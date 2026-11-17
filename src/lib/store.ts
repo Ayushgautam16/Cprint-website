@@ -352,20 +352,32 @@ export function useLiveProducts(filterCategory?: string) {
     window.addEventListener('rynochi-products-updated', handleUpdate);
 
     // 4. Supabase Realtime WebSocket subscription for live multi-device updates
-    const channel = supabase
-      .channel('storefront-products-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        () => {
-          fetchLatest();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `storefront-products-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'products' },
+          () => {
+            fetchLatest();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime products subscription skipped:', e);
+    }
 
     return () => {
       window.removeEventListener('rynochi-products-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 
@@ -420,25 +432,37 @@ export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
     window.addEventListener('rynochi-products-updated', handleUpdate);
 
     // Supabase Realtime channel
-    const channel = supabase
-      .channel(`product-${slugOrId}-realtime`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        () => {
-          fetch(`/api/products/${encodeURIComponent(slugOrId)}`)
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.product) setProduct(sanitizeProduct(data.product));
-            })
-            .catch((err) => console.warn('Realtime product update error:', err));
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `product-${slugOrId}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'products' },
+          () => {
+            fetch(`/api/products/${encodeURIComponent(slugOrId)}`)
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.product) setProduct(sanitizeProduct(data.product));
+              })
+              .catch((err) => console.warn('Realtime product update error:', err));
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime product detail subscription skipped:', e);
+    }
 
     return () => {
       window.removeEventListener('rynochi-products-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, [slugOrId]);
 
@@ -480,20 +504,32 @@ export function useLiveCategories() {
     const handleUpdate = () => setCategories(getStoredCategories());
     window.addEventListener('rynochi-categories-updated', handleUpdate);
 
-    const channel = supabase
-      .channel('categories-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'categories' },
-        () => {
-          fetchCategories();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `categories-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'categories' },
+          () => {
+            fetchCategories();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime categories subscription skipped:', e);
+    }
 
     return () => {
       window.removeEventListener('rynochi-categories-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 
@@ -541,20 +577,32 @@ export function useLiveSettings() {
     const handleUpdate = () => setSettings(getStoredSettings());
     window.addEventListener('rynochi-settings-updated', handleUpdate);
 
-    const channel = supabase
-      .channel('settings-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'store_settings' },
-        () => {
-          fetchSettings();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `settings-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'store_settings' },
+          () => {
+            fetchSettings();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime settings subscription skipped:', e);
+    }
 
     return () => {
       window.removeEventListener('rynochi-settings-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 

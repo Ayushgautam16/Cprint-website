@@ -31,16 +31,22 @@ export default function AdminInventoryPage() {
     refresh();
 
     // Supabase Realtime channel subscription
-    const channel = supabase
-      .channel('inventory-products-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        () => {
-          refresh();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `inventory-products-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'products' },
+          () => {
+            refresh();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Inventory products realtime subscription skipped:', e);
+    }
 
     const handleUpdate = () => {
       setProducts(getStoredProducts());
@@ -49,7 +55,13 @@ export default function AdminInventoryPage() {
 
     return () => {
       window.removeEventListener('rynochi-products-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 

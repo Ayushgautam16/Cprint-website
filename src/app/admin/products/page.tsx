@@ -89,16 +89,22 @@ export default function AdminProductsPage() {
     refreshProducts();
 
     // Supabase Realtime channel subscription for instant multi-device sync
-    const channel = supabase
-      .channel('admin-products-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        () => {
-          refreshProducts();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `admin-products-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'products' },
+          () => {
+            refreshProducts();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Admin products realtime subscription skipped:', e);
+    }
 
     const handleUpdate = () => {
       setProducts(getStoredProducts());
@@ -107,7 +113,13 @@ export default function AdminProductsPage() {
 
     return () => {
       window.removeEventListener('rynochi-products-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 

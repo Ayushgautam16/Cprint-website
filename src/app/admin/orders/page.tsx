@@ -81,28 +81,40 @@ export default function AdminOrdersPage() {
     window.addEventListener('rynochi-orders-updated', handleUpdate);
 
     // 3. Supabase Realtime WebSocket subscription
-    const channel = supabase
-      .channel('admin-orders-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'orders' },
-        () => {
-          fetch('/api/orders')
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.orders) {
-                setOrders(data.orders);
-                saveStoredOrders(data.orders);
-              }
-            })
-            .catch((err) => console.warn('Realtime refresh error:', err));
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `admin-orders-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'orders' },
+          () => {
+            fetch('/api/orders')
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.orders) {
+                  setOrders(data.orders);
+                  saveStoredOrders(data.orders);
+                }
+              })
+              .catch((err) => console.warn('Realtime refresh error:', err));
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Admin orders realtime subscription skipped:', e);
+    }
 
     return () => {
       window.removeEventListener('rynochi-orders-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 

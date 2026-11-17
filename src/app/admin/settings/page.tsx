@@ -28,16 +28,22 @@ export default function AdminSettingsPage() {
     refreshSettings();
 
     // Supabase Realtime channel subscription
-    const channel = supabase
-      .channel('admin-settings-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'store_settings' },
-        () => {
-          refreshSettings();
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    try {
+      const channelId = `admin-settings-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      channel = supabase
+        .channel(channelId)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'store_settings' },
+          () => {
+            refreshSettings();
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Admin settings realtime subscription skipped:', e);
+    }
 
     const handleUpdate = () => {
       setSettings(getStoredSettings());
@@ -46,7 +52,13 @@ export default function AdminSettingsPage() {
 
     return () => {
       window.removeEventListener('rynochi-settings-updated', handleUpdate);
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Realtime channel cleanup skipped:', e);
+        }
+      }
     };
   }, []);
 

@@ -28,12 +28,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Admin / Service client for server-side API routes (bypasses RLS)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-  },
-});
+export const supabaseAdmin =
+  typeof window === 'undefined'
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      })
+    : supabase;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
