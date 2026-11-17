@@ -21,6 +21,24 @@ import { formatCurrency } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { uploadProductImage } from '@/lib/imageUpload';
 
+const getSafeImages = (imgs: any): string[] => {
+  if (Array.isArray(imgs)) {
+    const filtered = imgs.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+    return filtered.length > 0 ? filtered : ['/images/products-optimized/1.png'];
+  }
+  if (typeof imgs === 'string' && imgs.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(imgs);
+      if (Array.isArray(parsed)) {
+        const filtered = parsed.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+        return filtered.length > 0 ? filtered : ['/images/products-optimized/1.png'];
+      }
+    } catch {}
+    return [imgs.trim()];
+  }
+  return ['/images/products-optimized/1.png'];
+};
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -563,42 +581,47 @@ export default function AdminProductsPage() {
             </div>
 
             {/* ALL EXISTING IMAGES GALLERY FOR THIS PRODUCT */}
-            <div className="pt-3 border-t border-navy-800/80">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  Existing Product Images ({prod.images.length} photos)
-                </span>
-                <span className="text-[10px] text-gray-500">
-                  Swipe/Cycle sequence on website
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3 overflow-x-auto pb-2 touch-pan-x scroll-smooth snap-x scrollbar-thin">
-                {prod.images.map((imgUrl, imgIdx) => (
-                  <div
-                    key={imgIdx}
-                    className="relative w-20 h-20 rounded-xl overflow-hidden bg-navy-950 border border-navy-700/80 flex-shrink-0 group shadow"
-                  >
-                    <Image
-                      src={imgUrl}
-                      alt={`${prod.name} - view ${imgIdx + 1}`}
-                      fill
-                      className="object-contain p-1"
-                      sizes="80px"
-                    />
-                    <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
-                      #{imgIdx + 1}
-                    </div>
-                    {imgIdx === 0 && (
-                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[9px] font-bold text-navy-950">
-                        Cover
-                      </div>
-                    )}
+            {(() => {
+              const safeProdImages = getSafeImages(prod.images);
+              return (
+                <div className="pt-3 border-t border-navy-800/80">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      Existing Product Images ({safeProdImages.length} photos)
+                    </span>
+                    <span className="text-[10px] text-gray-500">
+                      Swipe/Cycle sequence on website
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
+
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2 touch-pan-x scroll-smooth snap-x scrollbar-thin">
+                    {safeProdImages.map((imgUrl, imgIdx) => (
+                      <div
+                        key={imgIdx}
+                        className="relative w-20 h-20 rounded-xl overflow-hidden bg-navy-950 border border-navy-700/80 flex-shrink-0 group shadow"
+                      >
+                        <Image
+                          src={imgUrl}
+                          alt={`${prod.name} - view ${imgIdx + 1}`}
+                          fill
+                          className="object-contain p-1"
+                          sizes="80px"
+                        />
+                        <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
+                          #{imgIdx + 1}
+                        </div>
+                        {imgIdx === 0 && (
+                          <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[9px] font-bold text-navy-950">
+                            Cover
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         ))}
       </div>
@@ -635,7 +658,7 @@ export default function AdminProductsPage() {
                   <div>
                     <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-[#D4AF37] flex items-center gap-1.5">
                       <ImageIcon className="w-3.5 h-3.5" />
-                      Product Images Gallery ({editingProduct.images.length})
+                      Product Images Gallery ({getSafeImages(editingProduct.images).length})
                     </h4>
                     <p className="text-[11px] text-gray-400">
                       Add, delete, or set primary cover photo. These images cycle smoothly on the website.
@@ -651,7 +674,7 @@ export default function AdminProductsPage() {
 
                 {/* Visual Grid of All Current Images */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                  {editingProduct.images.map((imgUrl, idx) => (
+                  {getSafeImages(editingProduct.images).map((imgUrl, idx) => (
                     <div
                       key={idx}
                       className="relative h-28 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"

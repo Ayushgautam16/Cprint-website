@@ -25,6 +25,11 @@ declare global {
   }
 }
 
+const getItemImage = (item: any): string =>
+  (Array.isArray(item?.product?.images) && item.product.images[0]) ||
+  (typeof item?.product?.images === 'string' && item.product.images) ||
+  '/images/products-optimized/1.png';
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, customizationTotal, shippingFee, taxAmount, finalTotal, clearCart } =
@@ -147,9 +152,9 @@ export default function CheckoutPage() {
             items: items.map((item) => ({
               id: item.id,
               productId: item.productId,
-              productName: item.product.name,
-              productSku: item.product.sku,
-              productImageUrl: item.product.images[0],
+              productName: item.product?.name || 'Personalized Gift',
+              productSku: item.product?.sku || '',
+              productImageUrl: getItemImage(item),
               unitPrice: item.unitPrice,
               customizationCharge: item.customizationCharges,
               quantity: item.quantity,
@@ -236,9 +241,9 @@ export default function CheckoutPage() {
                 items: items.map((item) => ({
                   id: item.id,
                   productId: item.productId,
-                  productName: item.product.name,
-                  productSku: item.product.sku,
-                  productImageUrl: item.product.images[0],
+                  productName: item.product?.name || 'Personalized Gift',
+                  productSku: item.product?.sku || '',
+                  productImageUrl: getItemImage(item),
                   unitPrice: item.unitPrice,
                   customizationCharge: item.customizationCharges,
                   quantity: item.quantity,
@@ -307,9 +312,9 @@ export default function CheckoutPage() {
           items: items.map((item) => ({
             id: item.id,
             productId: item.productId,
-            productName: item.product.name,
-            productSku: item.product.sku,
-            productImageUrl: item.product.images[0],
+            productName: item.product?.name || 'Personalized Gift',
+            productSku: item.product?.sku || '',
+            productImageUrl: getItemImage(item),
             unitPrice: item.unitPrice,
             customizationCharge: item.customizationCharges,
             quantity: item.quantity,
@@ -632,15 +637,15 @@ export default function CheckoutPage() {
                   <div key={item.id} className="flex gap-3 text-xs">
                     <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-white border border-[#EBDDB4] flex-shrink-0">
                       <Image
-                        src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
-                        alt={item.product.name}
+                        src={getItemImage(item)}
+                        alt={item.product?.name || 'Personalized Gift'}
                         fill
                         className="object-contain p-1 mix-blend-multiply"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-200 line-clamp-2 leading-snug">
-                        {item.product.name}
+                      <h4 className="font-semibold text-gray-800 line-clamp-2 leading-snug">
+                        {item.product?.name || 'Personalized Gift'}
                       </h4>
                       <p className="text-[11px] text-[#6E675A]">Qty: {item.quantity}</p>
                       {item.customization?.customText && (

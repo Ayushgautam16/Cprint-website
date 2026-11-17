@@ -110,15 +110,19 @@ export default function CartPage() {
                   <div className="flex items-center gap-4">
                     <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white border border-[#EBDDB4] flex-shrink-0">
                       <Image
-                        src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
-                        alt={item.product.name}
+                        src={
+                          (Array.isArray(item?.product?.images) && item.product.images[0]) ||
+                          (typeof item?.product?.images === 'string' && item.product.images) ||
+                          '/images/products-optimized/1.png'
+                        }
+                        alt={item?.product?.name || 'Personalized Gift'}
                         fill
                         className="object-contain p-1.5 mix-blend-multiply"
                       />
                     </div>
                     <div>
                       <h3 className="text-sm font-serif font-bold text-[#2A2620] line-clamp-2 leading-snug">
-                        {item.product.name}
+                        {item?.product?.name || 'Personalized Gift'}
                       </h3>
                       {item.variantName && (
                         <p className="text-xs text-[#C5A059] mt-0.5">Finish: {item.variantName}</p>
