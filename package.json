@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node tests/platform.test.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:seed": "node prisma/seed.js"
   },
   "repository": {
     "type": "git",
@@ -17,5 +23,31 @@
   "bugs": {
     "url": "https://github.com/Ayushgautam16/Cprint-website/issues"
   },
-  "homepage": "https://github.com/Ayushgautam16/Cprint-website#readme"
+  "homepage": "https://github.com/Ayushgautam16/Cprint-website#readme",
+  "dependencies": {
+    "@prisma/client": "^7.10.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.6",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.6.2",
+    "bcryptjs": "^3.0.3",
+    "canvas-confetti": "^1.9.4",
+    "framer-motion": "^14.14.0",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.73.0",
+    "next": "^14.2.24",
+    "postcss": "^8.5.33",
+    "razorpay": "^2.9.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "prisma": "^8.0.0-rc.33",
+    "typescript": "^5.4.5"
+  }
 }

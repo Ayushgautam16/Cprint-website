@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+:root {
+  --font-serif: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-script: 'Great Vibes', cursive;
+  
+  --color-navy-dark: #070C1E;
+  --color-navy: #0B132B;
+  --color-navy-card: #101B3B;
+  --color-gold: #D4AF37;
+  --color-gold-light: #F3E5AB;
+  --color-gold-champagne: #C5A059;
+  --color-ivory: #FDFBF7;
+}
+
+/* Smooth Scrolling & Base Smoothing */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #1C2541;
+  background-color: #070C1E;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Universal Smooth Transitions for Interactive Elements */
+a, button, input, select, textarea {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: 250ms;
+}
+
+/* Luxury Headings */
+h1, h2, h3, h4, .font-serif-luxury {
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+}
+
+/* Metallic Gold Text Shimmer Effect */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #997519 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: filter 0.3s ease;
+}
+
+.gold-gradient-text:hover {
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #A48028 100%);
+}
+
+.gold-border {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* Custom Scrollbar for Luxury Look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B132B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+/* Interactive Luxury Hover Effects */
+.hover-luxury-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-luxury-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 175, 55, 0.65);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7),
+              0 0 25px -5px rgba(212, 175, 55, 0.3);
+}
+
+.hover-gold-glow {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hover-gold-glow:hover {
+  border-color: #D4AF37;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+}
+
+/* Metallic Button Shine Sweep Effect */
+.btn-luxury-gold {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #DFBA6F 0%, #D4AF37 50%, #AA8417 100%);
+  color: #070C1E;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-luxury-gold::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.75s ease;
+  pointer-events: none;
+}
+
+.btn-luxury-gold:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-luxury-gold:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 25px -3px rgba(212, 175, 55, 0.4);
+  transform: translateY(-1.5px);
+}
+
+.btn-luxury-gold:active {
+  transform: translateY(0.5px) scale(0.98);
+}
+
+/* Secondary Ghost Button Hover */
+.btn-luxury-ghost {
+  position: relative;
+  background: rgba(11, 19, 43, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #FFFFFF;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-luxury-ghost:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #D4AF37;
+  color: #F3E5AB;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+  transform: translateY(-1.5px);
+}
+
+.btn-luxury-ghost:active {
+  transform: translateY(0.5px) scale(0.98);
+}
+
+/* Brass / Laser Engraved Simulation Styles */
+.engraved-brass-text {
+  color: #2B1D0C;
+  text-shadow: 0px 1px 0px rgba(255, 235, 175, 0.8), 0px -1px 0px rgba(0, 0, 0, 0.6);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* Subtle Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-animation {
+  background: linear-gradient(
+    90deg,
+    rgba(212, 175, 55, 0) 0%,
+    rgba(212, 175, 55, 0.4) 50%,
+    rgba(212, 175, 55, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
