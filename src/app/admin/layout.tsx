@@ -182,7 +182,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Navigation Links (Simplified) */}
-        <nav className="flex-1 space-y-1.5 text-xs">
+        <nav className="flex-1 space-y-2 text-xs">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -190,14 +190,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200 ${
                   isActive
-                    ? 'btn-luxury-gold text-navy-950 font-bold shadow-md shadow-[#D4AF37]/20'
-                    : 'text-gray-400 hover:text-white hover:bg-navy-900/80 hover:translate-x-1'
+                    ? 'bg-gradient-to-r from-[#F5D77F] via-[#D4AF37] to-[#B88A2E] text-[#0A0F1D] shadow-lg shadow-[#D4AF37]/35 ring-1 ring-[#FFF0B8]/60 translate-x-1'
+                    : 'text-gray-200 hover:text-white hover:bg-navy-900/90 hover:translate-x-1'
                 }`}
               >
-                <Icon className="w-4 h-4 flex-shrink-0" />
-                <span>{item.label}</span>
+                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-[#0A0F1D]' : 'text-[#D4AF37]'}`} />
+                <span className={isActive ? 'text-[#0A0F1D] font-extrabold tracking-wide' : 'font-medium'}>
+                  {item.label}
+                </span>
               </Link>
             );
           })}
@@ -246,14 +248,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
                       isActive
-                        ? 'btn-luxury-gold text-navy-950 font-bold'
-                        : 'text-gray-300 hover:text-white hover:bg-navy-900'
+                        ? 'bg-gradient-to-r from-[#F5D77F] via-[#D4AF37] to-[#B88A2E] text-[#0A0F1D] shadow-lg shadow-[#D4AF37]/35 ring-1 ring-[#FFF0B8]/60'
+                        : 'text-gray-200 hover:text-white hover:bg-navy-900'
                     }`}
                   >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
-                    <span>{item.label}</span>
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-[#0A0F1D]' : 'text-[#D4AF37]'}`} />
+                    <span className={isActive ? 'text-[#0A0F1D] font-extrabold' : 'font-medium'}>{item.label}</span>
                   </Link>
                 );
               })}

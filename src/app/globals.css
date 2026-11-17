@@ -114,6 +114,35 @@ img {
   box-shadow: 0 16px 38px rgba(201,162,75,.5);
 }
 
+.btn-luxury-gold {
+  background: linear-gradient(110deg, #DFBA6F 0%, #F5E2B3 35%, #D4AF37 70%, #AA8417 100%) !important;
+  background-size: 200% 100% !important;
+  color: #0A0F1D !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(255, 240, 184, 0.4) !important;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35) !important;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-luxury-gold * {
+  color: #0A0F1D !important;
+}
+
+.btn-luxury-gold:hover {
+  background-position: 100% 0 !important;
+  color: #000000 !important;
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.55) !important;
+  transform: translateY(-2px);
+}
+
+.btn-luxury-gold:active {
+  transform: scale(0.98);
+}
+
 .btn-line {
   background: #fff;
   color: #7A5C16;
