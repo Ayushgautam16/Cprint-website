@@ -36,7 +36,7 @@ export default function RefundPolicyPage() {
               <li>Mechanical defects such as faulty pen twist mechanisms or broken diary clasps.</li>
             </ul>
             <p className="mt-2">
-              To request a replacement, simply send a photo or unboxing video to our WhatsApp concierge or email <strong className="text-[#D4AF37]">support@rynochi.com</strong> within 48 hours of delivery.
+              To request a replacement, simply send a photo or unboxing video to our WhatsApp concierge or email <a href="mailto:rynochioffice@gmail.com" className="text-[#D4AF37] hover:underline font-bold">rynochioffice@gmail.com</a> within 48 hours of delivery.
             </p>
           </section>
 

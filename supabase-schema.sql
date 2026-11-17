@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS public.store_settings (
   announcement_text TEXT,
   announcement_active BOOLEAN DEFAULT TRUE,
   whatsapp_number TEXT DEFAULT '917277338436',
-  support_email TEXT DEFAULT 'orders@rynochi.com',
+  support_email TEXT DEFAULT 'rynochioffice@gmail.com',
   support_phone TEXT DEFAULT '+91 72773 38436',
   office_address TEXT,
   shipping_fee NUMERIC DEFAULT 99,
@@ -523,7 +523,7 @@ INSERT INTO public.store_settings (
   shipping_fee, free_shipping_threshold, tax_rate_percent, razorpay_enabled, cod_enabled, social_links
 ) VALUES (
   'default', 'RYNOCHI', '/images/brand/rynochi-gold-logo.png', '✨ FREE ALL-INDIA SHIPPING ON ORDERS ABOVE ₹999 • COMPLIMENTARY LASER ENGRAVING • ZERO DEFECT GUARANTEE',
-  TRUE, '917277338436', 'orders@rynochi.com',
+  TRUE, '917277338436', 'rynochioffice@gmail.com',
   '+91 72773 38436', 'T371-FAST FLOR CHAMELIN ROAD KAROL BAGH DELHI-110006 NEW DELHI DELHI 110006 India', 99,
   999, 18, TRUE,
   TRUE, '{"instagram":"https://www.instagram.com/rynochi__eye_wear?utm_source=qr&srtk=MTB0MDVyMzd5anJsOQ==","facebook":"https://www.facebook.com/share/19ca1jff5P/","youtube":"http://youtube.com/@rynochi-p?si=8yDkeTxuhbS1fZQ3","whatsapp":"https://wa.me/917277338436?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry","amazonStore":"https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share","linkedin":"https://linkedin.com/company/rynochi","twitter":"https://twitter.com/rynochi"}'::jsonb

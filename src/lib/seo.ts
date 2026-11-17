@@ -19,6 +19,7 @@ export function getOrganizationStructuredData() {
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+91-72773-38436',
+      email: 'rynochioffice@gmail.com',
       contactType: 'customer service',
       areaServed: 'IN',
       availableLanguage: ['English', 'Hindi'],

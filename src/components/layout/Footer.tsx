@@ -28,6 +28,12 @@ export const Footer: React.FC = () => {
                   +91 72773 38436
                 </a>
               </p>
+              <p className="flex items-center gap-1.5 font-medium text-[#2A2620]">
+                <span>✉️ Email / Enquiries:</span>
+                <a href="mailto:rynochioffice@gmail.com" className="text-[#8F6A17] font-bold hover:underline">
+                  rynochioffice@gmail.com
+                </a>
+              </p>
               <p className="leading-snug text-[11px] text-[#6E675A]">
                 📍 T371-FAST FLOR CHAMELIN ROAD KAROL BAGH DELHI-110006 NEW DELHI DELHI 110006 India
               </p>

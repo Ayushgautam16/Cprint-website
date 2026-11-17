@@ -446,7 +446,7 @@ export function useLiveSettings() {
               announcementText: data.announcement_text || '',
               announcementActive: data.announcement_active !== false,
               whatsappNumber: data.whatsapp_number || '917277338436',
-              supportEmail: data.support_email || 'orders@rynochi.com',
+              supportEmail: data.support_email || 'rynochioffice@gmail.com',
               supportPhone: data.support_phone || '+91 72773 38436',
               officeAddress: data.office_address || '',
               shippingFee: Number(data.shipping_fee || 99),

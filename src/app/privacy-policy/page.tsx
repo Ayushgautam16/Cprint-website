@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-2">
             <h2 className="text-lg font-serif font-bold text-white">5. Contact Our Privacy Officer</h2>
             <p>
-              For any questions regarding personal data access or deletion requests, please contact: <strong className="text-[#D4AF37]">privacy@rynochi.com</strong>.
+              For any questions regarding personal data access or deletion requests, please contact: <a href="mailto:rynochioffice@gmail.com" className="text-[#D4AF37] hover:underline font-bold">rynochioffice@gmail.com</a>.
             </p>
           </section>
         </div>

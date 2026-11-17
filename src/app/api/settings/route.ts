@@ -10,7 +10,7 @@ function mapDbSettingsToModel(row: any): WebsiteSettings {
     announcementText: row.announcement_text || '',
     announcementActive: Boolean(row.announcement_active),
     whatsappNumber: row.whatsapp_number || '917277338436',
-    supportEmail: row.support_email || 'orders@rynochi.com',
+    supportEmail: row.support_email || 'rynochioffice@gmail.com',
     supportPhone: row.support_phone || '+91 72773 38436',
     officeAddress: row.office_address || '',
     shippingFee: Number(row.shipping_fee || 99),

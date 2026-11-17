@@ -6,7 +6,7 @@ export const INITIAL_SETTINGS: WebsiteSettings = {
   announcementText: '✨ FREE ALL-INDIA SHIPPING ON ORDERS ABOVE ₹999 • COMPLIMENTARY LASER ENGRAVING • ZERO DEFECT GUARANTEE',
   announcementActive: true,
   whatsappNumber: '917277338436',
-  supportEmail: 'orders@rynochi.com',
+  supportEmail: 'rynochioffice@gmail.com',
   supportPhone: '+91 72773 38436',
   officeAddress: 'T371-FAST FLOR CHAMELIN ROAD KAROL BAGH DELHI-110006 NEW DELHI DELHI 110006 India',
   shippingFee: 99,

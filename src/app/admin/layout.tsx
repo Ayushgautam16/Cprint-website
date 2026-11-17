@@ -21,7 +21,7 @@ import {
 import Logo from '@/components/brand/Logo';
 
 const ADMIN_STORAGE_KEY = 'rynochi_admin_authenticated_v2';
-const MASTER_EMAIL = 'admin@rynochi.com';
+const MASTER_EMAILS = ['rynochioffice@gmail.com', 'admin@rynochi.com'];
 const MASTER_PASS = 'Admin@Rynochi2026!';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     setTimeout(() => {
       if (
-        loginEmail.trim().toLowerCase() === MASTER_EMAIL.toLowerCase() &&
+        MASTER_EMAILS.includes(loginEmail.trim().toLowerCase()) &&
         loginPassword.trim() === MASTER_PASS
       ) {
         sessionStorage.setItem(ADMIN_STORAGE_KEY, 'true');

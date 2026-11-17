@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, MessageCircle, Send, CheckCircle2 } from 'lucide-react';
 import { INITIAL_SETTINGS } from '@/lib/mockData';
+import { useLiveSettings } from '@/lib/store';
 
 export default function ContactPage() {
+  const { settings } = useLiveSettings();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -74,8 +76,13 @@ export default function ContactPage() {
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
                   <div>
-                    <strong className="text-white block">Email</strong>
-                    <span>{INITIAL_SETTINGS.supportEmail}</span>
+                    <strong className="text-white block">Email / Enquiries</strong>
+                    <a
+                      href={`mailto:${settings?.supportEmail || 'rynochioffice@gmail.com'}`}
+                      className="text-[#F3E5AB] hover:text-[#D4AF37] hover:underline transition-colors"
+                    >
+                      {settings?.supportEmail || 'rynochioffice@gmail.com'}
+                    </a>
                   </div>
                 </div>
 
