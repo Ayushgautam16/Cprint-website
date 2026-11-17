@@ -242,6 +242,11 @@ Open [http://localhost:3000](http://localhost:3000) in your web browser.
 
 ---
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/main
 ## 🚀 Production Deployment Guide
 
 ### Deploying to Vercel
