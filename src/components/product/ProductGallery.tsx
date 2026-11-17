@@ -14,6 +14,13 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [dragDelta, setDragDelta] = useState(0);
 
+  // Guard bounds if image count changes dynamically
+  React.useEffect(() => {
+    if (selectedIndex >= images.length && images.length > 0) {
+      setSelectedIndex(0);
+    }
+  }, [images.length, selectedIndex]);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
@@ -77,7 +84,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         <img
           src={activeImage}
           alt={`${productName} view ${selectedIndex + 1}`}
-          className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-200 pointer-events-none ${
+          className={`w-full h-full object-contain drop-shadow-sm transition-transform duration-200 pointer-events-none ${
             isZoomed ? 'scale-150' : 'scale-100'
           }`}
           style={
@@ -150,7 +157,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
               <img
                 src={img}
                 alt={`${productName} thumbnail ${idx + 1}`}
-                className="w-full h-full object-contain mix-blend-multiply"
+                className="w-full h-full object-contain"
               />
             </button>
           ))}

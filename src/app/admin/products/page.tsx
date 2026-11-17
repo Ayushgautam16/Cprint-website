@@ -10,19 +10,16 @@ import {
   Check,
   X,
   Sparkles,
-  Package,
-  Boxes,
-  AlertCircle,
   Image as ImageIcon,
   Upload,
-  Star,
-  ArrowUpDown,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 import { getStoredProducts, saveStoredProducts, getStoredCategories } from '@/lib/store';
 import { Product, Category } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
+import { uploadProductImage } from '@/lib/imageUpload';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,6 +30,8 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [notification, setNotification] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // New product form state
   const [newProd, setNewProd] = useState<Partial<Product>>({
@@ -96,83 +95,97 @@ export default function AdminProductsPage() {
 
   const showToast = (msg: string) => {
     setNotification(msg);
-    setTimeout(() => setNotification(null), 3000);
+    setTimeout(() => setNotification(null), 3500);
   };
 
-  const handleToggleActive = (id: string) => {
+  const handleToggleActive = async (id: string) => {
     const target = products.find((p) => p.id === id);
     if (!target) return;
     const newActive = !target.isActive;
     const updated = products.map((p) => (p.id === id ? { ...p, isActive: newActive } : p));
     setProducts(updated);
     saveStoredProducts(updated);
-    showToast('Product visibility updated.');
+    window.dispatchEvent(new Event('rynochi-products-updated'));
+    showToast(`Product visibility marked as ${newActive ? 'Active' : 'Draft'}.`);
 
-    // Direct Supabase update for Realtime broadcast
-    supabase
-      .from('products')
-      .update({ is_active: newActive, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .then(({ error }) => {
-        if (error) console.warn('Direct product active update error:', error.message);
-      });
-
-    // Server API route PATCH
-    fetch(`/api/products/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isActive: newActive }),
-    }).catch((err) => console.warn('Product active sync error:', err));
-  };
-
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      const updated = products.filter((p) => p.id !== id);
-      setProducts(updated);
-      saveStoredProducts(updated);
-      showToast('Product removed.');
-
-      // Direct Supabase delete for Realtime broadcast
-      supabase
+    try {
+      // 1. Direct Supabase update for Realtime broadcast
+      await supabase
         .from('products')
-        .delete()
-        .eq('id', id)
-        .then(({ error }) => {
-          if (error) console.warn('Direct product delete error:', error.message);
-        });
+        .update({ is_active: newActive, updated_at: new Date().toISOString() })
+        .eq('id', id);
 
-      // Server API route DELETE
-      fetch(`/api/products/${id}`, {
-        method: 'DELETE',
-      }).catch((err) => console.warn('Product delete sync error:', err));
+      // 2. Server API route PATCH
+      await fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: newActive }),
+      });
+    } catch (err) {
+      console.warn('Product active sync error:', err);
     }
   };
 
-  // Add a new image from device file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isEditing = true) => {
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to permanently delete this product?')) return;
+
+    const updated = products.filter((p) => p.id !== id);
+    setProducts(updated);
+    saveStoredProducts(updated);
+    window.dispatchEvent(new Event('rynochi-products-updated'));
+    showToast('Product removed.');
+
+    try {
+      // 1. Direct Supabase delete for Realtime broadcast
+      await supabase.from('products').delete().eq('id', id);
+
+      // 2. Server API route DELETE
+      await fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+      });
+    } catch (err) {
+      console.warn('Product delete sync error:', err);
+    }
+  };
+
+  // Add a new image from device file upload via Supabase CDN
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEditing = true) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const result = uploadEvent.target?.result as string;
-      if (!result) return;
+    setIsUploadingImage(true);
+    showToast('Compressing & uploading photo to Cloud CDN...');
+
+    try {
+      const result = await uploadProductImage(file);
+      if (!result.success || !result.url) {
+        alert(result.error || 'Failed to upload photo. Please check your internet connection.');
+        return;
+      }
+
+      const cdnUrl = result.url;
 
       if (isEditing && editingProduct) {
+        const updatedImages = [...editingProduct.images, cdnUrl];
         setEditingProduct({
           ...editingProduct,
-          images: [...editingProduct.images, result],
+          images: updatedImages,
         });
+        showToast('Photo uploaded to Cloud CDN! Click Save Product to persist.');
       } else {
-        setNewProd({
-          ...newProd,
-          images: [...(newProd.images || []), result],
-        });
+        setNewProd((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), cdnUrl],
+        }));
+        showToast('Photo uploaded and added to gallery.');
       }
-      showToast('Image uploaded successfully.');
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
+    } catch (err: any) {
+      console.error('File upload error:', err);
+      alert('Upload error: ' + (err?.message || 'Failed'));
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
+    }
   };
 
   // Add image by URL or path
@@ -186,13 +199,13 @@ export default function AdminProductsPage() {
         images: [...editingProduct.images, url],
       });
     } else {
-      setNewProd({
-        ...newProd,
-        images: [...(newProd.images || []), url],
-      });
+      setNewProd((prev) => ({
+        ...prev,
+        images: [...(prev.images || []), url],
+      }));
     }
     setNewImageUrl('');
-    showToast('Image added.');
+    showToast('Image URL added.');
   };
 
   // Remove an image from the product's images array
@@ -209,11 +222,12 @@ export default function AdminProductsPage() {
       });
     } else {
       const updatedImages = (newProd.images || []).filter((_, idx) => idx !== indexToRemove);
-      setNewProd({
-        ...newProd,
+      setNewProd((prev) => ({
+        ...prev,
         images: updatedImages,
-      });
+      }));
     }
+    showToast('Image removed from draft.');
   };
 
   // Set an image as primary / cover (moves it to index 0)
@@ -228,77 +242,92 @@ export default function AdminProductsPage() {
     } else {
       const target = (newProd.images || [])[indexToPrimary];
       const remaining = (newProd.images || []).filter((_, idx) => idx !== indexToPrimary);
-      setNewProd({
-        ...newProd,
+      setNewProd((prev) => ({
+        ...prev,
         images: [target, ...remaining],
-      });
+      }));
     }
+    showToast('Main cover photo selected.');
   };
 
   // Save changes to editing product
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
+
+    setIsSaving(true);
+    showToast('Saving & syncing product to database...');
 
     const updated = products.map((p) => (p.id === editingProduct.id ? editingProduct : p));
     setProducts(updated);
     saveStoredProducts(updated);
-    setEditingProduct(null);
-    showToast('Product & pricing updated successfully!');
 
-    // Direct Supabase update for instant Realtime broadcast across all browsers
-    supabase
-      .from('products')
-      .update({
-        name: editingProduct.name,
-        slug: editingProduct.slug,
-        sku: editingProduct.sku,
-        short_description: editingProduct.shortDescription,
-        description: editingProduct.description,
-        category_id: editingProduct.categoryId,
-        category_name: editingProduct.categoryName,
-        base_price: editingProduct.basePrice,
-        discount_price: editingProduct.discountPrice || null,
-        stock: editingProduct.stock,
-        is_customizable: editingProduct.isCustomizable,
-        is_featured: editingProduct.isFeatured,
-        is_bestseller: editingProduct.isBestseller,
-        is_new_arrival: editingProduct.isNewArrival,
-        is_active: editingProduct.isActive,
-        images: editingProduct.images,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', editingProduct.id)
-      .then(({ error }) => {
-        if (error) console.warn('Direct product update error:', error.message);
+    try {
+      // 1. Direct Supabase update for instant Realtime broadcast across all browsers
+      await supabase
+        .from('products')
+        .update({
+          name: editingProduct.name,
+          slug: editingProduct.slug,
+          sku: editingProduct.sku,
+          short_description: editingProduct.shortDescription,
+          description: editingProduct.description,
+          category_id: editingProduct.categoryId,
+          category_name: editingProduct.categoryName,
+          base_price: Number(editingProduct.basePrice),
+          discount_price: editingProduct.discountPrice ? Number(editingProduct.discountPrice) : null,
+          stock: Number(editingProduct.stock),
+          is_customizable: Boolean(editingProduct.isCustomizable),
+          is_featured: Boolean(editingProduct.isFeatured),
+          is_bestseller: Boolean(editingProduct.isBestseller),
+          is_new_arrival: Boolean(editingProduct.isNewArrival),
+          is_active: Boolean(editingProduct.isActive),
+          images: editingProduct.images,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', editingProduct.id);
+
+      // 2. Server API route PATCH (runs with service role key, bypassing RLS)
+      await fetch(`/api/products/${editingProduct.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingProduct),
       });
 
-    // Server API route PATCH
-    fetch(`/api/products/${editingProduct.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editingProduct),
-    }).catch((err) => console.warn('Supabase product sync error:', err));
+      // 3. Dispatch local event for instant local tab sync
+      window.dispatchEvent(new Event('rynochi-products-updated'));
+      showToast('Product & photos updated and synced live across website!');
+      setEditingProduct(null);
+    } catch (err: any) {
+      console.error('Save product error:', err);
+      showToast('Saved locally.');
+      setEditingProduct(null);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Create new product
-  const handleCreateProduct = (e: React.FormEvent) => {
+  const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProd.name || !newProd.sku) return;
+
+    setIsSaving(true);
+    showToast('Creating product & broadcasting to live storefront...');
 
     const matchedCat = categories.find((c) => c.id === newProd.categoryId);
 
     const created: Product = {
       id: `prod_${Date.now()}`,
       name: newProd.name,
-      slug: newProd.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      slug: newProd.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
       sku: newProd.sku,
       shortDescription: newProd.shortDescription || 'Bespoke executive gift item.',
       description: newProd.description || 'Precision crafted with high-grade materials.',
       categoryId: newProd.categoryId || 'cat-pens',
       categoryName: matchedCat?.name || 'Personalized Pens',
       basePrice: Number(newProd.basePrice) || 999,
-      discountPrice: Number(newProd.discountPrice) || undefined,
+      discountPrice: newProd.discountPrice ? Number(newProd.discountPrice) : undefined,
       stock: Number(newProd.stock) || 50,
       minOrderQty: 1,
       isCustomizable: Boolean(newProd.isCustomizable),
@@ -315,13 +344,10 @@ export default function AdminProductsPage() {
     const updated = [created, ...products];
     setProducts(updated);
     saveStoredProducts(updated);
-    setIsAddModalOpen(false);
-    showToast('New product created successfully!');
 
-    // Direct Supabase insert for instant Realtime broadcast
-    supabase
-      .from('products')
-      .insert({
+    try {
+      // 1. Direct Supabase insert
+      await supabase.from('products').insert({
         id: created.id,
         name: created.name,
         slug: created.slug,
@@ -339,17 +365,45 @@ export default function AdminProductsPage() {
         is_new_arrival: created.isNewArrival,
         is_active: true,
         images: created.images,
-      })
-      .then(({ error }) => {
-        if (error) console.warn('Direct product insert error:', error.message);
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
 
-    // Sync to Supabase via API
-    fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(created),
-    }).catch((err) => console.warn('Supabase product create error:', err));
+      // 2. Server API route POST
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(created),
+      });
+
+      // 3. Dispatch local event
+      window.dispatchEvent(new Event('rynochi-products-updated'));
+      showToast('New product created & live on website!');
+      setIsAddModalOpen(false);
+      setNewProd({
+        name: '',
+        sku: '',
+        shortDescription: '',
+        description: '',
+        basePrice: 999,
+        discountPrice: 799,
+        stock: 50,
+        categoryId: 'cat-pens',
+        categoryName: 'Personalized Pens',
+        isCustomizable: true,
+        isFeatured: true,
+        isBestseller: false,
+        isNewArrival: true,
+        isActive: true,
+        images: ['/images/products-optimized/1.png'],
+      });
+    } catch (err: any) {
+      console.error('Create product error:', err);
+      showToast('Product created locally.');
+      setIsAddModalOpen(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Filter products by search and category
@@ -587,6 +641,12 @@ export default function AdminProductsPage() {
                       Add, delete, or set primary cover photo. These images cycle smoothly on the website.
                     </p>
                   </div>
+                  {isUploadingImage && (
+                    <div className="flex items-center gap-1.5 text-xs text-[#D4AF37] font-semibold animate-pulse">
+                      <Loader2 className="w-4 h-4 animate-spin text-[#D4AF37]" />
+                      <span>Uploading to CDN...</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Visual Grid of All Current Images */}
@@ -640,12 +700,17 @@ export default function AdminProductsPage() {
                 {/* Add Image Controls */}
                 <div className="pt-2 border-t border-navy-900 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   {/* Upload from Device */}
-                  <label className="px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-[#F3E5AB] cursor-pointer flex items-center justify-center gap-2 transition-colors flex-shrink-0">
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Upload from Device</span>
+                  <label className={`px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-[#F3E5AB] cursor-pointer flex items-center justify-center gap-2 transition-colors flex-shrink-0 ${isUploadingImage ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {isUploadingImage ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4AF37]" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isUploadingImage ? 'Uploading...' : 'Upload from Device'}</span>
                     <input
                       type="file"
                       accept="image/*"
+                      disabled={isUploadingImage}
                       onChange={(e) => handleFileUpload(e, true)}
                       className="hidden"
                     />
@@ -657,7 +722,7 @@ export default function AdminProductsPage() {
                       type="text"
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
-                      placeholder="Paste image path or URL (e.g. /images/...)"
+                      placeholder="Paste image path or URL (e.g. https://...)"
                       className="flex-1 px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
                     />
                     <button
@@ -678,7 +743,7 @@ export default function AdminProductsPage() {
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="text-gray-300 font-medium block">Base Price / MRP (₹)</label>
+                    <label className="text-gray-300 font-medium block">Base Price (₹)</label>
                     <input
                       type="number"
                       required
@@ -695,7 +760,7 @@ export default function AdminProductsPage() {
 
                   <div className="space-y-1">
                     <label className="text-gray-300 font-medium block">
-                      Selling / Discount Price (₹)
+                      Discounted Price (₹)
                     </label>
                     <input
                       type="number"
@@ -706,14 +771,16 @@ export default function AdminProductsPage() {
                           discountPrice: Number(e.target.value) || undefined,
                         })
                       }
+                      placeholder="Optional"
                       className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-gray-300 font-medium block">Stock Quantity (Units)</label>
+                    <label className="text-gray-300 font-medium block">Stock Units</label>
                     <input
                       type="number"
+                      required
                       value={editingProduct.stock}
                       onChange={(e) =>
                         setEditingProduct({
@@ -863,16 +930,27 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingProduct(null)}
+                  disabled={isSaving}
                   className="px-5 py-2.5 rounded-xl text-gray-400 hover:text-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#DFBA6F] via-[#D4AF37] to-[#AA8417] text-navy-950 hover:brightness-110 shadow-lg shadow-[#D4AF37]/20 flex items-center gap-2"
+                  disabled={isSaving || isUploadingImage}
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#DFBA6F] via-[#D4AF37] to-[#AA8417] text-navy-950 hover:brightness-110 shadow-lg shadow-[#D4AF37]/20 flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Check className="w-4 h-4" />
-                  <span>Save Product & Pricing</span>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-navy-950" />
+                      <span>Syncing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Save Product & Photos</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -885,52 +963,75 @@ export default function AdminProductsPage() {
       {/* ============================================================== */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-navy-800 pb-3">
-              <h3 className="text-base font-serif font-bold text-white">Add New Product</h3>
+          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-navy-800 pb-4">
+              <h3 className="text-lg font-serif font-bold text-white">Create New Product</h3>
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-gray-400 hover:text-white"
+                className="p-1 rounded-xl text-gray-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Product Name</label>
+                  <label className="text-gray-300 font-medium block">Product Name *</label>
                   <input
                     type="text"
                     required
                     value={newProd.name}
                     onChange={(e) => setNewProd({ ...newProd, name: e.target.value })}
-                    placeholder="e.g. Signature Golden Ballpoint Pen"
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                    placeholder="e.g. Sovereign Matte Black Ballpoint"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">SKU Code</label>
+                  <label className="text-gray-300 font-medium block">SKU Code *</label>
                   <input
                     type="text"
                     required
                     value={newProd.sku}
                     onChange={(e) => setNewProd({ ...newProd, sku: e.target.value })}
-                    placeholder="e.g. RYN-PEN-01"
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                    placeholder="e.g. RYN-PEN-BLK-01"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <label className="text-gray-300 font-medium block">Category</label>
+                <select
+                  value={newProd.categoryId}
+                  onChange={(e) => {
+                    const cat = categories.find((c) => c.id === e.target.value);
+                    setNewProd({
+                      ...newProd,
+                      categoryId: e.target.value,
+                      categoryName: cat?.name || newProd.categoryName,
+                    });
+                  }}
+                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                >
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Base Price (₹)</label>
+                  <label className="text-gray-300 font-medium block">Base Price (₹) *</label>
                   <input
                     type="number"
+                    required
                     value={newProd.basePrice}
                     onChange={(e) => setNewProd({ ...newProd, basePrice: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -941,7 +1042,7 @@ export default function AdminProductsPage() {
                     onChange={(e) =>
                       setNewProd({ ...newProd, discountPrice: Number(e.target.value) || undefined })
                     }
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -950,7 +1051,7 @@ export default function AdminProductsPage() {
                     type="number"
                     value={newProd.stock}
                     onChange={(e) => setNewProd({ ...newProd, stock: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
               </div>
@@ -962,7 +1063,7 @@ export default function AdminProductsPage() {
                   value={newProd.shortDescription}
                   onChange={(e) => setNewProd({ ...newProd, shortDescription: e.target.value })}
                   placeholder="One line summary for product grid..."
-                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
 
@@ -973,24 +1074,90 @@ export default function AdminProductsPage() {
                   value={newProd.description}
                   onChange={(e) => setNewProd({ ...newProd, description: e.target.value })}
                   placeholder="Specifications, materials, engraving instructions..."
-                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
 
-              {/* Upload image */}
-              <div className="p-3 rounded-xl bg-navy-950 border border-navy-800 space-y-2">
-                <label className="text-gray-300 font-medium block">Product Photos</label>
-                <div className="flex gap-2">
-                  <label className="px-3 py-1.5 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-gray-300 cursor-pointer flex items-center gap-1.5">
-                    <Upload className="w-3.5 h-3.5 text-[#D4AF37]" />
-                    <span>Upload Photo</span>
+              {/* Upload image & preview for New Product */}
+              <div className="p-3.5 rounded-2xl bg-navy-950 border border-navy-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-300 font-medium block">Product Photos</label>
+                  {isUploadingImage && (
+                    <div className="flex items-center gap-1.5 text-xs text-[#D4AF37] font-semibold animate-pulse">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4AF37]" />
+                      <span>Uploading to CDN...</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Previews of uploaded images */}
+                {newProd.images && newProd.images.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
+                    {newProd.images.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="relative h-20 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"
+                      >
+                        <Image
+                          src={img}
+                          alt={`New Product Photo ${idx + 1}`}
+                          fill
+                          className="object-contain p-1"
+                          sizes="100px"
+                        />
+                        <span className="absolute top-1 left-1 px-1 rounded bg-black/70 text-[9px] text-gray-300">
+                          #{idx + 1}
+                        </span>
+                        {idx === 0 && (
+                          <span className="absolute bottom-1 left-1 px-1.5 rounded bg-[#D4AF37] text-navy-950 text-[9px] font-bold">
+                            Cover
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx, false)}
+                          className="absolute top-1 right-1 p-1 rounded bg-rose-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-navy-900">
+                  <label className={`px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-[#F3E5AB] cursor-pointer flex items-center justify-center gap-2 transition-colors flex-shrink-0 ${isUploadingImage ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {isUploadingImage ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4AF37]" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    )}
+                    <span>{isUploadingImage ? 'Uploading...' : 'Upload Photo'}</span>
                     <input
                       type="file"
                       accept="image/*"
+                      disabled={isUploadingImage}
                       onChange={(e) => handleFileUpload(e, false)}
                       className="hidden"
                     />
                   </label>
+
+                  <div className="flex-1 flex gap-2">
+                    <input
+                      type="text"
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      placeholder="Paste image URL (e.g. https://...)"
+                      className="flex-1 px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleAddImageUrl(false)}
+                      className="px-3 py-2 rounded-xl bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-navy-950 font-semibold transition-colors"
+                    >
+                      + Add
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1000,7 +1167,7 @@ export default function AdminProductsPage() {
                     type="checkbox"
                     checked={newProd.isCustomizable}
                     onChange={(e) => setNewProd({ ...newProd, isCustomizable: e.target.checked })}
-                    className="accent-[#D4AF37]"
+                    className="accent-[#D4AF37] w-4 h-4"
                   />
                   <span>Enable Laser Customization</span>
                 </label>
@@ -1009,7 +1176,7 @@ export default function AdminProductsPage() {
                     type="checkbox"
                     checked={newProd.isFeatured}
                     onChange={(e) => setNewProd({ ...newProd, isFeatured: e.target.checked })}
-                    className="accent-[#D4AF37]"
+                    className="accent-[#D4AF37] w-4 h-4"
                   />
                   <span>Feature on Homepage</span>
                 </label>
@@ -1019,15 +1186,24 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
+                  disabled={isSaving}
                   className="px-4 py-2 rounded-xl text-gray-400 hover:text-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#DFBA6F] via-[#D4AF37] to-[#AA8417] text-navy-950"
+                  disabled={isSaving || isUploadingImage}
+                  className="px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#DFBA6F] via-[#D4AF37] to-[#AA8417] text-navy-950 disabled:opacity-50 flex items-center gap-2"
                 >
-                  Save Product
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-navy-950" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <span>Save Product</span>
+                  )}
                 </button>
               </div>
             </form>

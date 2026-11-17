@@ -1,7 +1,55 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { PRODUCTS } from '@/lib/mockData';
-import { Product } from '@/lib/types';
+import { Product, CustomizationField } from '@/lib/types';
+
+function safeParseArray(val: any): string[] {
+  if (Array.isArray(val)) return val;
+  if (!val) return [];
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      return trimmed
+        .slice(1, -1)
+        .split(',')
+        .map((s) => s.trim().replace(/^"|"$/g, ''))
+        .filter(Boolean);
+    }
+    if (trimmed.startsWith('http') || trimmed.startsWith('/') || trimmed.startsWith('data:')) {
+      return [trimmed];
+    }
+  }
+  return [];
+}
+
+function safeParseObjectArray<T = any>(val: any): T[] {
+  if (Array.isArray(val)) return val;
+  if (!val) return [];
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+  }
+  return [];
+}
+
+function safeParseObject(val: any): Record<string, string> {
+  if (val && typeof val === 'object' && !Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (parsed && typeof parsed === 'object') return parsed;
+    } catch {}
+  }
+  return {};
+}
 
 function mapDbProductToModel(row: any): Product {
   return {
@@ -24,11 +72,11 @@ function mapDbProductToModel(row: any): Product {
     isBestseller: Boolean(row.is_bestseller),
     isNewArrival: Boolean(row.is_new_arrival),
     isActive: Boolean(row.is_active),
-    images: typeof row.images === 'string' ? JSON.parse(row.images) : (row.images || []),
-    colors: typeof row.colors === 'string' ? JSON.parse(row.colors) : (row.colors || []),
-    fonts: typeof row.fonts === 'string' ? JSON.parse(row.fonts) : (row.fonts || []),
-    customizationFields: typeof row.customization_fields === 'string' ? JSON.parse(row.customization_fields) : (row.customization_fields || []),
-    specifications: typeof row.specifications === 'string' ? JSON.parse(row.specifications) : (row.specifications || {}),
+    images: safeParseArray(row.images),
+    colors: safeParseArray(row.colors),
+    fonts: safeParseArray(row.fonts),
+    customizationFields: safeParseObjectArray<CustomizationField>(row.customization_fields),
+    specifications: safeParseObject(row.specifications),
   };
 }
 
@@ -138,13 +186,12 @@ export async function DELETE(
           return NextResponse.json({ error: error.message }, { status: 500 });
         }
       } catch (err) {
-        console.warn('Supabase delete exception:', err);
+        console.warn('Supabase product delete exception:', err);
       }
     }
 
-    return NextResponse.json({ success: true, message: `Product ${id} deleted successfully` });
+    return NextResponse.json({ success: true, message: `Product ${id} deleted` });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || 'Failed to delete product' }, { status: 500 });
   }
 }
-
