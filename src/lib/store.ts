@@ -15,7 +15,22 @@ export function getStoredCart(): CartItem[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((item: any) => item && item.product && typeof item.product === 'object')
+      .map((item: any) => ({
+        ...item,
+        id: item.id || `item_${Date.now()}`,
+        productId: item.productId || item.product?.id || '',
+        variantId: item.variantId || '',
+        quantity: Math.max(1, Number(item.quantity) || 1),
+        unitPrice: Number(item.unitPrice) || Number(item.product?.basePrice) || 0,
+        customizationCharges: Number(item.customizationCharges) || 0,
+        totalPrice: Number(item.totalPrice) || 0,
+        product: sanitizeProduct(item.product),
+      }));
   } catch (e) {
     console.error('Failed to load cart from storage', e);
     return [];
@@ -133,7 +148,18 @@ export function getStoredCategories(): Category[] {
       localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(CATEGORIES));
       return CATEGORIES;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return CATEGORIES;
+    return parsed.map((c: any) => ({
+      id: c?.id || `cat-${Date.now()}`,
+      name: c?.name || 'Collection',
+      slug: c?.slug || 'collection',
+      description: c?.description || '',
+      imageUrl: c?.imageUrl || '/images/products-optimized/1.png',
+      productCount: Number(c?.productCount || 0),
+      displayOrder: Number(c?.displayOrder || 0),
+      isActive: Boolean(c?.isActive !== false),
+    }));
   } catch (e) {
     return CATEGORIES;
   }
@@ -157,7 +183,16 @@ export function getStoredSettings(): WebsiteSettings {
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(INITIAL_SETTINGS));
       return INITIAL_SETTINGS;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return INITIAL_SETTINGS;
+    return {
+      ...INITIAL_SETTINGS,
+      ...parsed,
+      socialLinks: {
+        ...INITIAL_SETTINGS.socialLinks,
+        ...((parsed && parsed.socialLinks) || {}),
+      },
+    };
   } catch (e) {
     return INITIAL_SETTINGS;
   }
@@ -250,12 +285,15 @@ export function useCart() {
     setItems([]);
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const customizationTotal = items.reduce(
-    (sum, item) => sum + (item.customizationCharges || 0) * item.quantity,
+  const subtotal = (items || []).reduce(
+    (sum, item) => sum + (Number(item?.unitPrice) || 0) * (Number(item?.quantity) || 1),
     0
   );
-  const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const customizationTotal = (items || []).reduce(
+    (sum, item) => sum + (Number(item?.customizationCharges) || 0) * (Number(item?.quantity) || 1),
+    0
+  );
+  const totalItemCount = (items || []).reduce((sum, item) => sum + (Number(item?.quantity) || 0), 0);
 
   const shippingFee = subtotal >= 999 || items.length === 0 ? 0 : 99;
   const taxAmount = Math.round((subtotal + customizationTotal) * 0.18);
@@ -284,10 +322,7 @@ export function useCart() {
 // -------------------------------------------------------------
 
 export function useLiveProducts(filterCategory?: string) {
-  const [products, setProducts] = useState<Product[]>(() => {
-    if (typeof window === 'undefined') return PRODUCTS;
-    return getStoredProducts();
-  });
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -347,11 +382,9 @@ export function useLiveProducts(filterCategory?: string) {
 }
 
 export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
-  const [product, setProduct] = useState<Product | null>(() => {
-    if (initialProduct) return initialProduct;
-    const list = typeof window === 'undefined' ? PRODUCTS : getStoredProducts();
-    return list.find((p) => p.slug === slugOrId || p.id === slugOrId) || null;
-  });
+  const [product, setProduct] = useState<Product | null>(
+    initialProduct || PRODUCTS.find((p) => p.slug === slugOrId || p.id === slugOrId) || null
+  );
 
   useEffect(() => {
     if (!slugOrId) return;
@@ -413,10 +446,7 @@ export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
 }
 
 export function useLiveCategories() {
-  const [categories, setCategories] = useState<Category[]>(() => {
-    if (typeof window === 'undefined') return CATEGORIES;
-    return getStoredCategories();
-  });
+  const [categories, setCategories] = useState<Category[]>(CATEGORIES);
 
   useEffect(() => {
     setCategories(getStoredCategories());
@@ -471,10 +501,7 @@ export function useLiveCategories() {
 }
 
 export function useLiveSettings() {
-  const [settings, setSettings] = useState<WebsiteSettings>(() => {
-    if (typeof window === 'undefined') return INITIAL_SETTINGS;
-    return getStoredSettings();
-  });
+  const [settings, setSettings] = useState<WebsiteSettings>(INITIAL_SETTINGS);
 
   useEffect(() => {
     setSettings(getStoredSettings());

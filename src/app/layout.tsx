@@ -79,14 +79,14 @@ export default function RootLayout({
   const orgJsonLd = getOrganizationStructuredData();
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#FFFDF8] text-[#2A2620] antialiased selection:bg-[#F0DFAE] selection:text-[#2A2620]">
+      <body className="min-h-screen flex flex-col bg-[#FFFDF8] text-[#2A2620] antialiased selection:bg-[#F0DFAE] selection:text-[#2A2620]" suppressHydrationWarning>
         <AnnouncementBar />
         <Navbar />
         <main className="flex-1">{children}</main>
