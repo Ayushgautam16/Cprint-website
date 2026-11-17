@@ -44,7 +44,7 @@ export default function ShippingPolicyPage() {
           <section className="space-y-2">
             <h2 className="text-lg font-serif font-bold text-white">4. Consignment Tracking</h2>
             <p>
-              Once your parcel leaves our Noida production studio, you will receive an automated SMS and WhatsApp notification containing the live Courier Air Waybill (AWB) number and direct tracking URL.
+              Once your parcel leaves our Delhi production studio, you will receive an automated SMS and WhatsApp notification containing the live Courier Air Waybill (AWB) number and direct tracking URL.
             </p>
           </section>
         </div>

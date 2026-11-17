@@ -127,7 +127,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
 
   // WhatsApp Enquiry Link Generator
   const generateWhatsAppLink = () => {
-    const businessPhone = '919876543210';
+    const businessPhone = '917277338436';
     const text = encodeURIComponent(
       `Hello RYNOCHI Team! I'm interested in personalizing:\n\n*Product:* ${product.name} (SKU: ${product.sku})\n*Engraved Name:* ${primaryText || 'Not specified'}\n*Quantity:* ${quantity}\n*Variant:* ${selectedVariant?.name || 'Standard'}\n\nPlease share design assistance and delivery estimates.`
     );

@@ -250,7 +250,7 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
             Need urgent assistance or modification regarding this invoice?
           </span>
           <a
-            href={`https://wa.me/919876543210?text=Hello%20RYNOCHI!%20I%20have%20a%20question%20regarding%20invoice%20${order.orderNumber}.`}
+            href={`https://wa.me/917277338436?text=Hello%20RYNOCHI!%20I%20have%20a%20question%20regarding%20invoice%20${order.orderNumber}.`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-emerald-400 hover:underline flex items-center gap-1 font-semibold"

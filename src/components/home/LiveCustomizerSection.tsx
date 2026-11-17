@@ -35,7 +35,7 @@ export const LiveCustomizerSection: React.FC = () => {
   const fontSize = Math.max(20, Math.min(52, Math.floor((300 / len) * curFont.k)));
   const textY = 178 + Math.round(fontSize / 3);
 
-  const waLink = `https://wa.me/919876543210?text=${encodeURIComponent(
+  const waLink = `https://wa.me/917277338436?text=${encodeURIComponent(
     `Hello RYNOCHI, I would like help customizing a gift. Engraving text: ${displayText}, finish: ${curFinish.name}, font: ${curFont.label}.`
   )}`;
 

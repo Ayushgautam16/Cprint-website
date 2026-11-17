@@ -82,7 +82,7 @@ export default function AdminOrdersPage() {
               id: `hist_${Date.now()}`,
               status: editStatus,
               notes: adminNotes || `Status updated to ${editStatus} by Admin`,
-              changedBy: 'Admin (Ayush)',
+              changedBy: 'Admin Panel',
               createdAt: now,
             },
           ]

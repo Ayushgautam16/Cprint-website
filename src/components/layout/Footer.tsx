@@ -21,6 +21,17 @@ export const Footer: React.FC = () => {
             <p className="text-[15px] leading-relaxed text-[#5B5444] max-w-[320px]">
               Premium custom printing, precision laser engraving and personalised corporate gifting essentials.
             </p>
+            <div className="text-xs text-[#5B5444] space-y-1.5 pt-1">
+              <p className="flex items-center gap-1.5 font-medium text-[#2A2620]">
+                <span>📞 Call / WhatsApp:</span>
+                <a href="tel:+917277338436" className="text-[#8F6A17] font-bold hover:underline">
+                  +91 72773 38436
+                </a>
+              </p>
+              <p className="leading-snug text-[11px] text-[#6E675A]">
+                📍 T371-FAST FLOR CHAMELIN ROAD KAROL BAGH DELHI-110006 NEW DELHI DELHI 110006 India
+              </p>
+            </div>
             <div className="flex gap-3 pt-2">
               <a
                 href="https://instagram.com/rynochi.official"
@@ -47,7 +58,7 @@ export const Footer: React.FC = () => {
                 </svg>
               </a>
               <a
-                href="https://wa.me/919876543210?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry"
+                href="https://wa.me/917277338436?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

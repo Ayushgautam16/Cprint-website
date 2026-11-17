@@ -42,7 +42,7 @@ export default function TermsPage() {
           <section className="space-y-2">
             <h2 className="text-lg font-serif font-bold text-white">4. Governing Law & Jurisdiction</h2>
             <p>
-              All transactions and disputes are governed under the laws of India, subject to the exclusive jurisdiction of the courts of Gautam Buddha Nagar (Noida, Uttar Pradesh).
+              All transactions and disputes are governed under the laws of India, subject to the exclusive jurisdiction of the courts of New Delhi, India.
             </p>
           </section>
         </div>

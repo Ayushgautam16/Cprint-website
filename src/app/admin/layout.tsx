@@ -97,12 +97,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Lock className="w-6 h-6 text-[#D4AF37]" />
             </div>
             <Logo size="md" variant="gold" showTagline={false} />
-            <h1 className="text-lg font-serif font-bold text-white tracking-wide">
-              RYNOCHI Studio Gatekeeper
+            <h1 className="text-xl font-serif font-bold text-white tracking-wide">
+              Admin Panel
             </h1>
-            <p className="text-xs text-gray-400">
-              Restricted Studio Administration. Only authorized personnel may access order queues & catalogue controls.
-            </p>
           </div>
 
           {loginError && (
@@ -177,7 +174,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Logo size="sm" variant="gold" showTagline={false} />
           <div className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] px-1 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Studio Admin Panel
+            Admin Panel
           </div>
         </div>
 
@@ -287,7 +284,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-semibold text-gray-300 hidden sm:inline">
-              RYNOCHI Studio Admin
+              Admin Panel
             </span>
           </div>
 
@@ -303,7 +300,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#AA8417] text-navy-950 font-bold flex items-center justify-center text-[10px]">
                 A
               </span>
-              <span className="text-gray-200 font-medium">Ayush (Admin)</span>
+              <span className="text-gray-200 font-medium">Admin Panel</span>
             </div>
             <button
               type="button"

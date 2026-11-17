@@ -11,7 +11,7 @@ const CORP_PERKS = [
 ];
 
 export const CorporateSection: React.FC = () => {
-  const bulkWhatsApp = `https://wa.me/919876543210?text=${encodeURIComponent(
+  const bulkWhatsApp = `https://wa.me/917277338436?text=${encodeURIComponent(
     'Hello RYNOCHI, I would like a quote for a corporate / bulk order. Quantity: __ , Occasion: __ , Customization: __ .'
   )}`;
 

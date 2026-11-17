@@ -45,7 +45,7 @@ export default function AboutPage() {
               water-resistant, hand-stitched PU leather.
             </p>
             <p>
-              Our production floor in Noida, NCR utilizes cutting-edge German MOPA and Fiber Laser
+              Our production floor in Karol Bagh, New Delhi utilizes cutting-edge German MOPA and Fiber Laser
               systems. Operating at 0.02 millimeter tolerances, our lasers vaporize exterior lacquers
               to expose gleaming underlying brass, ensuring a mark that will outlast generations without fading.
             </p>

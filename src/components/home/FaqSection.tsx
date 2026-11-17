@@ -36,7 +36,7 @@ export const FaqSection: React.FC = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const waLink = `https://wa.me/919876543210?text=${encodeURIComponent(
+  const waLink = `https://wa.me/917277338436?text=${encodeURIComponent(
     'Hello RYNOCHI Concierge, I have a question regarding custom printing and personalization.'
   )}`;
 

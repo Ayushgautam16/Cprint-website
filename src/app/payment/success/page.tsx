@@ -92,7 +92,7 @@ function PaymentSuccessContent() {
             </Link>
 
             <a
-              href={`https://wa.me/919876543210?text=Hi%20RYNOCHI!%20I%20just%20placed%20order%20${orderNumber}.%20Please%20confirm%20laser%20engraving%20details.`}
+              href={`https://wa.me/917277338436?text=Hi%20RYNOCHI!%20I%20just%20placed%20order%20${orderNumber}.%20Please%20confirm%20laser%20engraving%20details.`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-semibold bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 flex items-center justify-center gap-2"
