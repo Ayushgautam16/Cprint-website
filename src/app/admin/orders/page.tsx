@@ -156,7 +156,22 @@ export default function AdminOrdersPage() {
     setEditingOrder(null);
     showToast(`Order ${updatedOrder.orderNumber} updated successfully!`);
 
-    // Sync to Supabase via API
+    // 1. Direct Supabase update for instant Realtime broadcast
+    supabase
+      .from('orders')
+      .update({
+        status: updatedOrder.status,
+        tracking_number: updatedOrder.trackingNumber || null,
+        delivery_partner: updatedOrder.courierName || null,
+        notes: updatedOrder.adminNotes || null,
+        updated_at: now,
+      })
+      .eq('order_number', updatedOrder.orderNumber)
+      .then(({ error }) => {
+        if (error) console.warn('Direct Supabase update:', error.message);
+      });
+
+    // 2. Sync to Supabase via server API route
     fetch(`/api/orders/${updatedOrder.orderNumber}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -196,7 +211,19 @@ export default function AdminOrdersPage() {
     setOrders(updatedList);
     showToast(`Status updated to ${newStatus.replace(/_/g, ' ')}`);
 
-    // Sync to Supabase via API
+    // 1. Direct Supabase update for instant Realtime broadcast
+    supabase
+      .from('orders')
+      .update({
+        status: newStatus,
+        updated_at: now,
+      })
+      .eq('order_number', updatedOrder.orderNumber)
+      .then(({ error }) => {
+        if (error) console.warn('Direct Supabase update:', error.message);
+      });
+
+    // 2. Sync to Supabase via server API route
     fetch(`/api/orders/${updatedOrder.orderNumber}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

@@ -42,11 +42,13 @@ export async function GET(
 
   if (isSupabaseConfigured) {
     try {
-      const { data, error } = await supabaseAdmin
-        .from('orders')
-        .select('*')
-        .ilike('order_number', orderNumber)
-        .maybeSingle();
+      let query = supabaseAdmin.from('orders').select('*');
+      if (orderNumber.startsWith('ord-')) {
+        query = query.eq('id', orderNumber);
+      } else {
+        query = query.ilike('order_number', orderNumber);
+      }
+      const { data, error } = await query.maybeSingle();
 
       if (!error && data) {
         return NextResponse.json({ order: mapDbOrderToModel(data) });
@@ -89,12 +91,13 @@ export async function PATCH(
 
     if (isSupabaseConfigured) {
       try {
-        const { data, error } = await supabaseAdmin
-          .from('orders')
-          .update(updates)
-          .ilike('order_number', orderNumber)
-          .select()
-          .maybeSingle();
+        let query = supabaseAdmin.from('orders').update(updates);
+        if (orderNumber.startsWith('ord-')) {
+          query = query.eq('id', orderNumber);
+        } else {
+          query = query.ilike('order_number', orderNumber);
+        }
+        const { data, error } = await query.select().maybeSingle();
 
         if (!error && data) {
           return NextResponse.json({ success: true, order: mapDbOrderToModel(data) });

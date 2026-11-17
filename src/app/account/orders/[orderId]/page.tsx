@@ -28,7 +28,16 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
         o.orderNumber.toUpperCase() === params.orderId.toUpperCase() ||
         o.id === params.orderId
     );
-    setOrder(found || null);
+    if (found) setOrder(found);
+
+    fetch(`/api/orders/${encodeURIComponent(params.orderId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.order) {
+          setOrder(data.order);
+        }
+      })
+      .catch((err) => console.warn('Account order detail fetch error:', err));
   }, [params.orderId]);
 
   if (!order) {

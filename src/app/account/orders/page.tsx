@@ -14,6 +14,15 @@ export default function MyOrdersPage() {
 
   useEffect(() => {
     setOrders(getStoredOrders());
+    fetch('/api/orders')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.orders && data.orders.length > 0) {
+          setOrders(data.orders);
+          saveStoredOrders(data.orders);
+        }
+      })
+      .catch((err) => console.warn('Account orders fetch error:', err));
   }, []);
 
   const filtered = orders.filter((o) => {

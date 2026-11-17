@@ -47,9 +47,11 @@ function TrackOrderContent() {
     }
   }, [initialQuery]);
 
-  const handleLookup = (query: string) => {
+  const handleLookup = async (query: string) => {
     setSearched(true);
     const q = query.trim().toUpperCase();
+
+    // 1. Immediate local cache match for instant responsiveness
     const orders = getStoredOrders();
     const found = orders.find(
       (o) =>
@@ -57,7 +59,35 @@ function TrackOrderContent() {
         o.customerEmail.toUpperCase() === q ||
         o.customerPhone.includes(q)
     );
-    setActiveOrder(found || null);
+    if (found) {
+      setActiveOrder(found);
+    }
+
+    // 2. Fetch live up-to-the-minute status from Supabase API
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.order) {
+          setActiveOrder(data.order);
+          // Sync with local cache
+          const currentList = getStoredOrders();
+          const exists = currentList.some(
+            (o) => o.orderNumber.toUpperCase() === data.order.orderNumber.toUpperCase()
+          );
+          const updated = exists
+            ? currentList.map((o) =>
+                o.orderNumber.toUpperCase() === data.order.orderNumber.toUpperCase()
+                  ? data.order
+                  : o
+              )
+            : [data.order, ...currentList];
+          saveStoredOrders(updated);
+        }
+      }
+    } catch (err) {
+      console.warn('Live tracking lookup error:', err);
+    }
   };
 
   const currentStatusDetails = activeOrder
