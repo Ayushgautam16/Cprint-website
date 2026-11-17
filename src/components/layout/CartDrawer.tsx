@@ -112,7 +112,7 @@ export const CartDrawer: React.FC = () => {
                       src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
                       alt={item.product.name}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1.5 mix-blend-multiply"
                     />
                   </div>
 
