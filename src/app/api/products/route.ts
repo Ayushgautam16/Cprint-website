@@ -4,14 +4,19 @@ import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { Product, CustomizationField } from '@/lib/types';
 
 function safeParseArray(val: any): string[] {
-  if (Array.isArray(val)) return val;
+  if (Array.isArray(val)) {
+    return val.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+  }
   if (!val) return [];
   if (typeof val === 'string') {
     const trimmed = val.trim();
+    if (!trimmed) return [];
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       try {
         const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          return parsed.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+        }
       } catch {}
     }
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
@@ -19,11 +24,9 @@ function safeParseArray(val: any): string[] {
         .slice(1, -1)
         .split(',')
         .map((s) => s.trim().replace(/^"|"$/g, ''))
-        .filter(Boolean);
+        .filter((s) => s.length > 0);
     }
-    if (trimmed.startsWith('http') || trimmed.startsWith('/') || trimmed.startsWith('data:')) {
-      return [trimmed];
-    }
+    return [trimmed];
   }
   return [];
 }
@@ -52,27 +55,30 @@ function safeParseObject(val: any): Record<string, string> {
 }
 
 function mapDbProductToModel(row: any): Product {
+  const parsedImages = safeParseArray(row.images);
+  const images = parsedImages.length > 0 ? parsedImages : ['/images/products-optimized/1.png'];
+
   return {
     id: row.id,
-    name: row.name,
-    slug: row.slug,
+    name: row.name || 'Personalized Gift',
+    slug: row.slug || 'product',
     sku: row.sku || '',
     shortDescription: row.short_description || '',
     description: row.description || '',
     categoryId: row.category_id || '',
     categoryName: row.category_name || '',
-    basePrice: Number(row.base_price),
+    basePrice: Number(row.base_price) || 999,
     discountPrice: row.discount_price ? Number(row.discount_price) : undefined,
     stock: Number(row.stock || 0),
     minOrderQty: Number(row.min_order_qty || 1),
-    isCustomizable: Boolean(row.is_customizable),
+    isCustomizable: Boolean(row.is_customizable !== false),
     engravingType: row.engraving_type || '',
     additionalCustomizationFee: Number(row.additional_customization_fee || 0),
     isFeatured: Boolean(row.is_featured),
     isBestseller: Boolean(row.is_bestseller),
     isNewArrival: Boolean(row.is_new_arrival),
-    isActive: Boolean(row.is_active),
-    images: safeParseArray(row.images),
+    isActive: Boolean(row.is_active !== false),
+    images,
     colors: safeParseArray(row.colors),
     fonts: safeParseArray(row.fonts),
     customizationFields: safeParseObjectArray<CustomizationField>(row.customization_fields),
