@@ -242,16 +242,7 @@ Open [http://localhost:3000](http://localhost:3000) in your web browser.
 
 ---
 
-## 🔑 Demo Access Credentials
 
-| Role | Email | Password | Direct Portal |
-|---|---|---|---|
-| **Chief Administrator** | `admin@rynochi.com` | `Admin@Rynochi2026!` | [`/admin`](http://localhost:3000/admin) |
-| **Demo Customer** | `customer@rynochi.com` | `Customer123!` | [`/account`](http://localhost:3000/account) |
-
-*Note: The login page at `/login` also features 1-click quick evaluation buttons to log in instantly without typing.*
-
----
 
 ## 🚀 Production Deployment Guide
 
