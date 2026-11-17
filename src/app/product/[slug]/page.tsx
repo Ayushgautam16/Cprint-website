@@ -98,6 +98,29 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 </li>
               </ul>
             </div>
+
+            {/* Amazon Store Listing Link */}
+            <a
+              href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-2xl bg-[#FFFDF8] border border-[#EBDDB4] hover:border-[#8F6A17] hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#232F3E] text-[#FF9900] flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M13.607 15.35c-2.42 1.782-5.918 2.73-8.91 1.666-.418-.149-.089-.724.316-.622 2.61.657 5.703-.134 7.82-1.705.32-.239.774.208.774.661zm1.096-.927c-.206-.264-1.356-.124-1.874-.062-.158.019-.181-.122-.04-.22 1.157-.803 2.825-.333 3.011-.097.185.236-.481 1.83-1.34 2.428-.105.073-.205.034-.158-.062.247-.497.607-1.723.401-1.987zm-2.02-3.138c0 .991-.044 1.821-.652 2.645-.558.756-1.378 1.139-2.28 1.139-1.282 0-2.043-.902-2.043-2.23 0-2.617 2.302-3.097 4.975-3.097v1.543zm2.597 4.127c-.156-.124-.226-.296-.226-.499V8.922c0-1.272-.257-2.284-.969-3.04-.847-.902-2.115-1.288-3.41-1.288-2.203 0-4.148.974-4.668 2.85-.052.191.077.348.272.383l1.884.225c.168.02.31-.107.368-.266.33-.918 1.097-1.357 2.05-1.357 1.085 0 1.866.586 1.866 1.688v.489c-2.457.072-5.068.747-6.074 2.213-.659.957-.751 2.219-.247 3.296.536 1.144 1.657 1.764 2.923 1.764 1.777 0 2.842-.712 3.619-1.895v1.391c0 .193.109.349.278.412l2.036.78c.189.072.378-.052.378-.246v-.884c0-.285-.12-.477-.286-.599z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-[#8F6A17]">Prefer Amazon?</div>
+                  <div className="text-xs font-bold text-[#2A2620]">Available on Official Amazon India Store</div>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-[#8F6A17] group-hover:translate-x-0.5 transition-transform">
+                View ↗
+              </span>
+            </a>
           </div>
 
           {/* Right Column: Title, Customization Controls, Live Canvas (7 Cols) */}

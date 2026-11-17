@@ -15,8 +15,11 @@ export const INITIAL_SETTINGS: WebsiteSettings = {
   razorpayEnabled: true,
   codEnabled: true,
   socialLinks: {
-    instagram: 'https://instagram.com/rynochi.official',
-    facebook: 'https://facebook.com/rynochi',
+    instagram: 'https://www.instagram.com/rynochi__eye_wear?utm_source=qr&srtk=MTB0MDVyMzd5anJsOQ==',
+    facebook: 'https://www.facebook.com/share/19ca1jff5P/',
+    youtube: 'http://youtube.com/@rynochi-p?si=8yDkeTxuhbS1fZQ3',
+    whatsapp: 'https://wa.me/917277338436?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry',
+    amazonStore: 'https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link',
     linkedin: 'https://linkedin.com/company/rynochi',
     twitter: 'https://twitter.com/rynochi',
   },

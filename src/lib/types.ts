@@ -207,6 +207,9 @@ export interface WebsiteSettings {
   socialLinks: {
     instagram?: string;
     facebook?: string;
+    youtube?: string;
+    whatsapp?: string;
+    amazonStore?: string;
     linkedin?: string;
     twitter?: string;
   };

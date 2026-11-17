@@ -24,9 +24,10 @@ export function getOrganizationStructuredData() {
       availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
-      'https://instagram.com/rynochi.official',
-      'https://facebook.com/rynochi',
-      'https://linkedin.com/company/rynochi',
+      'https://www.instagram.com/rynochi__eye_wear?utm_source=qr&srtk=MTB0MDVyMzd5anJsOQ==',
+      'https://www.facebook.com/share/19ca1jff5P/',
+      'http://youtube.com/@rynochi-p?si=8yDkeTxuhbS1fZQ3',
+      'https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link',
     ],
   };
 }
