@@ -56,6 +56,17 @@ export default function AdminProductsPage() {
     setProducts(getStoredProducts());
     setCategories(getStoredCategories());
 
+    // Fetch from Supabase via API
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.products && data.products.length > 0) {
+          setProducts(data.products);
+          saveStoredProducts(data.products);
+        }
+      })
+      .catch((err) => console.warn('Products fetch error:', err));
+
     const handleUpdate = () => {
       setProducts(getStoredProducts());
     };
@@ -181,6 +192,13 @@ export default function AdminProductsPage() {
     saveStoredProducts(updated);
     setEditingProduct(null);
     showToast('Product & pricing updated successfully!');
+
+    // Sync to Supabase via API
+    fetch(`/api/products/${editingProduct.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editingProduct),
+    }).catch((err) => console.warn('Supabase product sync error:', err));
   };
 
   // Create new product
@@ -219,6 +237,13 @@ export default function AdminProductsPage() {
     saveStoredProducts(updated);
     setIsAddModalOpen(false);
     showToast('New product created successfully!');
+
+    // Sync to Supabase via API
+    fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(created),
+    }).catch((err) => console.warn('Supabase product create error:', err));
   };
 
   // Filter products by search and category

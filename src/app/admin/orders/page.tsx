@@ -27,6 +27,7 @@ import {
 import { getStoredOrders, saveStoredOrders } from '@/lib/store';
 import { Order, OrderStatus } from '@/lib/types';
 import { formatCurrency, formatDate, getOrderStatusDetails } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 const STATUS_OPTIONS: OrderStatus[] = [
   'ORDER_PLACED',
@@ -59,14 +60,50 @@ export default function AdminOrdersPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    // 1. Initial local cache load
     const list = getStoredOrders();
     setOrders(list);
+
+    // 2. Fetch latest orders from Supabase via API
+    fetch('/api/orders')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.orders && data.orders.length > 0) {
+          setOrders(data.orders);
+          saveStoredOrders(data.orders);
+        }
+      })
+      .catch((err) => console.warn('Orders fetch error:', err));
 
     const handleUpdate = () => {
       setOrders(getStoredOrders());
     };
     window.addEventListener('rynochi-orders-updated', handleUpdate);
-    return () => window.removeEventListener('rynochi-orders-updated', handleUpdate);
+
+    // 3. Supabase Realtime WebSocket subscription
+    const channel = supabase
+      .channel('admin-orders-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        () => {
+          fetch('/api/orders')
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.orders) {
+                setOrders(data.orders);
+                saveStoredOrders(data.orders);
+              }
+            })
+            .catch((err) => console.warn('Realtime refresh error:', err));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('rynochi-orders-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -118,6 +155,18 @@ export default function AdminOrdersPage() {
     setOrders(updatedList);
     setEditingOrder(null);
     showToast(`Order ${updatedOrder.orderNumber} updated successfully!`);
+
+    // Sync to Supabase via API
+    fetch(`/api/orders/${updatedOrder.orderNumber}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: updatedOrder.status,
+        trackingNumber: updatedOrder.trackingNumber,
+        deliveryPartner: updatedOrder.courierName,
+        notes: updatedOrder.adminNotes,
+      }),
+    }).catch((err) => console.warn('Supabase sync error:', err));
   };
 
   // Quick inline status change
@@ -146,6 +195,15 @@ export default function AdminOrdersPage() {
     saveStoredOrders(updatedList);
     setOrders(updatedList);
     showToast(`Status updated to ${newStatus.replace(/_/g, ' ')}`);
+
+    // Sync to Supabase via API
+    fetch(`/api/orders/${updatedOrder.orderNumber}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
+    }).catch((err) => console.warn('Supabase sync error:', err));
   };
 
   const filteredOrders = orders.filter((o) => {

@@ -92,6 +92,8 @@ export interface Product {
   isNewArrival: boolean;
   isActive: boolean;
   images: string[];
+  colors?: string[];
+  fonts?: string[];
   variants?: ProductVariant[];
   customizationFields?: CustomizationField[];
   specifications?: Record<string, string>;
@@ -183,8 +185,11 @@ export interface Order {
   razorpayPaymentId?: string;
   trackingNumber?: string;
   courierName?: string;
+  deliveryPartner?: string;
+  trackingUrl?: string;
   customerNotes?: string;
   adminNotes?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
   statusHistory: OrderStatusHistoryItem[];

@@ -2,14 +2,63 @@ import { NextResponse } from 'next/server';
 import { generateOrderNumber } from '@/lib/utils';
 import { Order, OrderStatus, PaymentStatus } from '@/lib/types';
 import { SAMPLE_ORDERS } from '@/lib/mockData';
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 
-// In-memory orders cache for instant runtime response
+// In-memory orders cache as immediate fallback
 let globalOrders: Order[] = [...SAMPLE_ORDERS];
+
+function mapDbOrderToModel(row: any): Order {
+  return {
+    id: row.id,
+    orderNumber: row.order_number,
+    customerName: row.customer_name,
+    customerEmail: row.customer_email,
+    customerPhone: row.customer_phone,
+    shippingAddress: typeof row.shipping_address === 'string' ? JSON.parse(row.shipping_address) : row.shipping_address,
+    items: typeof row.items === 'string' ? JSON.parse(row.items) : row.items,
+    subtotal: Number(row.subtotal),
+    customizationTotal: Number(row.customization_total || 0),
+    shippingFee: Number(row.shipping_fee || 0),
+    discountAmount: Number(row.discount_amount || 0),
+    taxAmount: Number(row.tax_amount || 0),
+    totalAmount: Number(row.total_amount),
+    currency: row.currency || 'INR',
+    status: row.status,
+    paymentStatus: row.payment_status,
+    paymentMethod: row.payment_method,
+    razorpayOrderId: row.razorpay_order_id,
+    razorpayPaymentId: row.razorpay_payment_id,
+    trackingNumber: row.tracking_number,
+    deliveryPartner: row.delivery_partner,
+    trackingUrl: row.tracking_url,
+    notes: row.notes,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    statusHistory: [],
+  };
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const userEmail = searchParams.get('email');
 
+  if (isSupabaseConfigured) {
+    try {
+      let query = supabaseAdmin.from('orders').select('*').order('created_at', { ascending: false });
+      if (userEmail) {
+        query = query.ilike('customer_email', userEmail);
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        const orders = data.map(mapDbOrderToModel);
+        return NextResponse.json({ orders });
+      }
+    } catch (err) {
+      console.warn('Supabase orders fetch error, falling back to cache:', err);
+    }
+  }
+
+  // Fallback to cache / sample data
   if (userEmail) {
     const userOrders = globalOrders.filter(
       (o) => o.customerEmail.toLowerCase() === userEmail.toLowerCase()
@@ -123,6 +172,46 @@ export async function POST(request: Request) {
       ],
     };
 
+    // 1. Insert into Supabase if configured
+    if (isSupabaseConfigured) {
+      try {
+        const { error: dbError } = await supabaseAdmin.from('orders').insert({
+          id: newOrder.id,
+          order_number: newOrder.orderNumber,
+          customer_name: newOrder.customerName,
+          customer_email: newOrder.customerEmail,
+          customer_phone: newOrder.customerPhone,
+          shipping_address: newOrder.shippingAddress,
+          items: newOrder.items,
+          subtotal: newOrder.subtotal,
+          customization_total: newOrder.customizationTotal,
+          shipping_fee: newOrder.shippingFee,
+          discount_amount: newOrder.discountAmount,
+          tax_amount: newOrder.taxAmount,
+          total_amount: newOrder.totalAmount,
+          currency: newOrder.currency,
+          status: newOrder.status,
+          payment_status: newOrder.paymentStatus,
+          payment_method: newOrder.paymentMethod,
+          razorpay_order_id: newOrder.razorpayOrderId || null,
+          razorpay_payment_id: newOrder.razorpayPaymentId || null,
+          tracking_number: newOrder.trackingNumber || null,
+          delivery_partner: newOrder.deliveryPartner || null,
+          tracking_url: newOrder.trackingUrl || null,
+          notes: newOrder.customerNotes || null,
+          created_at: newOrder.createdAt,
+          updated_at: newOrder.updatedAt,
+        });
+
+        if (dbError) {
+          console.warn('Supabase order insert warning:', dbError.message);
+        }
+      } catch (err) {
+        console.warn('Supabase insert failed, order saved in runtime cache:', err);
+      }
+    }
+
+    // 2. Keep in local cache
     globalOrders.unshift(newOrder);
 
     return NextResponse.json({
@@ -137,4 +226,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
