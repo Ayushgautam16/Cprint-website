@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { PRODUCTS, CATEGORIES } from '@/lib/mockData';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://rynochi.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.rynochi.com';
 
   const productUrls = PRODUCTS.map((product) => ({
     url: `${baseUrl}/product/${product.slug}`,

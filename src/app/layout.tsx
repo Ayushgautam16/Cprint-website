@@ -8,7 +8,7 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import { getOrganizationStructuredData } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://rynochi.com'),
+  metadataBase: new URL('https://www.rynochi.com'),
   title: {
     default: 'RYNOCHI | Premium Personalized Printing, Laser Engraved Pens & Executive Gifts',
     template: '%s | RYNOCHI',

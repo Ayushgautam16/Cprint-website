@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/', '/checkout/'],
       },
     ],
-    sitemap: 'https://rynochi.com/sitemap.xml',
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.rynochi.com'}/sitemap.xml`,
   };
 }
 
