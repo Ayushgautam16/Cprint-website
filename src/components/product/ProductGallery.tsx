@@ -19,7 +19,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     setMousePos({ x, y });
   };
 
-  const activeImage = images[selectedIndex] || images[0] || '/images/products-catalog/1.png';
+  const activeImage = images[selectedIndex] || images[0] || '/images/products-optimized/1.png';
 
   return (
     <div className="flex flex-col gap-4 w-full">

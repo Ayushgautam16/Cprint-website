@@ -36,6 +36,7 @@ next-env.d.ts
 # product images uploaded by user (heavy media assets)
 /public/product images/
 /public/images/products-catalog
+/public/images/products-optimized/
 /public/extracted_assets/
 
 

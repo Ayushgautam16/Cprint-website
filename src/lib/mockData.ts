@@ -28,7 +28,7 @@ export const CATEGORIES: Category[] = [
     name: 'Personalized Pens',
     slug: 'personalized-pens',
     description: 'Everyday writing instruments engraved with a name or message.',
-    imageUrl: '/images/products-catalog/1.png',
+    imageUrl: '/images/products-optimized/1.png',
     productCount: 12,
     displayOrder: 1,
     isActive: true,
@@ -38,7 +38,7 @@ export const CATEGORIES: Category[] = [
     name: 'Premium Metal Pens',
     slug: 'premium-metal-pens',
     description: 'Weighty, polished finishes made to be kept and noticed.',
-    imageUrl: '/images/products-catalog/2.png',
+    imageUrl: '/images/products-optimized/2.png',
     productCount: 8,
     displayOrder: 2,
     isActive: true,
@@ -48,7 +48,7 @@ export const CATEGORIES: Category[] = [
     name: 'Customized Diaries',
     slug: 'customized-diaries',
     description: 'Leather-finish diaries with a name plate that is yours alone.',
-    imageUrl: '/images/products-catalog/3.png',
+    imageUrl: '/images/products-optimized/3.png',
     productCount: 10,
     displayOrder: 3,
     isActive: true,
@@ -58,7 +58,7 @@ export const CATEGORIES: Category[] = [
     name: 'Diary & Pen Gift Sets',
     slug: 'gift-sets',
     description: 'A diary and pen, boxed and ready to gift.',
-    imageUrl: '/images/products-catalog/6.png',
+    imageUrl: '/images/products-optimized/6.png',
     productCount: 15,
     displayOrder: 4,
     isActive: true,
@@ -68,7 +68,7 @@ export const CATEGORIES: Category[] = [
     name: 'Corporate Gifts',
     slug: 'corporate-gifts',
     description: 'Branded sets for clients, teams, launches and festivals.',
-    imageUrl: '/images/products-catalog/5.png',
+    imageUrl: '/images/products-optimized/5.png',
     productCount: 14,
     displayOrder: 5,
     isActive: true,
@@ -78,7 +78,7 @@ export const CATEGORIES: Category[] = [
     name: 'Stylus Pens & Accessories',
     slug: 'stylus-pens',
     description: 'Touch-tip pens and engraved desk essentials.',
-    imageUrl: '/images/products-catalog/7.png',
+    imageUrl: '/images/products-optimized/7.png',
     productCount: 9,
     displayOrder: 6,
     isActive: true,
@@ -113,11 +113,11 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/1.png',
-      '/images/products-catalog/1 (1).png',
-      '/images/products-catalog/1 (2).png',
-      '/images/products-catalog/1 (3).png',
-      '/images/products-catalog/1 (4).png',
+      '/images/products-optimized/1.png',
+      '/images/products-optimized/1 (1).png',
+      '/images/products-optimized/1 (2).png',
+      '/images/products-optimized/1 (3).png',
+      '/images/products-optimized/1 (4).png',
     ],
     variants: [
       {
@@ -128,7 +128,7 @@ Features:
         colorCode: '#26262B',
         priceAdjustment: 0,
         stock: 60,
-        imageUrl: '/images/products-catalog/1.png',
+        imageUrl: '/images/products-optimized/1.png',
       },
       {
         id: 'var-blk-slv',
@@ -138,7 +138,7 @@ Features:
         colorCode: '#55555C',
         priceAdjustment: 50,
         stock: 35,
-        imageUrl: '/images/products-catalog/1 (1).png',
+        imageUrl: '/images/products-optimized/1 (1).png',
       },
     ],
     customizationFields: [
@@ -212,10 +212,10 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/2.png',
-      '/images/products-catalog/2 (1).png',
-      '/images/products-catalog/2 (2).png',
-      '/images/products-catalog/2 (3).png',
+      '/images/products-optimized/2.png',
+      '/images/products-optimized/2 (1).png',
+      '/images/products-optimized/2 (2).png',
+      '/images/products-optimized/2 (3).png',
     ],
     variants: [
       {
@@ -226,7 +226,7 @@ Features:
         colorCode: '#D2AC55',
         priceAdjustment: 0,
         stock: 45,
-        imageUrl: '/images/products-catalog/2.png',
+        imageUrl: '/images/products-optimized/2.png',
       },
       {
         id: 'var-tex-slv',
@@ -236,7 +236,7 @@ Features:
         colorCode: '#C4C9D2',
         priceAdjustment: 50,
         stock: 30,
-        imageUrl: '/images/products-catalog/2 (1).png',
+        imageUrl: '/images/products-optimized/2 (1).png',
       },
     ],
     customizationFields: [
@@ -301,12 +301,12 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/3.png',
-      '/images/products-catalog/3 (1).png',
-      '/images/products-catalog/3 (2).png',
-      '/images/products-catalog/3 (3).png',
-      '/images/products-catalog/3 (4).png',
-      '/images/products-catalog/3 (5).png',
+      '/images/products-optimized/3.png',
+      '/images/products-optimized/3 (1).png',
+      '/images/products-optimized/3 (2).png',
+      '/images/products-optimized/3 (3).png',
+      '/images/products-optimized/3 (4).png',
+      '/images/products-optimized/3 (5).png',
     ],
     customizationFields: [
       {
@@ -370,10 +370,10 @@ Features:
     isNewArrival: true,
     isActive: true,
     images: [
-      '/images/products-catalog/4.png',
-      '/images/products-catalog/4 (1).png',
-      '/images/products-catalog/4 (2).png',
-      '/images/products-catalog/4 (3).png',
+      '/images/products-optimized/4.png',
+      '/images/products-optimized/4 (1).png',
+      '/images/products-optimized/4 (2).png',
+      '/images/products-optimized/4 (3).png',
     ],
     customizationFields: [
       {
@@ -422,11 +422,11 @@ Features:
     isNewArrival: true,
     isActive: true,
     images: [
-      '/images/products-catalog/5.png',
-      '/images/products-catalog/5 (1).png',
-      '/images/products-catalog/5 (2).png',
-      '/images/products-catalog/5 (3).png',
-      '/images/products-catalog/5 (4).png',
+      '/images/products-optimized/5.png',
+      '/images/products-optimized/5 (1).png',
+      '/images/products-optimized/5 (2).png',
+      '/images/products-optimized/5 (3).png',
+      '/images/products-optimized/5 (4).png',
     ],
     customizationFields: [
       {
@@ -485,11 +485,11 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/6.png',
-      '/images/products-catalog/6 (1).png',
-      '/images/products-catalog/6 (2).png',
-      '/images/products-catalog/6 (3).png',
-      '/images/products-catalog/6 (4).png',
+      '/images/products-optimized/6.png',
+      '/images/products-optimized/6 (1).png',
+      '/images/products-optimized/6 (2).png',
+      '/images/products-optimized/6 (3).png',
+      '/images/products-optimized/6 (4).png',
     ],
     customizationFields: [
       {
@@ -542,9 +542,9 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/7.png',
-      '/images/products-catalog/7 (1).png',
-      '/images/products-catalog/7 (2).png',
+      '/images/products-optimized/7.png',
+      '/images/products-optimized/7 (1).png',
+      '/images/products-optimized/7 (2).png',
     ],
     customizationFields: [
       {
@@ -588,9 +588,9 @@ Features:
     isNewArrival: true,
     isActive: true,
     images: [
-      '/images/products-catalog/8.png',
-      '/images/products-catalog/8 (1).png',
-      '/images/products-catalog/8 (2).png',
+      '/images/products-optimized/8.png',
+      '/images/products-optimized/8 (1).png',
+      '/images/products-optimized/8 (2).png',
     ],
     customizationFields: [
       {
@@ -634,9 +634,9 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/9.png',
-      '/images/products-catalog/9 (1).png',
-      '/images/products-catalog/9 (2).png',
+      '/images/products-optimized/9.png',
+      '/images/products-optimized/9 (1).png',
+      '/images/products-optimized/9 (2).png',
     ],
     customizationFields: [
       {
@@ -680,11 +680,11 @@ Features:
     isNewArrival: false,
     isActive: true,
     images: [
-      '/images/products-catalog/10.png',
-      '/images/products-catalog/10 (1).png',
-      '/images/products-catalog/10 (2).png',
-      '/images/products-catalog/10 (3).png',
-      '/images/products-catalog/10 (4).png',
+      '/images/products-optimized/10.png',
+      '/images/products-optimized/10 (1).png',
+      '/images/products-optimized/10 (2).png',
+      '/images/products-optimized/10 (3).png',
+      '/images/products-optimized/10 (4).png',
     ],
     customizationFields: [
       {
@@ -740,7 +740,7 @@ export const INITIAL_ORDERS: Order[] = [
         productId: 'prod-006',
         productName: 'Diary & Pen Gift Set — Signature Gold Box',
         productSku: 'RYN-SET-006',
-        productImageUrl: '/images/products-catalog/6.png',
+        productImageUrl: '/images/products-optimized/6.png',
         unitPrice: 2199,
         customizationCharge: 0,
         quantity: 1,
