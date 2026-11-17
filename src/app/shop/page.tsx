@@ -4,10 +4,13 @@ import React, { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Search, Filter, SlidersHorizontal, ArrowUpDown, Sparkles, X } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
-import { PRODUCTS, CATEGORIES } from '@/lib/mockData';
+import { useLiveProducts, useLiveCategories } from '@/lib/store';
 import { Product } from '@/lib/types';
 
 function ShopContent() {
+  const { allProducts } = useLiveProducts();
+  const { categories } = useLiveCategories();
+
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
   const initialCategory = searchParams.get('category') || 'all';
@@ -21,7 +24,7 @@ function ShopContent() {
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return allProducts.filter((product) => {
       // Category filter
       if (selectedCategory !== 'all' && product.categoryId !== selectedCategory) {
         return false;
@@ -174,9 +177,9 @@ function ShopContent() {
                   }`}
                 >
                   <span>All Products</span>
-                  <span>{PRODUCTS.length}</span>
+                  <span>{allProducts.length}</span>
                 </button>
-                {CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <button
                     key={cat.id}
                     type="button"
@@ -189,7 +192,7 @@ function ShopContent() {
                   >
                     <span>{cat.name}</span>
                     <span>
-                      {PRODUCTS.filter((p) => p.categoryId === cat.id).length}
+                      {allProducts.filter((p) => p.categoryId === cat.id).length}
                     </span>
                   </button>
                 ))}

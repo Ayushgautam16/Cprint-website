@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, CheckCircle2, Phone, Mail, MapPin, Sparkles, CreditCard, Shield } from 'lucide-react';
 import { getStoredSettings, saveStoredSettings } from '@/lib/store';
 import { WebsiteSettings } from '@/lib/types';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<WebsiteSettings | null>(null);
@@ -11,6 +12,42 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     setSettings(getStoredSettings());
+
+    const refreshSettings = () => {
+      fetch('/api/settings')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.settings) {
+            setSettings(data.settings);
+            saveStoredSettings(data.settings);
+          }
+        })
+        .catch((err) => console.warn('Settings fetch error:', err));
+    };
+
+    refreshSettings();
+
+    // Supabase Realtime channel subscription
+    const channel = supabase
+      .channel('admin-settings-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'store_settings' },
+        () => {
+          refreshSettings();
+        }
+      )
+      .subscribe();
+
+    const handleUpdate = () => {
+      setSettings(getStoredSettings());
+    };
+    window.addEventListener('rynochi-settings-updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('rynochi-settings-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -19,6 +56,38 @@ export default function AdminSettingsPage() {
     saveStoredSettings(settings);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
+
+    // Direct Supabase update for Realtime broadcast
+    supabase
+      .from('store_settings')
+      .update({
+        business_name: settings.businessName,
+        logo_url: settings.logoUrl,
+        announcement_text: settings.announcementText,
+        announcement_active: settings.announcementActive,
+        whatsapp_number: settings.whatsappNumber,
+        support_email: settings.supportEmail,
+        support_phone: settings.supportPhone,
+        office_address: settings.officeAddress,
+        shipping_fee: settings.shippingFee,
+        free_shipping_threshold: settings.freeShippingThreshold,
+        tax_rate_percent: settings.taxRatePercent,
+        razorpay_enabled: settings.razorpayEnabled,
+        cod_enabled: settings.codEnabled,
+        social_links: settings.socialLinks,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', 'default')
+      .then(({ error }) => {
+        if (error) console.warn('Settings direct supabase update error:', error.message);
+      });
+
+    // Server API route PATCH
+    fetch('/api/settings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+    }).catch((err) => console.warn('Settings sync error:', err));
   };
 
   if (!settings) {

@@ -2,15 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { PRODUCTS, CATEGORIES } from '@/lib/mockData';
+import { useLiveProducts, useLiveCategories } from '@/lib/store';
 import ProductCard from '../product/ProductCard';
 
 export const BestsellerGrid: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
-
-  const filteredProducts = activeCategory === 'all'
-    ? PRODUCTS
-    : PRODUCTS.filter((p) => p.categoryId === activeCategory);
+  const { products: filteredProducts } = useLiveProducts(activeCategory);
+  const { categories } = useLiveCategories();
 
   return (
     <section id="shop" className="py-24 bg-[#F8F2E3]">
@@ -45,7 +43,7 @@ export const BestsellerGrid: React.FC = () => {
           >
             All Products
           </button>
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat.id}
               type="button"

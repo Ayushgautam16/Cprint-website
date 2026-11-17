@@ -32,14 +32,18 @@ function mapDbProductToModel(row: any): Product {
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const includeInactive = searchParams.get('all') === 'true' || searchParams.get('admin') === 'true';
+
   if (isSupabaseConfigured) {
     try {
-      const { data, error } = await supabaseAdmin
-        .from('products')
-        .select('*')
-        .eq('is_active', true)
-        .order('id');
+      let query = supabaseAdmin.from('products').select('*').order('id');
+      if (!includeInactive) {
+        query = query.eq('is_active', true);
+      }
+
+      const { data, error } = await query;
 
       if (!error && data && data.length > 0) {
         const products = data.map(mapDbProductToModel);
@@ -50,7 +54,8 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({ products: PRODUCTS });
+  const fallback = includeInactive ? PRODUCTS : PRODUCTS.filter((p) => p.isActive);
+  return NextResponse.json({ products: fallback });
 }
 
 export async function POST(request: Request) {

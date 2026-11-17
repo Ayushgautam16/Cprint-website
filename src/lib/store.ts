@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Product, Category, Order, CartItem, WebsiteSettings, OrderStatus, PaymentStatus } from './types';
 import { PRODUCTS, CATEGORIES, SAMPLE_ORDERS, INITIAL_SETTINGS } from './mockData';
+import { supabase } from './supabase';
 
 const CART_STORAGE_KEY = 'rynochi_cart_items_v1';
 const ORDERS_STORAGE_KEY = 'rynochi_orders_v1';
@@ -231,5 +232,258 @@ export function useCart() {
     finalTotal,
     totalItemCount,
   };
+}
+
+// -------------------------------------------------------------
+// Realtime Storefront Hooks Powered by Supabase & Local Store
+// -------------------------------------------------------------
+
+export function useLiveProducts(filterCategory?: string) {
+  const [products, setProducts] = useState<Product[]>(() => {
+    if (typeof window === 'undefined') return PRODUCTS;
+    return getStoredProducts();
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // 1. Initial local store load
+    setProducts(getStoredProducts());
+
+    // 2. Refresh from Supabase API
+    const fetchLatest = () => {
+      fetch('/api/products')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.products && data.products.length > 0) {
+            setProducts(data.products);
+            saveStoredProducts(data.products);
+          }
+        })
+        .catch((err) => console.warn('Live products fetch error:', err));
+    };
+
+    fetchLatest();
+
+    // 3. Local tab sync
+    const handleUpdate = () => {
+      setProducts(getStoredProducts());
+    };
+    window.addEventListener('rynochi-products-updated', handleUpdate);
+
+    // 4. Supabase Realtime WebSocket subscription for live multi-device updates
+    const channel = supabase
+      .channel('storefront-products-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          fetchLatest();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('rynochi-products-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    if (!filterCategory || filterCategory === 'all') return products;
+    return products.filter((p) => p.categoryId === filterCategory);
+  }, [products, filterCategory]);
+
+  return {
+    products: filtered,
+    allProducts: products,
+    isLoading,
+  };
+}
+
+export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
+  const [product, setProduct] = useState<Product | null>(() => {
+    if (initialProduct) return initialProduct;
+    const list = typeof window === 'undefined' ? PRODUCTS : getStoredProducts();
+    return list.find((p) => p.slug === slugOrId || p.id === slugOrId) || null;
+  });
+
+  useEffect(() => {
+    if (!slugOrId) return;
+
+    const findAndSet = () => {
+      const list = getStoredProducts();
+      const match = list.find((p) => p.slug === slugOrId || p.id === slugOrId);
+      if (match) setProduct(match);
+    };
+
+    findAndSet();
+
+    // Fetch live from API
+    fetch(`/api/products/${encodeURIComponent(slugOrId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.product) {
+          setProduct(data.product);
+          const list = getStoredProducts();
+          const updated = list.map((p) =>
+            p.id === data.product.id || p.slug === data.product.slug ? data.product : p
+          );
+          if (!updated.some((p) => p.id === data.product.id)) {
+            updated.push(data.product);
+          }
+          saveStoredProducts(updated);
+        }
+      })
+      .catch((err) => console.warn('Live product detail fetch error:', err));
+
+    const handleUpdate = () => findAndSet();
+    window.addEventListener('rynochi-products-updated', handleUpdate);
+
+    // Supabase Realtime channel
+    const channel = supabase
+      .channel(`product-${slugOrId}-realtime`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          fetch(`/api/products/${encodeURIComponent(slugOrId)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.product) setProduct(data.product);
+            })
+            .catch((err) => console.warn('Realtime product update error:', err));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('rynochi-products-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, [slugOrId]);
+
+  return { product };
+}
+
+export function useLiveCategories() {
+  const [categories, setCategories] = useState<Category[]>(() => {
+    if (typeof window === 'undefined') return CATEGORIES;
+    return getStoredCategories();
+  });
+
+  useEffect(() => {
+    setCategories(getStoredCategories());
+
+    const fetchCategories = () => {
+      supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order')
+        .then(({ data, error }) => {
+          if (!error && data && data.length > 0) {
+            const mapped: Category[] = data.map((c) => ({
+              id: c.id,
+              name: c.name,
+              slug: c.slug,
+              description: c.description || '',
+              imageUrl: c.image_url || '/images/products-optimized/1.png',
+              productCount: c.product_count || 0,
+              displayOrder: Number(c.display_order || 0),
+              isActive: Boolean(c.is_active !== false),
+            }));
+            setCategories(mapped);
+            saveStoredCategories(mapped);
+          }
+        });
+    };
+
+    fetchCategories();
+
+    const handleUpdate = () => setCategories(getStoredCategories());
+    window.addEventListener('rynochi-categories-updated', handleUpdate);
+
+    const channel = supabase
+      .channel('categories-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'categories' },
+        () => {
+          fetchCategories();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('rynochi-categories-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return { categories };
+}
+
+export function useLiveSettings() {
+  const [settings, setSettings] = useState<WebsiteSettings>(() => {
+    if (typeof window === 'undefined') return INITIAL_SETTINGS;
+    return getStoredSettings();
+  });
+
+  useEffect(() => {
+    setSettings(getStoredSettings());
+
+    const fetchSettings = () => {
+      supabase
+        .from('store_settings')
+        .select('*')
+        .eq('id', 'default')
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            const mapped: WebsiteSettings = {
+              businessName: data.business_name || 'RYNOCHI',
+              logoUrl: data.logo_url || '/images/brand/rynochi-gold-logo.png',
+              announcementText: data.announcement_text || '',
+              announcementActive: data.announcement_active !== false,
+              whatsappNumber: data.whatsapp_number || '917277338436',
+              supportEmail: data.support_email || 'orders@rynochi.com',
+              supportPhone: data.support_phone || '+91 72773 38436',
+              officeAddress: data.office_address || '',
+              shippingFee: Number(data.shipping_fee || 99),
+              freeShippingThreshold: Number(data.free_shipping_threshold || 999),
+              taxRatePercent: Number(data.tax_rate_percent || 18),
+              razorpayEnabled: data.razorpay_enabled !== false,
+              codEnabled: data.cod_enabled !== false,
+              socialLinks: data.social_links || INITIAL_SETTINGS.socialLinks,
+            };
+            setSettings(mapped);
+            saveStoredSettings(mapped);
+          }
+        });
+    };
+
+    fetchSettings();
+
+    const handleUpdate = () => setSettings(getStoredSettings());
+    window.addEventListener('rynochi-settings-updated', handleUpdate);
+
+    const channel = supabase
+      .channel('settings-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'store_settings' },
+        () => {
+          fetchSettings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('rynochi-settings-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return { settings };
 }
 

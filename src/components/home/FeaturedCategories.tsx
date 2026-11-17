@@ -2,9 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CATEGORIES } from '@/lib/mockData';
+import { useLiveCategories } from '@/lib/store';
 
 export const FeaturedCategories: React.FC = () => {
+  const { categories } = useLiveCategories();
+
   return (
     <section id="categories" className="py-28 bg-[#FFFDF8]">
       <div className="wrap">
@@ -16,7 +18,7 @@ export const FeaturedCategories: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/category/${cat.slug}`}

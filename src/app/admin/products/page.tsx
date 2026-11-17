@@ -22,6 +22,7 @@ import {
 import { getStoredProducts, saveStoredProducts, getStoredCategories } from '@/lib/store';
 import { Product, Category } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -56,22 +57,41 @@ export default function AdminProductsPage() {
     setProducts(getStoredProducts());
     setCategories(getStoredCategories());
 
-    // Fetch from Supabase via API
-    fetch('/api/products')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.products && data.products.length > 0) {
-          setProducts(data.products);
-          saveStoredProducts(data.products);
+    const refreshProducts = () => {
+      fetch('/api/products?admin=true')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.products && data.products.length > 0) {
+            setProducts(data.products);
+            saveStoredProducts(data.products);
+          }
+        })
+        .catch((err) => console.warn('Products fetch error:', err));
+    };
+
+    refreshProducts();
+
+    // Supabase Realtime channel subscription for instant multi-device sync
+    const channel = supabase
+      .channel('admin-products-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          refreshProducts();
         }
-      })
-      .catch((err) => console.warn('Products fetch error:', err));
+      )
+      .subscribe();
 
     const handleUpdate = () => {
       setProducts(getStoredProducts());
     };
     window.addEventListener('rynochi-products-updated', handleUpdate);
-    return () => window.removeEventListener('rynochi-products-updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('rynochi-products-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -80,10 +100,29 @@ export default function AdminProductsPage() {
   };
 
   const handleToggleActive = (id: string) => {
-    const updated = products.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
+    const target = products.find((p) => p.id === id);
+    if (!target) return;
+    const newActive = !target.isActive;
+    const updated = products.map((p) => (p.id === id ? { ...p, isActive: newActive } : p));
     setProducts(updated);
     saveStoredProducts(updated);
     showToast('Product visibility updated.');
+
+    // Direct Supabase update for Realtime broadcast
+    supabase
+      .from('products')
+      .update({ is_active: newActive, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .then(({ error }) => {
+        if (error) console.warn('Direct product active update error:', error.message);
+      });
+
+    // Server API route PATCH
+    fetch(`/api/products/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isActive: newActive }),
+    }).catch((err) => console.warn('Product active sync error:', err));
   };
 
   const handleDelete = (id: string) => {
@@ -92,6 +131,20 @@ export default function AdminProductsPage() {
       setProducts(updated);
       saveStoredProducts(updated);
       showToast('Product removed.');
+
+      // Direct Supabase delete for Realtime broadcast
+      supabase
+        .from('products')
+        .delete()
+        .eq('id', id)
+        .then(({ error }) => {
+          if (error) console.warn('Direct product delete error:', error.message);
+        });
+
+      // Server API route DELETE
+      fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+      }).catch((err) => console.warn('Product delete sync error:', err));
     }
   };
 
@@ -193,7 +246,34 @@ export default function AdminProductsPage() {
     setEditingProduct(null);
     showToast('Product & pricing updated successfully!');
 
-    // Sync to Supabase via API
+    // Direct Supabase update for instant Realtime broadcast across all browsers
+    supabase
+      .from('products')
+      .update({
+        name: editingProduct.name,
+        slug: editingProduct.slug,
+        sku: editingProduct.sku,
+        short_description: editingProduct.shortDescription,
+        description: editingProduct.description,
+        category_id: editingProduct.categoryId,
+        category_name: editingProduct.categoryName,
+        base_price: editingProduct.basePrice,
+        discount_price: editingProduct.discountPrice || null,
+        stock: editingProduct.stock,
+        is_customizable: editingProduct.isCustomizable,
+        is_featured: editingProduct.isFeatured,
+        is_bestseller: editingProduct.isBestseller,
+        is_new_arrival: editingProduct.isNewArrival,
+        is_active: editingProduct.isActive,
+        images: editingProduct.images,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', editingProduct.id)
+      .then(({ error }) => {
+        if (error) console.warn('Direct product update error:', error.message);
+      });
+
+    // Server API route PATCH
     fetch(`/api/products/${editingProduct.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -237,6 +317,32 @@ export default function AdminProductsPage() {
     saveStoredProducts(updated);
     setIsAddModalOpen(false);
     showToast('New product created successfully!');
+
+    // Direct Supabase insert for instant Realtime broadcast
+    supabase
+      .from('products')
+      .insert({
+        id: created.id,
+        name: created.name,
+        slug: created.slug,
+        sku: created.sku,
+        short_description: created.shortDescription,
+        description: created.description,
+        category_id: created.categoryId,
+        category_name: created.categoryName,
+        base_price: created.basePrice,
+        discount_price: created.discountPrice || null,
+        stock: created.stock,
+        is_customizable: created.isCustomizable,
+        is_featured: created.isFeatured,
+        is_bestseller: created.isBestseller,
+        is_new_arrival: created.isNewArrival,
+        is_active: true,
+        images: created.images,
+      })
+      .then(({ error }) => {
+        if (error) console.warn('Direct product insert error:', error.message);
+      });
 
     // Sync to Supabase via API
     fetch('/api/products', {

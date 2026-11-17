@@ -6,6 +6,7 @@ import { Boxes, AlertTriangle, ArrowUpDown, Plus, Minus, CheckCircle2 } from 'lu
 import { getStoredProducts, saveStoredProducts } from '@/lib/store';
 import { Product } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminInventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,20 +15,75 @@ export default function AdminInventoryPage() {
 
   useEffect(() => {
     setProducts(getStoredProducts());
+
+    const refresh = () => {
+      fetch('/api/products?admin=true')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.products && data.products.length > 0) {
+            setProducts(data.products);
+            saveStoredProducts(data.products);
+          }
+        })
+        .catch((err) => console.warn('Inventory products fetch error:', err));
+    };
+
+    refresh();
+
+    // Supabase Realtime channel subscription
+    const channel = supabase
+      .channel('inventory-products-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          refresh();
+        }
+      )
+      .subscribe();
+
+    const handleUpdate = () => {
+      setProducts(getStoredProducts());
+    };
+    window.addEventListener('rynochi-products-updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('rynochi-products-updated', handleUpdate);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleAdjustStock = (id: string, delta: number) => {
+    let targetNewStock = 0;
     const updated = products.map((p) => {
       if (p.id === id) {
         const newStock = Math.max(0, p.stock + delta);
+        targetNewStock = newStock;
         return { ...p, stock: newStock };
       }
       return p;
     });
+
     setProducts(updated);
     saveStoredProducts(updated);
     setSavedId(id);
     setTimeout(() => setSavedId(null), 2000);
+
+    // Direct Supabase update for instant Realtime broadcast
+    supabase
+      .from('products')
+      .update({ stock: targetNewStock, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .then(({ error }) => {
+        if (error) console.warn('Stock update direct supabase error:', error.message);
+      });
+
+    // Server API route PATCH
+    fetch(`/api/products/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stock: targetNewStock }),
+    }).catch((err) => console.warn('Stock sync error:', err));
   };
 
   return (
