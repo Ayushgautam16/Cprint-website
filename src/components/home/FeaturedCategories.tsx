@@ -18,12 +18,13 @@ export const FeaturedCategories: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/category/${cat.slug}`}
-              className="cat rvs group"
-            >
+          {Array.isArray(categories) &&
+            categories.filter(Boolean).map((cat) => (
+              <Link
+                key={cat.id || cat.slug}
+                href={`/category/${cat.slug}`}
+                className="cat rvs group"
+              >
               <div className="cimg p-6 flex items-center justify-center">
                 <img
                   src={cat.imageUrl}

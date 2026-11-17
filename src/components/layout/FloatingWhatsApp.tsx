@@ -5,8 +5,8 @@ import { useLiveSettings } from '@/lib/store';
 
 export const FloatingWhatsApp: React.FC = () => {
   const { settings } = useLiveSettings();
-  const rawPhone = settings.whatsappNumber || '917277338436';
-  const cleanPhone = rawPhone.replace(/\D/g, '') || '917277338436';
+  const rawPhone = settings?.whatsappNumber || '917277338436';
+  const cleanPhone = (rawPhone || '917277338436').replace(/\D/g, '') || '917277338436';
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
     'Hello RYNOCHI! I would like to inquire about customized printing and personalized gifting.'
   )}`;

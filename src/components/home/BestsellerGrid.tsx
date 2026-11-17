@@ -43,27 +43,29 @@ export const BestsellerGrid: React.FC = () => {
           >
             All Products
           </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-5 py-2.5 text-xs font-bold tracking-wider uppercase transition-all duration-300 ${
-                activeCategory === cat.id
-                  ? 'bg-gradient-to-r from-[#C9A24B] to-[#F0DFAE] text-[#2A2620] shadow-md'
-                  : 'bg-white text-[#7A5C16] border border-[#D9C48C] hover:bg-[#FFFDF8]'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
+          {Array.isArray(categories) &&
+            categories.filter(Boolean).map((cat) => (
+              <button
+                key={cat.id || cat.slug}
+                type="button"
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-5 py-2.5 text-xs font-bold tracking-wider uppercase transition-all duration-300 ${
+                  activeCategory === cat.id
+                    ? 'bg-gradient-to-r from-[#C9A24B] to-[#F0DFAE] text-[#2A2620] shadow-md'
+                    : 'bg-white text-[#7A5C16] border border-[#D9C48C] hover:bg-[#FFFDF8]'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
         </div>
 
         {/* Product Grid with Auto-Swiping Galleries */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mt-10">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {Array.isArray(filteredProducts) &&
+            filteredProducts.filter(Boolean).map((product) => (
+              <ProductCard key={product.id || product.slug} product={product} />
+            ))}
         </div>
       </div>
     </section>
