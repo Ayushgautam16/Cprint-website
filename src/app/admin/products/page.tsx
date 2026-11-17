@@ -360,9 +360,9 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingProduct(prod)}
-                  className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#D4AF37]/15 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-navy-950 border border-[#D4AF37]/40 transition-all flex items-center gap-1.5"
+                  className="btn-luxury-gold px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider !text-[#0A0F1D] flex items-center gap-1.5 shadow-md shadow-[#D4AF37]/30 hover:brightness-110 transition-all active:scale-95"
                 >
-                  <Edit2 className="w-3.5 h-3.5" />
+                  <Edit2 className="w-3.5 h-3.5 !text-[#0A0F1D]" />
                   <span>Edit Product & Images</span>
                 </button>
 
