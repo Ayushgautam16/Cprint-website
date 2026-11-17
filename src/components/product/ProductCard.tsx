@@ -24,11 +24,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? 'Featured'
     : 'Customizable';
 
-  const safeImages = Array.isArray(product.images) && product.images.length > 0
-    ? product.images
-    : typeof product.images === 'string' && (product.images as string).trim()
-    ? [product.images]
-    : ['/images/products-optimized/1.png'];
+  let safeImages: string[] = [];
+  if (Array.isArray(product.images)) {
+    safeImages = product.images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+  } else if (typeof product.images === 'string') {
+    const trimmed = (product.images as string).trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          safeImages = parsed.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+        }
+      } catch {
+        safeImages = [trimmed];
+      }
+    } else if (trimmed.length > 0) {
+      safeImages = [trimmed];
+    }
+  }
+  if (safeImages.length === 0) {
+    safeImages = ['/images/products-optimized/1.png'];
+  }
 
   return (
     <article className="prod rvs rounded-none border border-[#EBDDB4] bg-white flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_56px_rgba(122,92,22,0.18)] hover:border-[#C9A24B] overflow-hidden group">
