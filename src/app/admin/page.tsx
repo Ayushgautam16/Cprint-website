@@ -224,7 +224,7 @@ export default function AdminDashboardPage() {
                     <td className="px-4 py-3.5 text-right">
                       <Link
                         href={`/admin/orders`}
-                        className="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-[#D4AF37] text-gray-300 hover:text-navy-950 font-semibold transition-colors"
+                        className="px-3.5 py-1.5 rounded-lg bg-[#D4AF37] text-navy-950 hover:bg-[#FFF0B8] font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm"
                       >
                         Update
                       </Link>
