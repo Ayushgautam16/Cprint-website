@@ -95,27 +95,15 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Quick Demo Logins for instant evaluation */}
+        {/* Quick Demo Customer Login for testing */}
         <div className="pt-2 border-t border-navy-800 space-y-2">
-          <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider block text-center">
-            One-Click Instant Evaluation
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('admin')}
-              className="py-2 px-3 rounded-xl bg-navy-900 hover:bg-[#D4AF37] text-gray-300 hover:text-navy-950 border border-navy-700 text-[11px] font-semibold transition-all text-center"
-            >
-              Demo Admin (Ayush)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('customer')}
-              className="py-2 px-3 rounded-xl bg-navy-900 hover:bg-[#D4AF37] text-gray-300 hover:text-navy-950 border border-navy-700 text-[11px] font-semibold transition-all text-center"
-            >
-              Demo Customer (Saurabh)
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleQuickDemo}
+            className="w-full py-2.5 px-3 rounded-xl bg-navy-900 hover:bg-[#D4AF37] text-gray-300 hover:text-navy-950 border border-navy-700 text-xs font-semibold transition-all text-center"
+          >
+            Demo Customer Sign-In (Saurabh)
+          </button>
         </div>
 
         <div className="text-center text-xs text-gray-400">
