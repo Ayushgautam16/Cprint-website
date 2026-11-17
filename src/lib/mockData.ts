@@ -763,7 +763,7 @@ export const INITIAL_ORDERS: Order[] = [
     taxAmount: 0,
     totalAmount: 2199,
     currency: 'INR',
-    status: 'PRINTING_ENGRAVING',
+    status: 'DESIGN_APPROVED',
     statusHistory: [
       {
         id: 'hist-1',
