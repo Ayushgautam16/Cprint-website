@@ -14,7 +14,7 @@ import {
   ExternalLink,
   MessageCircle,
 } from 'lucide-react';
-import { getStoredOrders } from '@/lib/store';
+import { getStoredOrders, saveStoredOrders } from '@/lib/store';
 import { Order, OrderStatus } from '@/lib/types';
 import { formatCurrency, formatDate, getOrderStatusDetails } from '@/lib/utils';
 import Logo from '@/components/brand/Logo';

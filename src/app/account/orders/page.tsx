@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Package, Truck, ExternalLink, ChevronLeft, Search, Sparkles } from 'lucide-react';
-import { getStoredOrders } from '@/lib/store';
+import { getStoredOrders, saveStoredOrders } from '@/lib/store';
 import { Order } from '@/lib/types';
 import { formatCurrency, formatDate, getOrderStatusDetails } from '@/lib/utils';
 

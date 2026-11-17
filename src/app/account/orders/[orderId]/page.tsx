@@ -14,7 +14,7 @@ import {
   Download,
   MessageCircle,
 } from 'lucide-react';
-import { getStoredOrders } from '@/lib/store';
+import { getStoredOrders, saveStoredOrders } from '@/lib/store';
 import { Order } from '@/lib/types';
 import { formatCurrency, formatDate, getOrderStatusDetails } from '@/lib/utils';
 
@@ -35,6 +35,13 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
       .then((data) => {
         if (data.order) {
           setOrder(data.order);
+          const list = getStoredOrders();
+          const updated = list.map((o) =>
+            o.orderNumber.toUpperCase() === data.order.orderNumber.toUpperCase()
+              ? data.order
+              : o
+          );
+          saveStoredOrders(updated);
         }
       })
       .catch((err) => console.warn('Account order detail fetch error:', err));
