@@ -19,24 +19,15 @@ export default function LoginPage() {
     setError('');
 
     setTimeout(() => {
-      if (email.toLowerCase().includes('admin')) {
-        router.push('/admin');
-      } else {
-        router.push('/account');
-      }
+      // Normal customer authentication
+      router.push('/account');
     }, 600);
   };
 
-  const handleQuickDemo = (type: 'admin' | 'customer') => {
-    if (type === 'admin') {
-      setEmail('admin@rynochi.com');
-      setPassword('Admin@Rynochi2026!');
-      router.push('/admin');
-    } else {
-      setEmail('customer@rynochi.com');
-      setPassword('Customer123!');
-      router.push('/account');
-    }
+  const handleQuickDemo = () => {
+    setEmail('customer@rynochi.com');
+    setPassword('Customer123!');
+    router.push('/account');
   };
 
   return (

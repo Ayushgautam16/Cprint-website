@@ -42,12 +42,6 @@ export default function AccountPage() {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/admin"
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-navy-900 border border-[#D4AF37]/40 text-[#F3E5AB] hover:bg-[#D4AF37]/10"
-            >
-              Staff Portal →
-            </Link>
-            <Link
               href="/login"
               className="p-2 rounded-xl text-gray-400 hover:text-rose-400 hover:bg-navy-900"
               title="Sign Out"

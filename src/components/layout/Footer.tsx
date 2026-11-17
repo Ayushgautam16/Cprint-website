@@ -93,9 +93,6 @@ export const Footer: React.FC = () => {
               <li>
                 <Link href="/about" className="flink">About RYNOCHI</Link>
               </li>
-              <li>
-                <Link href="/admin" className="flink font-bold text-[#8F6A17]">Admin Portal →</Link>
-              </li>
             </ul>
           </div>
 

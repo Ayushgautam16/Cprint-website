@@ -201,9 +201,6 @@ export const Navbar: React.FC = () => {
             <Link href="/contact" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
               Contact Us
             </Link>
-            <Link href="/admin" className="py-2 text-xs uppercase tracking-wider font-bold text-[#8F6A17]">
-              Admin Portal →
-            </Link>
           </nav>
         </div>
       )}
