@@ -24,7 +24,8 @@ function ShopContent() {
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    return allProducts.filter((product) => {
+    return (Array.isArray(allProducts) ? allProducts : []).filter((product) => {
+      if (!product) return false;
       // Category filter
       if (selectedCategory !== 'all' && product.categoryId !== selectedCategory) {
         return false;
@@ -34,22 +35,23 @@ function ShopContent() {
         return false;
       }
       // Price filter
-      const effectivePrice = product.discountPrice || product.basePrice;
+      const effectivePrice = product.discountPrice || product.basePrice || 0;
       if (effectivePrice > priceRange) {
         return false;
       }
       // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchesName = product.name.toLowerCase().includes(q);
-        const matchesDesc = product.shortDescription.toLowerCase().includes(q);
-        const matchesSku = product.sku.toLowerCase().includes(q);
+        const matchesName = (product.name || '').toLowerCase().includes(q);
+        const matchesDesc = (product.shortDescription || '').toLowerCase().includes(q);
+        const matchesSku = (product.sku || '').toLowerCase().includes(q);
         if (!matchesName && !matchesDesc && !matchesSku) return false;
       }
       return true;
     }).sort((a, b) => {
-      const priceA = a.discountPrice || a.basePrice;
-      const priceB = b.discountPrice || b.basePrice;
+      if (!a || !b) return 0;
+      const priceA = a.discountPrice || a.basePrice || 0;
+      const priceB = b.discountPrice || b.basePrice || 0;
 
       switch (sortBy) {
         case 'price-low':
@@ -65,7 +67,7 @@ function ShopContent() {
           return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
       }
     });
-  }, [searchQuery, selectedCategory, sortBy, priceRange, onlyCustomizable]);
+  }, [allProducts, searchQuery, selectedCategory, sortBy, priceRange, onlyCustomizable]);
 
   return (
     <div className="min-h-screen bg-[#FFFDF8] py-12">

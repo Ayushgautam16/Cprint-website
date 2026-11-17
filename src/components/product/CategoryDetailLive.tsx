@@ -20,14 +20,15 @@ export const CategoryDetailLive: React.FC<CategoryDetailLiveProps> = ({
   const { allProducts } = useLiveProducts();
 
   const currentCategory =
-    categories.find((c) => c.slug === initialCategory.slug || c.id === initialCategory.id) ||
-    initialCategory;
+    (Array.isArray(categories) ? categories : []).find(
+      (c) => c && (c.slug === initialCategory?.slug || c.id === initialCategory?.id)
+    ) || initialCategory;
 
-  const categoryProducts = allProducts.filter(
-    (p) => p.categoryId === currentCategory.id || p.categoryName === currentCategory.name
+  const categoryProducts = (Array.isArray(allProducts) ? allProducts : []).filter(
+    (p) => p && (p.categoryId === currentCategory?.id || p.categoryName === currentCategory?.name)
   );
 
-  const displayProducts = categoryProducts.length > 0 ? categoryProducts : initialProducts;
+  const displayProducts = (categoryProducts.length > 0 ? categoryProducts : initialProducts || []).filter(Boolean);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -109,8 +109,12 @@ export const CartDrawer: React.FC = () => {
                   {/* Thumbnail */}
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-[#FBF3DC] flex-shrink-0 border border-[#EBDDB4]">
                     <Image
-                      src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
-                      alt={item.product.name}
+                      src={
+                        (Array.isArray(item?.product?.images) && item.product.images[0]) ||
+                        (typeof item?.product?.images === 'string' && item.product.images) ||
+                        '/images/products-optimized/1.png'
+                      }
+                      alt={item?.product?.name || 'Personalized Gift'}
                       fill
                       className="object-contain p-1.5 mix-blend-multiply"
                     />
@@ -119,8 +123,8 @@ export const CartDrawer: React.FC = () => {
                   {/* Details */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                      <h4 className="text-xs font-semibold text-gray-200 line-clamp-2 leading-snug">
-                        {item.product.name}
+                      <h4 className="text-xs font-semibold text-gray-800 line-clamp-2 leading-snug">
+                        {item?.product?.name || 'Personalized Item'}
                       </h4>
                       {item.variantName && (
                         <p className="text-[11px] text-[#C5A059] mt-0.5">

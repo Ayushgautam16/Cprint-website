@@ -299,9 +299,10 @@ export function useLiveProducts(filterCategory?: string) {
       fetch('/api/products')
         .then((res) => res.json())
         .then((data) => {
-          if (data.products && data.products.length > 0) {
-            setProducts(data.products);
-            saveStoredProducts(data.products);
+          if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+            const sanitized = data.products.map(sanitizeProduct);
+            setProducts(sanitized);
+            saveStoredProducts(sanitized);
           }
         })
         .catch((err) => console.warn('Live products fetch error:', err));
@@ -368,13 +369,14 @@ export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
       .then((res) => res.json())
       .then((data) => {
         if (data.product) {
-          setProduct(data.product);
+          const sanitized = sanitizeProduct(data.product);
+          setProduct(sanitized);
           const list = getStoredProducts();
           const updated = list.map((p) =>
-            p.id === data.product.id || p.slug === data.product.slug ? data.product : p
+            p.id === sanitized.id || p.slug === sanitized.slug ? sanitized : p
           );
-          if (!updated.some((p) => p.id === data.product.id)) {
-            updated.push(data.product);
+          if (!updated.some((p) => p.id === sanitized.id)) {
+            updated.push(sanitized);
           }
           saveStoredProducts(updated);
         }
@@ -394,7 +396,7 @@ export function useLiveProduct(slugOrId: string, initialProduct?: Product) {
           fetch(`/api/products/${encodeURIComponent(slugOrId)}`)
             .then((res) => res.json())
             .then((data) => {
-              if (data.product) setProduct(data.product);
+              if (data.product) setProduct(sanitizeProduct(data.product));
             })
             .catch((err) => console.warn('Realtime product update error:', err));
         }
