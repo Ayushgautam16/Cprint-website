@@ -138,7 +138,7 @@ export default function CustomizerStudioPage() {
                 }`}
               >
                 <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-navy-900 flex-shrink-0">
-                  <Image src={p.images[0]} alt={p.name} fill className="object-cover" />
+                  <Image src={p.images[0]} alt={p.name} fill className="object-contain p-1" />
                 </div>
                 <div className="min-w-0">
                   <h4 className="text-xs font-bold text-white truncate">{p.name}</h4>

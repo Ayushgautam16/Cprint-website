@@ -399,7 +399,7 @@ export default function AdminProductsPage() {
                       src={imgUrl}
                       alt={`${prod.name} - view ${imgIdx + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1"
                       sizes="80px"
                     />
                     <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
@@ -469,7 +469,7 @@ export default function AdminProductsPage() {
                         src={imgUrl}
                         alt={`Photo ${idx + 1}`}
                         fill
-                        className="object-cover"
+                        className="object-contain p-2"
                         sizes="150px"
                       />
 

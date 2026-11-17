@@ -287,7 +287,7 @@ function TrackOrderContent() {
                           src={item.productImageUrl || '/images/products/diary-pen-giftset-box.jpg'}
                           alt={item.productName}
                           fill
-                          className="object-cover"
+                          className="object-contain p-1 mix-blend-multiply"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

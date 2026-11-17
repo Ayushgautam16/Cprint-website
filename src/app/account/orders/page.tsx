@@ -113,7 +113,7 @@ export default function MyOrdersPage() {
                             }
                             alt={item.productName}
                             fill
-                            className="object-cover"
+                            className="object-contain p-1"
                           />
                         </div>
                         <div className="flex-1 min-w-0">

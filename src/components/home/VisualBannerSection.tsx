@@ -8,11 +8,11 @@ export const VisualBannerSection: React.FC = () => {
     <section className="pt-10 pb-28 bg-[#FFFDF8]">
       <div className="wrap">
         <div className="relative overflow-hidden border border-[#EBDDB4] shadow-[0_34px_70px_rgba(122,92,22,0.16)] bg-white">
-          <div className="overflow-hidden aspect-[16/9] max-h-[640px] w-full">
+          <div className="overflow-hidden aspect-[16/9] max-h-[640px] w-full bg-[#FFFDF8] flex items-center justify-center p-2">
             <img
               src="/images/showcase/banner-pen-luxury-box.jpg"
               alt="RYNOCHI textured metal pen next to its black gift box"
-              className="w-full h-full object-cover object-center transition-transform duration-1000 hover:scale-105"
+              className="w-full h-full object-contain object-center transition-transform duration-1000 hover:scale-105"
             />
           </div>
 

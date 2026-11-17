@@ -136,7 +136,7 @@ export default function OrderDetailsPage({ params }: { params: { orderId: string
                       }
                       alt={item.productName}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1"
                     />
                   </div>
                   <div className="flex-1 min-w-0">

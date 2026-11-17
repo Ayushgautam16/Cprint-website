@@ -65,7 +65,7 @@ export default function AboutPage() {
               src="/images/products/giftset-diary-pen-showcase.jpg"
               alt="RYNOCHI Craftsmanship"
               fill
-              className="object-cover"
+              className="object-contain p-4"
             />
           </div>
         </div>

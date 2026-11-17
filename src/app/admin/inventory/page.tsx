@@ -64,7 +64,7 @@ export default function AdminInventoryPage() {
                           src={prod.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
                           alt={prod.name}
                           fill
-                          className="object-cover"
+                          className="object-contain p-0.5"
                         />
                       </div>
                       <span className="font-semibold text-white max-w-xs truncate">{prod.name}</span>

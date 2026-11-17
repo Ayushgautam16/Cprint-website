@@ -635,7 +635,7 @@ export default function CheckoutPage() {
                         src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
                         alt={item.product.name}
                         fill
-                        className="object-cover"
+                        className="object-contain p-1 mix-blend-multiply"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
