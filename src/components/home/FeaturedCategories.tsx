@@ -22,11 +22,11 @@ export const FeaturedCategories: React.FC = () => {
               href={`/category/${cat.slug}`}
               className="cat rvs group"
             >
-              <div className="cimg">
+              <div className="cimg p-6 flex items-center justify-center">
                 <img
                   src={cat.imageUrl}
                   alt={cat.name}
-                  className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
               <div className="p-7 flex flex-col gap-3">
