@@ -51,28 +51,28 @@ export default function CartPage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#070C1E] flex items-center justify-center text-gray-400">
+      <div className="min-h-screen bg-[#FFFDF8] flex items-center justify-center text-[#6E675A]">
         Loading cart...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#070C1E] py-12">
+    <div className="min-h-screen bg-[#FFFDF8] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8 border-b border-navy-800 pb-4">
+        <div className="flex items-center justify-between mb-8 border-b border-[#EBDDB4] pb-4">
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#2A2620]">
               Shopping Bag ({totalItemCount} {totalItemCount === 1 ? 'item' : 'items'})
             </h1>
-            <p className="text-xs text-gray-400 font-sans">
+            <p className="text-xs text-[#6E675A] font-sans">
               Review your personalized selections and engraving details before proceeding.
             </p>
           </div>
 
           <Link
             href="/shop"
-            className="text-xs text-[#D4AF37] hover:text-[#F3E5AB] flex items-center gap-1 font-semibold"
+            className="text-xs text-[#D4AF37] hover:text-[#7A5C16] flex items-center gap-1 font-semibold"
           >
             <ChevronLeft className="w-4 h-4" />
             Continue Shopping
@@ -80,13 +80,13 @@ export default function CartPage() {
         </div>
 
         {items.length === 0 ? (
-          <div className="p-16 text-center rounded-3xl bg-[#091126] border border-navy-800 max-w-xl mx-auto space-y-6">
-            <div className="w-20 h-20 rounded-full bg-navy-900 border border-navy-700 flex items-center justify-center text-[#D4AF37] mx-auto">
+          <div className="p-16 text-center rounded-3xl bg-[#F8F2E3] border border-[#EBDDB4] max-w-xl mx-auto space-y-6">
+            <div className="w-20 h-20 rounded-full bg-white border border-[#D9C48C] flex items-center justify-center text-[#D4AF37] mx-auto">
               <ShoppingBag className="w-10 h-10" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-xl font-serif font-bold text-white">Your bag is empty</h2>
-              <p className="text-xs text-gray-400 font-sans leading-relaxed">
+              <h2 className="text-xl font-serif font-bold text-[#2A2620]">Your bag is empty</h2>
+              <p className="text-xs text-[#6E675A] font-sans leading-relaxed">
                 You haven&apos;t added any personalized creations to your bag yet. Explore our handcrafted pens and diaries.
               </p>
             </div>
@@ -105,10 +105,10 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="p-5 rounded-2xl bg-[#091126] border border-navy-800 flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between"
+                  className="p-5 rounded-2xl bg-[#F8F2E3] border border-[#EBDDB4] flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-navy-950 border border-navy-800 flex-shrink-0">
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white border border-[#EBDDB4] flex-shrink-0">
                       <Image
                         src={item.product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
                         alt={item.product.name}
@@ -117,7 +117,7 @@ export default function CartPage() {
                       />
                     </div>
                     <div>
-                      <h3 className="text-sm font-serif font-bold text-white line-clamp-2 leading-snug">
+                      <h3 className="text-sm font-serif font-bold text-[#2A2620] line-clamp-2 leading-snug">
                         {item.product.name}
                       </h3>
                       {item.variantName && (
@@ -126,10 +126,10 @@ export default function CartPage() {
 
                       {/* Engraving Tag */}
                       {item.customization?.customText && (
-                        <div className="mt-1.5 px-3 py-1.5 rounded-lg bg-navy-950 border border-[#D4AF37]/30 text-[11px] flex items-center gap-2 flex-wrap">
+                        <div className="mt-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#D4AF37]/30 text-[11px] flex items-center gap-2 flex-wrap">
                           <Sparkles className="w-3 h-3 text-[#D4AF37] flex-shrink-0" />
-                          <span className="text-gray-300">
-                            Engraving: <strong className="text-[#F3E5AB]">&quot;{item.customization.customText}&quot;</strong>
+                          <span className="text-[#5B5444]">
+                            Engraving: <strong className="text-[#7A5C16]">&quot;{item.customization.customText}&quot;</strong>
                           </span>
                           <span className="text-gray-500">({item.customization.fontName})</span>
                         </div>
@@ -138,22 +138,22 @@ export default function CartPage() {
                   </div>
 
                   {/* Quantity & Pricing */}
-                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-navy-800">
-                    <div className="flex items-center border border-navy-700 bg-navy-950 rounded-lg">
+                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-[#EBDDB4]">
+                    <div className="flex items-center border border-[#D9C48C] bg-white rounded-lg">
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="px-2.5 py-1 text-xs text-gray-400 hover:text-white"
+                        className="px-2.5 py-1 text-xs text-[#6E675A] hover:text-[#2A2620]"
                       >
                         -
                       </button>
-                      <span className="px-3 py-1 text-xs font-semibold text-white">
+                      <span className="px-3 py-1 text-xs font-semibold text-[#2A2620]">
                         {item.quantity}
                       </span>
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.id, 1)}
-                        className="px-2.5 py-1 text-xs text-gray-400 hover:text-white"
+                        className="px-2.5 py-1 text-xs text-[#6E675A] hover:text-[#2A2620]"
                       >
                         +
                       </button>
@@ -197,15 +197,15 @@ export default function CartPage() {
             {/* Right Summary Column (4 Cols) */}
             <div className="lg:col-span-4 space-y-6">
               {/* Order Summary Box */}
-              <div className="p-6 rounded-2xl bg-[#091126] border border-[#D4AF37]/30 shadow-xl space-y-5">
-                <h3 className="text-base font-serif font-bold text-white border-b border-navy-800 pb-3">
+              <div className="p-6 rounded-2xl bg-[#F8F2E3] border border-[#D4AF37]/30 shadow-xl space-y-5">
+                <h3 className="text-base font-serif font-bold text-[#2A2620] border-b border-[#EBDDB4] pb-3">
                   Order Summary
                 </h3>
 
-                <div className="space-y-2.5 text-xs text-gray-300">
+                <div className="space-y-2.5 text-xs text-[#5B5444]">
                   <div className="flex justify-between">
                     <span>Subtotal:</span>
-                    <span className="text-white font-medium">{formatCurrency(subtotal)}</span>
+                    <span className="text-[#2A2620] font-medium">{formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Personalized Engraving:</span>
@@ -214,12 +214,12 @@ export default function CartPage() {
                   {customizationTotal > 0 && (
                     <div className="flex justify-between">
                       <span>Logo Artwork Setup:</span>
-                      <span className="text-white font-medium">{formatCurrency(customizationTotal)}</span>
+                      <span className="text-[#2A2620] font-medium">{formatCurrency(customizationTotal)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span>Estimated GST (18%):</span>
-                    <span className="text-white font-medium">{formatCurrency(taxAmount)}</span>
+                    <span className="text-[#2A2620] font-medium">{formatCurrency(taxAmount)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping Charges:</span>
@@ -233,13 +233,13 @@ export default function CartPage() {
                   </div>
 
                   {couponApplied && (
-                    <div className="flex justify-between text-emerald-400 font-semibold pt-1 border-t border-navy-800">
+                    <div className="flex justify-between text-emerald-400 font-semibold pt-1 border-t border-[#EBDDB4]">
                       <span>Discount (RYNOCHI10):</span>
                       <span>-{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
 
-                  <div className="flex justify-between text-base font-bold text-white pt-3 border-t border-navy-800">
+                  <div className="flex justify-between text-base font-bold text-[#2A2620] pt-3 border-t border-[#EBDDB4]">
                     <span>Total Payable:</span>
                     <span className="text-xl text-[#D4AF37] font-serif">
                       {formatCurrency(netPayable)}
@@ -249,7 +249,7 @@ export default function CartPage() {
 
                 {/* Coupon Code Section */}
                 <form onSubmit={handleApplyCoupon} className="pt-2">
-                  <label className="text-[11px] text-gray-400 block mb-1">
+                  <label className="text-[11px] text-[#6E675A] block mb-1">
                     Have a promo coupon?
                   </label>
                   <div className="flex gap-2">
@@ -258,11 +258,11 @@ export default function CartPage() {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
                       placeholder="e.g. RYNOCHI10"
-                      className="flex-1 px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs uppercase placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+                      className="flex-1 px-3 py-2 rounded-xl bg-white border border-[#D9C48C] text-[#2A2620] text-xs uppercase placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-navy-800 text-[#F3E5AB] hover:bg-[#D4AF37] hover:text-navy-950 transition-colors"
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#F8F2E3] text-[#7A5C16] hover:bg-[#D4AF37] hover:text-navy-950 transition-colors"
                     >
                       Apply
                     </button>
@@ -283,7 +283,7 @@ export default function CartPage() {
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                 </Link>
 
-                <div className="flex items-center justify-center gap-2 text-[11px] text-gray-400 pt-1">
+                <div className="flex items-center justify-center gap-2 text-[11px] text-[#6E675A] pt-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
                   <span>Razorpay Verified Payment Gateway</span>
                 </div>

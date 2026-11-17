@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 
 interface ProductGalleryProps {
   images: string[];
@@ -20,24 +19,21 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     setMousePos({ x, y });
   };
 
-  const activeImage = images[selectedIndex] || images[0] || '/images/products/diary-pen-giftset-box.jpg';
+  const activeImage = images[selectedIndex] || images[0] || '/images/products-catalog/1.png';
 
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Main Image Display with Hover Zoom */}
       <div
-        className="relative aspect-square w-full rounded-2xl overflow-hidden bg-navy-950/40 border border-[#D4AF37]/20 cursor-crosshair group shadow-xl"
+        className="relative aspect-square w-full border border-[#EBDDB4] bg-[radial-gradient(circle_at_50%_40%,#FFFFFF_0%,#F8F2E3_100%)] cursor-crosshair group shadow-md overflow-hidden flex items-center justify-center p-6"
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
       >
-        <Image
+        <img
           src={activeImage}
           alt={`${productName} view ${selectedIndex + 1}`}
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className={`object-contain transition-transform duration-200 ${
+          className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-200 ${
             isZoomed ? 'scale-150' : 'scale-100'
           }`}
           style={
@@ -50,7 +46,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         />
 
         {/* Hover Hint */}
-        <div className="absolute bottom-3 right-3 text-[11px] bg-navy-900/80 backdrop-blur-md text-gray-300 px-2.5 py-1 rounded-md border border-navy-700 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-3 right-3 text-[11px] bg-white/90 backdrop-blur-md text-[#7A5C16] px-2.5 py-1 border border-[#EBDDB4] opacity-0 group-hover:opacity-100 transition-opacity">
           Hover to zoom
         </div>
       </div>
@@ -63,17 +59,16 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
               key={idx}
               type="button"
               onClick={() => setSelectedIndex(idx)}
-              className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
+              className={`relative w-20 h-20 flex-shrink-0 border-2 transition-all p-1 bg-white ${
                 selectedIndex === idx
-                  ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/30 scale-105'
-                  : 'border-navy-800 opacity-60 hover:opacity-100'
+                  ? 'border-[#C9A24B] shadow-md scale-105'
+                  : 'border-[#EBDDB4] opacity-70 hover:opacity-100'
               }`}
             >
-              <Image
+              <img
                 src={img}
                 alt={`${productName} thumbnail ${idx + 1}`}
-                fill
-                className="object-cover"
+                className="w-full h-full object-contain mix-blend-multiply"
               />
             </button>
           ))}
@@ -84,4 +79,3 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 };
 
 export default ProductGallery;
-

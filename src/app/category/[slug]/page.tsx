@@ -32,7 +32,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#070C1E] py-12">
+    <div className="min-h-screen bg-[#FFFDF8] py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
@@ -40,7 +40,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-gray-400 mb-8" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-2 text-xs text-[#6E675A] mb-8" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-[#D4AF37] transition-colors">
             Home
           </Link>
@@ -49,19 +49,19 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             Collections
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-[#F3E5AB] font-medium">{category.name}</span>
+          <span className="text-[#7A5C16] font-medium">{category.name}</span>
         </nav>
 
         {/* Category Header Banner */}
         <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#0B132B] via-[#101B3B] to-[#070D1F] border border-[#D4AF37]/30 shadow-2xl mb-12 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-950/60 border border-[#D4AF37]/40 text-xs font-semibold uppercase tracking-widest text-[#F3E5AB]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 border border-[#D4AF37]/40 text-xs font-semibold uppercase tracking-widest text-[#7A5C16]">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             Official Collection
           </div>
-          <h1 className="text-3xl sm:text-5xl font-serif font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-serif font-extrabold text-[#2A2620] tracking-tight">
             {category.name}
           </h1>
-          <p className="text-sm text-gray-300 max-w-2xl leading-relaxed font-sans">
+          <p className="text-sm text-[#5B5444] max-w-2xl leading-relaxed font-sans">
             {category.description}
           </p>
           <div className="pt-2 text-xs text-[#C5A059] font-medium">
@@ -71,8 +71,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
         {/* Product Cards Grid */}
         {categoryProducts.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-[#091126] border border-navy-800">
-            <p className="text-sm text-gray-400">
+          <div className="p-12 text-center rounded-2xl bg-[#F8F2E3] border border-[#EBDDB4]">
+            <p className="text-sm text-[#6E675A]">
               New customized items are currently being added to this collection.
             </p>
             <Link

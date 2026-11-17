@@ -10,30 +10,17 @@ import {
   Menu,
   X,
   ChevronDown,
-  Sparkles,
-  Phone,
-  ShieldCheck,
 } from 'lucide-react';
-import Logo from '../brand/Logo';
 import { useCart } from '@/lib/store';
 import { CATEGORIES } from '@/lib/mockData';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { totalItemCount, setIsOpen } = useCart();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Close menus on page transition
   useEffect(() => {
@@ -43,50 +30,37 @@ export const Navbar: React.FC = () => {
   }, [pathname]);
 
   return (
-    <header
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-[#070C1E]/95 backdrop-blur-md shadow-xl border-b border-[#D4AF37]/25 py-2.5'
-          : 'bg-[#0B132B] border-b border-[#D4AF37]/15 py-4'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-        {/* Mobile menu hamburger toggle */}
+    <header className="sticky top-0 z-40 bg-[rgba(255,253,248,.96)] backdrop-blur-md border-b border-[#EBDDB4] transition-all">
+      <div className="wrap flex items-center justify-between h-[84px] gap-5">
+        {/* Mobile Hamburger */}
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 rounded-xl text-gray-300 hover:text-white hover:bg-navy-900 border border-navy-800 transition-colors"
-          aria-label="Toggle Navigation Menu"
+          className="lg:hidden p-2 rounded-lg text-[#7A5C16] hover:bg-[#FBF3DC] transition-colors"
+          aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X className="w-5 h-5 text-[#D4AF37]" /> : <Menu className="w-5 h-5" />}
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
         {/* Brand Logo */}
-        <div className="flex-shrink-0">
-          <Logo size="md" variant="gold" showTagline={!isScrolled} />
-        </div>
+        <Link href="/" aria-label="RYNOCHI home" className="flex items-center">
+          <img
+            src="/images/brand/rynochi-gold-logo.png"
+            alt="RYNOCHI"
+            className="h-[54px] sm:h-[58px] w-auto object-contain mix-blend-multiply transition-transform hover:scale-105 duration-300"
+          />
+        </Link>
 
-        {/* Desktop Primary Nav Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium tracking-wide">
-          <Link
-            href="/"
-            className={`relative py-1 transition-colors hover:text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:transition-transform after:duration-300 after:origin-left ${
-              pathname === '/' ? 'text-[#D4AF37] font-semibold after:scale-x-100' : 'text-gray-200 after:scale-x-0 hover:after:scale-x-100'
-            }`}
-          >
+        {/* Desktop Primary Navlinks */}
+        <nav className="hidden lg:flex items-center gap-9 text-[15px] font-semibold text-[#2A2620]">
+          <Link href="/" className={`navlink ${pathname === '/' ? 'active text-[#8F6A17]' : ''}`}>
             Home
           </Link>
-
-          <Link
-            href="/shop"
-            className={`relative py-1 transition-colors hover:text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:transition-transform after:duration-300 after:origin-left ${
-              pathname === '/shop' ? 'text-[#D4AF37] font-semibold after:scale-x-100' : 'text-gray-200 after:scale-x-0 hover:after:scale-x-100'
-            }`}
-          >
+          <Link href="/shop" className={`navlink ${pathname === '/shop' ? 'active text-[#8F6A17]' : ''}`}>
             Shop All
           </Link>
 
-          {/* Categories Dropdown */}
+          {/* Categories dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setCategoriesDropdownOpen(true)}
@@ -94,34 +68,25 @@ export const Navbar: React.FC = () => {
           >
             <button
               type="button"
-              className="relative py-1 flex items-center gap-1.5 text-gray-200 hover:text-[#D4AF37] transition-colors focus:outline-none after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
+              className="navlink flex items-center gap-1.5 focus:outline-none"
             >
               <span>Categories</span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  categoriesDropdownOpen ? 'rotate-180 text-[#D4AF37]' : ''
-                }`}
-              />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${categoriesDropdownOpen ? 'rotate-180 text-[#8F6A17]' : ''}`} />
             </button>
 
             {categoriesDropdownOpen && (
-              <div className="absolute top-full left-0 w-72 rounded-2xl bg-[#080E24] border border-[#D4AF37]/30 shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="text-[10px] uppercase font-bold tracking-wider text-[#C5A059] px-3 py-1.5 border-b border-navy-800">
-                  Featured Collections
+              <div className="absolute top-full left-0 w-72 bg-[#FFFDF8] border border-[#EBDDB4] shadow-2xl p-3 z-50 animate-in fade-in duration-200">
+                <div className="text-[10px] uppercase font-bold tracking-[.18em] text-[#7A5C16] px-3 py-1.5 border-b border-[#EBDDB4]">
+                  Browse Collections
                 </div>
-                <div className="mt-1 space-y-1">
+                <div className="py-1">
                   {CATEGORIES.map((cat) => (
                     <Link
                       key={cat.id}
                       href={`/category/${cat.slug}`}
-                      className="flex flex-col px-3 py-2 rounded-xl hover:bg-navy-900/80 hover:border-l-2 hover:border-[#D4AF37] transition-all group"
+                      className="block px-3 py-2 text-sm text-[#2A2620] hover:bg-[#F8F2E3] hover:text-[#8F6A17] font-medium transition-colors"
                     >
-                      <span className="text-sm font-medium text-gray-200 group-hover:text-[#D4AF37] group-hover:translate-x-1 transition-all duration-200">
-                        {cat.name}
-                      </span>
-                      <span className="text-[11px] text-gray-500 line-clamp-1">
-                        {cat.description}
-                      </span>
+                      {cat.name}
                     </Link>
                   ))}
                 </div>
@@ -129,49 +94,32 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          <Link
-            href="/corporate"
-            className={`relative py-1 transition-colors hover:text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:transition-transform after:duration-300 after:origin-left ${
-              pathname === '/corporate' ? 'text-[#D4AF37] font-semibold after:scale-x-100' : 'text-gray-200 after:scale-x-0 hover:after:scale-x-100'
-            }`}
-          >
-            Corporate & Bulk
+          <Link href="/#customizer" className="navlink">
+            Customize
           </Link>
-
-          <Link
-            href="/about"
-            className={`relative py-1 transition-colors hover:text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:transition-transform after:duration-300 after:origin-left ${
-              pathname === '/about' ? 'text-[#D4AF37] font-semibold after:scale-x-100' : 'text-gray-200 after:scale-x-0 hover:after:scale-x-100'
-            }`}
-          >
-            About Us
+          <Link href="/corporate" className={`navlink ${pathname === '/corporate' ? 'active text-[#8F6A17]' : ''}`}>
+            Corporate
           </Link>
-
-          <Link
-            href="/contact"
-            className={`relative py-1 transition-colors hover:text-[#D4AF37] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-gradient-to-r after:from-[#DFBA6F] after:to-[#AA8417] after:transition-transform after:duration-300 after:origin-left ${
-              pathname === '/contact' ? 'text-[#D4AF37] font-semibold after:scale-x-100' : 'text-gray-200 after:scale-x-0 hover:after:scale-x-100'
-            }`}
-          >
+          <Link href="/contact" className={`navlink ${pathname === '/contact' ? 'active text-[#8F6A17]' : ''}`}>
             Contact
           </Link>
         </nav>
 
-        {/* Action Controls: Search, Account, Cart */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Right Icon Actions */}
+        <div className="flex items-center gap-2">
           {/* Search Trigger */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 sm:p-2.5 rounded-xl text-gray-300 hover:text-[#D4AF37] hover:bg-navy-900 transition-colors border border-transparent hover:border-navy-800"
-              aria-label="Search Products"
+              className="iconbtn"
+              aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
 
             {searchOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 p-3 rounded-2xl bg-[#070C1E] border border-[#D4AF37]/40 shadow-2xl z-50">
+              <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 p-3 bg-white border border-[#EBDDB4] shadow-2xl z-50">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -179,41 +127,35 @@ export const Navbar: React.FC = () => {
                       window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
                     }
                   }}
-                  className="relative"
                 >
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search pens, diaries, gifts..."
+                    placeholder="Search pens, diaries, gift sets..."
                     autoFocus
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs placeholder-gray-400 focus:outline-none focus:border-[#D4AF37]"
+                    className="field !min-h-[44px] text-sm"
                   />
-                  <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
                 </form>
               </div>
             )}
           </div>
 
-          {/* Customer / Admin Account link */}
-          <Link
-            href="/account"
-            className="p-2 sm:p-2.5 rounded-xl text-gray-300 hover:text-[#D4AF37] hover:bg-navy-900 transition-colors border border-transparent hover:border-navy-800"
-            title="My Account"
-          >
+          {/* Account */}
+          <Link href="/account" className="iconbtn" aria-label="Account">
             <User className="w-5 h-5" />
           </Link>
 
-          {/* Cart Icon with Live Counter */}
+          {/* Cart with Count */}
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="btn-luxury-gold relative p-2.5 rounded-xl text-navy-950 font-bold shadow-md shadow-[#D4AF37]/20 flex items-center justify-center transition-all duration-300"
+            className="iconbtn relative"
             aria-label="Shopping Cart"
           >
-            <ShoppingBag className="w-5 h-5 text-navy-950 font-bold" />
+            <ShoppingBag className="w-5 h-5" />
             {totalItemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-[#060B18] text-[#D4AF37] border border-[#D4AF37] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="absolute top-1 right-1 bg-[#C9A24B] text-[#2A2620] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 {totalItemCount}
               </span>
             )}
@@ -223,23 +165,16 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[65px] z-50 bg-[#060B18]/95 backdrop-blur-xl border-t border-navy-800 p-6 flex flex-col gap-4 overflow-y-auto animate-in fade-in duration-200">
-          <nav className="flex flex-col gap-3 text-base">
-            <Link
-              href="/"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
+        <div className="lg:hidden border-t border-[#EBDDB4] bg-[#FFFDF8] px-6 py-6 shadow-xl flex flex-col gap-4 animate-in fade-in duration-200">
+          <nav className="flex flex-col gap-3 text-base font-semibold text-[#2A2620]">
+            <Link href="/" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
               Home
             </Link>
-            <Link
-              href="/shop"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
+            <Link href="/shop" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
               Shop All Products
             </Link>
-
-            <div className="py-2 border-b border-navy-800">
-              <span className="text-xs uppercase tracking-wider text-[#D4AF37] font-bold block mb-2">
+            <div className="py-2 border-b border-[#EBDDB4]/50">
+              <span className="text-xs uppercase tracking-[.18em] text-[#7A5C16] font-bold block mb-2">
                 Categories
               </span>
               <div className="grid grid-cols-1 gap-2 pl-3">
@@ -247,43 +182,27 @@ export const Navbar: React.FC = () => {
                   <Link
                     key={cat.id}
                     href={`/category/${cat.slug}`}
-                    className="text-sm text-gray-300 hover:text-white py-1"
+                    className="text-sm text-[#4A432F] hover:text-[#8F6A17] py-1"
                   >
                     {cat.name}
                   </Link>
                 ))}
               </div>
             </div>
-
-            <Link
-              href="/corporate"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
+            <Link href="/#customizer" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
+              Live Customizer
+            </Link>
+            <Link href="/corporate" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
               Corporate & Bulk Orders
             </Link>
-            <Link
-              href="/track-order"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
-              Track Your Order
+            <Link href="/track-order" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
+              Track Order
             </Link>
-            <Link
-              href="/about"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
-              About RYNOCHI
-            </Link>
-            <Link
-              href="/contact"
-              className="py-2 border-b border-navy-800 text-white font-medium hover:text-[#D4AF37]"
-            >
+            <Link href="/contact" className="py-2 border-b border-[#EBDDB4]/50 hover:text-[#8F6A17]">
               Contact Us
             </Link>
-            <Link
-              href="/admin"
-              className="py-2 text-xs uppercase tracking-wider font-semibold text-[#D4AF37] hover:underline"
-            >
-              Admin Dashboard →
+            <Link href="/admin" className="py-2 text-xs uppercase tracking-wider font-bold text-[#8F6A17]">
+              Admin Portal →
             </Link>
           </nav>
         </div>
@@ -293,4 +212,3 @@ export const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-

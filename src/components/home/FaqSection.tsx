@@ -1,62 +1,104 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
-import { FAQS } from '@/lib/mockData';
+
+const FAQS = [
+  {
+    q: 'What can I customize on my products?',
+    a: 'You can personalize recipient names, company names, designation titles, corporate logos, or bespoke messages. Engraving placements include metallic brass plaques, pen barrels, and clips depending on the chosen model.',
+  },
+  {
+    q: 'Is there a minimum order quantity?',
+    a: 'No minimum order quantity applies for individual retail gifting — you can order a single personalized pen or diary. For corporate bulk batches of 20+ units, tiered volume discounts apply automatically.',
+  },
+  {
+    q: 'Will I see a design proof before production?',
+    a: 'Yes. Upon receiving your order, our master studio prepares a digital vector layout showing the exact font, size, and alignment. We share this with you via WhatsApp/Email for final approval prior to laser engraving.',
+  },
+  {
+    q: 'Which payment methods are accepted?',
+    a: 'We accept all major online payment channels powered by Razorpay: UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, Net Banking, and select Cash on Delivery (COD) options.',
+  },
+  {
+    q: 'How do I track my order status?',
+    a: 'You can track your order progression anytime using our 12-Stage Live Tracking portal with your Order Reference Number. You will also receive automated SMS and WhatsApp milestone notifications.',
+  },
+  {
+    q: 'What if there is a defect or misprint on my order?',
+    a: 'We operate under our strict Zero-Defect Guarantee. In the rare event of a manufacturing flaw or spelling discrepancy made on our end, we re-engrave and ship a brand new piece immediately free of charge.',
+  },
+];
 
 export const FaqSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const toggle = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
+  const toggleFaq = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
   };
 
+  const waLink = `https://wa.me/919876543210?text=${encodeURIComponent(
+    'Hello RYNOCHI Concierge, I have a question regarding custom printing and personalization.'
+  )}`;
+
   return (
-    <section className="py-24 bg-[#0B132B] relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111C3A] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-widest text-[#F3E5AB]">
-            <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37]" />
-            Frequently Asked Questions
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
-            Everything You Need to Know
+    <section id="faq" className="py-28 bg-[#FFFDF8]">
+      <div className="wrap flex flex-wrap gap-14 lg:gap-20">
+        {/* Left Column: Heading & WhatsApp CTA */}
+        <div className="flex-1 basis-[320px] min-w-0">
+          <div className="eyebrow">FAQ</div>
+          <h2 className="serif mt-4 text-[clamp(40px,5vw,62px)] leading-[1.04] font-semibold text-[#2A2620]">
+            Questions, answered
           </h2>
-          <p className="text-xs sm:text-sm text-gray-400 font-sans">
-            Have questions regarding engraving methods, delivery speeds, or corporate orders? Find answers below.
+          <p className="mt-5 text-[16px] leading-[1.7] text-[#5B5444]">
+            Cannot find what you need? Message our concierge and our laser studio will assist you in planning the perfect gifting suite.
           </p>
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-gold mt-7"
+          >
+            Chat on WhatsApp
+          </a>
         </div>
 
-        <div className="space-y-4">
-          {FAQS.map((faq, idx) => {
-            const isOpen = openIndex === idx;
+        {/* Right Column: Accordion Rows */}
+        <div className="flex-2 basis-[520px] min-w-0 border-t border-[#E6D9B3]">
+          {FAQS.map((faq, index) => {
+            const isOpen = openIndex === index;
             return (
-              <div
-                key={idx}
-                className="rounded-2xl bg-[#070D1F] border border-navy-800 hover:border-[#D4AF37]/50 hover:shadow-lg transition-all duration-300 overflow-hidden"
-              >
+              <div key={faq.q} className="faqrow">
                 <button
                   type="button"
-                  onClick={() => toggle(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                  onClick={() => toggleFaq(index)}
+                  className="faqq"
+                  aria-expanded={isOpen}
                 >
-                  <span className="text-sm sm:text-base font-serif font-bold text-white tracking-wide">
-                    {faq.question}
-                  </span>
-                  <div
-                    className={`w-8 h-8 rounded-full bg-navy-900 border border-navy-700 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
-                      isOpen ? 'rotate-180 text-[#D4AF37] border-[#D4AF37]' : 'text-gray-400'
-                    }`}
+                  <span className="pr-4">{faq.q}</span>
+                  <span
+                    className="plus"
+                    style={{
+                      transform: isOpen ? 'rotate(135deg)' : 'none',
+                      backgroundColor: isOpen ? '#F0DFAE' : 'transparent',
+                    }}
                   >
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M8 2v12M2 8h12" />
+                    </svg>
+                  </span>
                 </button>
-
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-gray-300 leading-relaxed font-sans border-t border-navy-900 animate-in fade-in duration-200">
-                    {faq.answer}
+                <div
+                  className="faqa"
+                  style={{
+                    gridTemplateRows: isOpen ? '1fr' : '0fr',
+                  }}
+                >
+                  <div>
+                    <p className="mb-6 text-[16px] leading-[1.75] text-[#5B5444] max-w-[620px]">
+                      {faq.a}
+                    </p>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
@@ -67,4 +109,3 @@ export const FaqSection: React.FC = () => {
 };
 
 export default FaqSection;
-

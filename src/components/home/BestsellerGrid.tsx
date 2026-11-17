@@ -1,44 +1,70 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Flame } from 'lucide-react';
-import { PRODUCTS } from '@/lib/mockData';
+import { PRODUCTS, CATEGORIES } from '@/lib/mockData';
 import ProductCard from '../product/ProductCard';
 
 export const BestsellerGrid: React.FC = () => {
-  const bestsellers = PRODUCTS.filter((p) => p.isBestseller || p.isFeatured).slice(0, 4);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+
+  const filteredProducts = activeCategory === 'all'
+    ? PRODUCTS
+    : PRODUCTS.filter((p) => p.categoryId === activeCategory);
 
   return (
-    <section className="py-20 bg-[#0B132B] relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Flame className="w-4 h-4 text-orange-400" />
-              <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37]">
-                Customer Favorites
-              </span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
-              Bestselling Personalized Creations
+    <section id="shop" className="py-24 bg-[#F8F2E3]">
+      <div className="wrap">
+        {/* Header with Title & View All */}
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-[640px]">
+            <div className="eyebrow">Bestselling</div>
+            <h2 className="serif mt-4 text-[clamp(40px,5.5vw,68px)] leading-[1.04] font-semibold text-[#2A2620]">
+              Made to carry your name
             </h2>
           </div>
-
-          <Link
-            href="/shop"
-            className="mt-4 md:mt-0 text-sm font-semibold text-[#D4AF37] hover:text-[#F3E5AB] flex items-center gap-1.5 transition-colors group"
-          >
-            <span>Explore All 20+ Designs</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <Link href="/shop" className="btn btn-line">
+            View all products
           </Link>
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {bestsellers.map((prod) => (
-            <ProductCard key={prod.id} product={prod} />
+        <p className="mt-4 text-sm text-[#6E675A]">
+          Every piece includes complimentary laser personalization and arrives in a luxury presentation box.
+        </p>
+
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap gap-2.5 mt-8 pb-2">
+          <button
+            type="button"
+            onClick={() => setActiveCategory('all')}
+            className={`px-5 py-2.5 text-xs font-bold tracking-wider uppercase transition-all duration-300 ${
+              activeCategory === 'all'
+                ? 'bg-gradient-to-r from-[#C9A24B] to-[#F0DFAE] text-[#2A2620] shadow-md'
+                : 'bg-white text-[#7A5C16] border border-[#D9C48C] hover:bg-[#FFFDF8]'
+            }`}
+          >
+            All Products
+          </button>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-5 py-2.5 text-xs font-bold tracking-wider uppercase transition-all duration-300 ${
+                activeCategory === cat.id
+                  ? 'bg-gradient-to-r from-[#C9A24B] to-[#F0DFAE] text-[#2A2620] shadow-md'
+                  : 'bg-white text-[#7A5C16] border border-[#D9C48C] hover:bg-[#FFFDF8]'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Product Grid with Auto-Swiping Galleries */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mt-10">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
@@ -47,4 +73,3 @@ export const BestsellerGrid: React.FC = () => {
 };
 
 export default BestsellerGrid;
-

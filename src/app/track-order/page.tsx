@@ -65,21 +65,21 @@ function TrackOrderContent() {
     : null;
 
   return (
-    <div className="min-h-screen bg-[#070C1E] py-14">
+    <div className="min-h-screen bg-[#FFFDF8] py-14">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
             <Logo size="md" variant="gold" showTagline={false} />
           </div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111C3A] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-widest text-[#F3E5AB]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111C3A] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-widest text-[#7A5C16]">
             <Truck className="w-3.5 h-3.5 text-[#D4AF37]" />
             Live Dispatch Tracking
           </div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#2A2620] tracking-tight">
             Track Your Custom Kept Gift
           </h1>
-          <p className="text-xs sm:text-sm text-gray-400 font-sans max-w-lg mx-auto">
+          <p className="text-xs sm:text-sm text-[#6E675A] font-sans max-w-lg mx-auto">
             Enter your RYNOCHI Order Reference (e.g. <code>RYN-2026-1049</code>) or mobile number to track manufacturing and courier milestones.
           </p>
         </div>
@@ -91,7 +91,7 @@ function TrackOrderContent() {
               e.preventDefault();
               handleLookup(searchQuery);
             }}
-            className="flex gap-2 p-2 rounded-2xl bg-[#091126] border border-[#D4AF37]/40 shadow-xl hover-luxury-card"
+            className="flex gap-2 p-2 rounded-2xl bg-[#F8F2E3] border border-[#D4AF37]/40 shadow-xl hover-luxury-card"
           >
             <div className="relative flex-1">
               <input
@@ -100,9 +100,9 @@ function TrackOrderContent() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Enter Order ID (e.g. RYN-2026-1049)"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-navy-900 border border-navy-700 text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-[#D4AF37]"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-[#D9C48C] text-[#2A2620] placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-[#D4AF37]"
               />
-              <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+              <Search className="w-4 h-4 text-[#6E675A] absolute left-3.5 top-3.5" />
             </div>
             <button
               type="submit"
@@ -122,7 +122,7 @@ function TrackOrderContent() {
                 setSearchQuery('RYN-2026-1049');
                 handleLookup('RYN-2026-1049');
               }}
-              className="text-[#D4AF37] underline hover:text-[#F3E5AB]"
+              className="text-[#D4AF37] underline hover:text-[#7A5C16]"
             >
               RYN-2026-1049 (Engraving)
             </button>
@@ -133,7 +133,7 @@ function TrackOrderContent() {
                 setSearchQuery('RYN-2026-1050');
                 handleLookup('RYN-2026-1050');
               }}
-              className="text-[#D4AF37] underline hover:text-[#F3E5AB]"
+              className="text-[#D4AF37] underline hover:text-[#7A5C16]"
             >
               RYN-2026-1050 (Shipped)
             </button>
@@ -142,10 +142,10 @@ function TrackOrderContent() {
 
         {/* Tracking Result View */}
         {searched && !activeOrder && (
-          <div className="p-10 text-center rounded-2xl bg-[#091126] border border-navy-800 space-y-3 max-w-lg mx-auto">
+          <div className="p-10 text-center rounded-2xl bg-[#F8F2E3] border border-[#EBDDB4] space-y-3 max-w-lg mx-auto">
             <Package className="w-10 h-10 text-gray-500 mx-auto" />
-            <h3 className="text-base font-serif font-bold text-white">Order Not Found</h3>
-            <p className="text-xs text-gray-400">
+            <h3 className="text-base font-serif font-bold text-[#2A2620]">Order Not Found</h3>
+            <p className="text-xs text-[#6E675A]">
               No matching order record was found for &quot;{searchQuery}&quot;. Please verify the order number on your email receipt or contact our WhatsApp concierge.
             </p>
           </div>
@@ -154,16 +154,16 @@ function TrackOrderContent() {
         {activeOrder && (
           <div className="space-y-8 animate-in fade-in duration-300">
             {/* Current Status Card */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#091126] border border-[#D4AF37]/30 shadow-2xl space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-navy-800 pb-5">
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#F8F2E3] border border-[#D4AF37]/30 shadow-2xl space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#EBDDB4] pb-5">
                 <div>
-                  <span className="text-[11px] uppercase tracking-wider text-gray-400">
+                  <span className="text-[11px] uppercase tracking-wider text-[#6E675A]">
                     Order Reference
                   </span>
-                  <h2 className="text-xl sm:text-2xl font-mono font-bold text-[#F3E5AB]">
+                  <h2 className="text-xl sm:text-2xl font-mono font-bold text-[#7A5C16]">
                     {activeOrder.orderNumber}
                   </h2>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-[#6E675A] mt-0.5">
                     Placed on {formatDate(activeOrder.createdAt)}
                   </p>
                 </div>
@@ -174,7 +174,7 @@ function TrackOrderContent() {
                   >
                     {currentStatusDetails?.label}
                   </div>
-                  <span className="text-[11px] text-gray-400 mt-1">
+                  <span className="text-[11px] text-[#6E675A] mt-1">
                     {currentStatusDetails?.description}
                   </span>
                 </div>
@@ -182,11 +182,11 @@ function TrackOrderContent() {
 
               {/* Courier Tracking Pill if Shipped */}
               {activeOrder.trackingNumber && (
-                <div className="p-4 rounded-xl bg-navy-950 border border-navy-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="p-4 rounded-xl bg-white border border-[#EBDDB4] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-3">
                     <Truck className="w-5 h-5 text-[#D4AF37]" />
                     <div>
-                      <span className="text-gray-300 font-semibold block">
+                      <span className="text-[#5B5444] font-semibold block">
                         Courier: {activeOrder.courierName || 'Blue Dart Express'}
                       </span>
                       <span className="text-gray-500 font-mono">
@@ -210,7 +210,7 @@ function TrackOrderContent() {
 
               {/* Visual 10-Stage Milestone Progress Bar */}
               <div className="space-y-4 pt-2">
-                <h3 className="text-xs uppercase font-serif font-bold text-gray-300 tracking-wider">
+                <h3 className="text-xs uppercase font-serif font-bold text-[#5B5444] tracking-wider">
                   Milestone Progress
                 </h3>
 
@@ -231,8 +231,8 @@ function TrackOrderContent() {
                               isCurrent
                                 ? 'bg-[#D4AF37] text-navy-950 ring-4 ring-[#D4AF37]/30 shadow-lg'
                                 : isCompleted
-                                ? 'bg-emerald-500 text-white shadow-sm'
-                                : 'bg-navy-900 text-gray-500 border border-navy-800'
+                                ? 'bg-emerald-500 text-[#2A2620] shadow-sm'
+                                : 'bg-white text-gray-500 border border-[#EBDDB4]'
                             }`}
                           >
                             {isCompleted ? '✓' : stageNumber}
@@ -240,7 +240,7 @@ function TrackOrderContent() {
                           {idx < ALL_TIMELINE_STAGES.length - 1 && (
                             <div
                               className={`w-0.5 h-6 my-1 ${
-                                isCompleted ? 'bg-emerald-500/50' : 'bg-navy-800'
+                                isCompleted ? 'bg-emerald-500/50' : 'bg-[#F8F2E3]'
                               }`}
                             />
                           )}
@@ -251,9 +251,9 @@ function TrackOrderContent() {
                           <h4
                             className={`text-xs font-semibold ${
                               isCurrent
-                                ? 'text-[#F3E5AB] font-bold'
+                                ? 'text-[#7A5C16] font-bold'
                                 : isCompleted
-                                ? 'text-white'
+                                ? 'text-[#2A2620]'
                                 : 'text-gray-500'
                             }`}
                           >
@@ -272,17 +272,17 @@ function TrackOrderContent() {
               </div>
 
               {/* Items & Customization Breakdown */}
-              <div className="pt-6 border-t border-navy-800 space-y-3">
-                <h3 className="text-xs uppercase font-serif font-bold text-gray-300 tracking-wider">
+              <div className="pt-6 border-t border-[#EBDDB4] space-y-3">
+                <h3 className="text-xs uppercase font-serif font-bold text-[#5B5444] tracking-wider">
                   Personalized Items in this Consignment
                 </h3>
                 <div className="space-y-3">
                   {activeOrder.items.map((item) => (
                     <div
                       key={item.id}
-                      className="p-4 rounded-xl bg-navy-950 border border-navy-800 flex gap-4 text-xs"
+                      className="p-4 rounded-xl bg-white border border-[#EBDDB4] flex gap-4 text-xs"
                     >
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-navy-900 flex-shrink-0">
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0">
                         <Image
                           src={item.productImageUrl || '/images/products/diary-pen-giftset-box.jpg'}
                           alt={item.productName}
@@ -291,8 +291,8 @@ function TrackOrderContent() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-white">{item.productName}</h4>
-                        <p className="text-gray-400 mt-0.5">Qty: {item.quantity}</p>
+                        <h4 className="font-semibold text-[#2A2620]">{item.productName}</h4>
+                        <p className="text-[#6E675A] mt-0.5">Qty: {item.quantity}</p>
                         {item.customization?.customText && (
                           <div className="mt-1 text-[#D4AF37] flex items-center gap-1.5 font-medium">
                             <Sparkles className="w-3.5 h-3.5" />
@@ -300,7 +300,7 @@ function TrackOrderContent() {
                           </div>
                         )}
                       </div>
-                      <div className="text-right font-serif font-semibold text-white">
+                      <div className="text-right font-serif font-semibold text-[#2A2620]">
                         {formatCurrency(item.totalPrice)}
                       </div>
                     </div>
@@ -317,7 +317,7 @@ function TrackOrderContent() {
 
 export default function TrackOrderPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#070C1E] p-12 text-center text-gray-400">Loading tracker...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#FFFDF8] p-12 text-center text-[#6E675A]">Loading tracker...</div>}>
       <TrackOrderContent />
     </Suspense>
   );

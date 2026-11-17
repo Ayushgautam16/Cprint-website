@@ -1,125 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, CheckCircle, Shield, Award, Sparkles, Send } from 'lucide-react';
-import Logo from '../brand/Logo';
-import { CATEGORIES, INITIAL_SETTINGS } from '@/lib/mockData';
+import { CATEGORIES } from '@/lib/mockData';
 
 export const Footer: React.FC = () => {
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setIsSubscribed(true);
-      setTimeout(() => {
-        setIsSubscribed(false);
-        setNewsletterEmail('');
-      }, 4000);
-    }
-  };
-
   return (
-    <footer className="bg-[#050914] text-gray-300 border-t border-[#D4AF37]/25 relative overflow-hidden">
-      {/* Decorative Gold Accent Top Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
-
-      {/* Brand Value Assurance Bar */}
-      <div className="border-b border-navy-800/80 bg-[#070D1F] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-navy-900 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-serif font-bold text-white uppercase tracking-wider">
-                Precision Fiber Laser
-              </h4>
-              <p className="text-[11px] text-gray-400">Microscopic permanent engraving</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-navy-900 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-serif font-bold text-white uppercase tracking-wider">
-                Zero-Flaw Guarantee
-              </h4>
-              <p className="text-[11px] text-gray-400">100% Free replacement policy</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-navy-900 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
-              <Award className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-serif font-bold text-white uppercase tracking-wider">
-                Luxury Presentation Box
-              </h4>
-              <p className="text-[11px] text-gray-400">Gold satin pull-ribbon casing</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-navy-900 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
-              <CheckCircle className="w-5 h-5 text-emerald-400" />
-            </div>
-            <div>
-              <h4 className="text-xs font-serif font-bold text-white uppercase tracking-wider">
-                Razorpay Verified
-              </h4>
-              <p className="text-[11px] text-gray-400">Secure UPI & 256-bit encrypted checkout</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-          {/* Col 1: Brand & Heritage */}
-          <div className="lg:col-span-2 space-y-4">
-            <Logo size="md" variant="gold" showTagline={true} />
-            <p className="text-xs text-gray-400 leading-relaxed pr-6">
-              RYNOCHI elevates everyday writing instruments and executive journals into
-              bespoke keepsakes. Combining laser craftsmanship with premium PU leather and aerospace-grade
-              alloys, we craft personalized corporate gifts, executive pens, and organizers tailored
-              for milestones that matter.
+    <footer className="bg-[#FFFDF8] text-[#4A432F] pt-20 pb-10 border-t border-[#D9C48C]">
+      <div className="wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand & Mission */}
+          <div className="space-y-4">
+            <Link href="/" aria-label="RYNOCHI">
+              <img
+                src="/images/brand/rynochi-gold-logo.png"
+                alt="RYNOCHI"
+                className="h-[64px] w-auto mix-blend-multiply"
+              />
+            </Link>
+            <p className="text-[15px] leading-relaxed text-[#5B5444] max-w-[320px]">
+              Premium custom printing, precision laser engraving and personalised corporate gifting essentials.
             </p>
-
-            <div className="space-y-2 pt-2 text-xs text-gray-400">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                <span>{INITIAL_SETTINGS.officeAddress}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
-                <span>{INITIAL_SETTINGS.supportPhone}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
-                <span>{INITIAL_SETTINGS.supportEmail}</span>
-              </div>
+            <div className="flex gap-3 pt-2">
+              <a
+                href="https://instagram.com/rynochi.official"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="iconbtn border border-[#D9C48C] hover:bg-[#FBF3DC]"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+                </svg>
+              </a>
+              <a
+                href="https://facebook.com/rynochi"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="iconbtn border border-[#D9C48C] hover:bg-[#FBF3DC]"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+                  <path d="M14 8h3V4h-3a4 4 0 00-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z" />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/919876543210?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="iconbtn border border-[#D9C48C] hover:bg-[#FBF3DC]"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+                </svg>
+              </a>
             </div>
           </div>
 
-          {/* Col 2: Collections */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-serif font-bold text-[#F3E5AB] uppercase tracking-widest border-b border-navy-800 pb-2">
-              Collections
-            </h4>
-            <ul className="space-y-2 text-xs">
+          {/* Categories */}
+          <div>
+            <div className="eyebrow mb-4">Categories</div>
+            <ul className="space-y-1">
               {CATEGORIES.map((cat) => (
                 <li key={cat.id}>
-                  <Link
-                    href={`/category/${cat.slug}`}
-                    className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300"
-                  >
+                  <Link href={`/category/${cat.slug}`} className="flink">
                     {cat.name}
                   </Link>
                 </li>
@@ -127,103 +74,62 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Customer Care & Services */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-serif font-bold text-[#F3E5AB] uppercase tracking-widest border-b border-navy-800 pb-2">
-              Client Concierge
-            </h4>
-            <ul className="space-y-2 text-xs">
+          {/* Quick Links & Services */}
+          <div>
+            <div className="eyebrow mb-4">Quick Links</div>
+            <ul className="space-y-1">
               <li>
-                <Link href="/track-order" className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300">
-                  Track Your Order
-                </Link>
+                <Link href="/shop" className="flink">Shop All Products</Link>
               </li>
               <li>
-                <Link href="/corporate" className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300">
-                  Corporate Bulk Orders
-                </Link>
+                <Link href="/#customizer" className="flink">Live Customizer</Link>
               </li>
               <li>
-                <Link href="/faqs" className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300">
-                  Frequently Asked Questions
-                </Link>
+                <Link href="/corporate" className="flink">Corporate & Bulk Orders</Link>
               </li>
               <li>
-                <Link href="/about" className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300">
-                  Our Laser Craft & Story
-                </Link>
+                <Link href="/track-order" className="flink">Track Your Order</Link>
               </li>
               <li>
-                <Link href="/contact" className="inline-block text-gray-400 hover:text-[#D4AF37] hover:translate-x-1.5 transition-all duration-300">
-                  Contact Studio
-                </Link>
+                <Link href="/about" className="flink">About RYNOCHI</Link>
               </li>
               <li>
-                <Link href="/admin" className="inline-block text-[#C5A059] hover:underline transition-colors font-medium">
-                  Staff / Admin Portal →
-                </Link>
+                <Link href="/admin" className="flink font-bold text-[#8F6A17]">Admin Portal →</Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Newsletter & Direct Updates */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-serif font-bold text-[#F3E5AB] uppercase tracking-widest border-b border-navy-800 pb-2">
-              Privilege Circle
-            </h4>
-            <p className="text-xs text-gray-400">
-              Subscribe for private previews, seasonal gifting catalogs, and corporate volume rates.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="space-y-2">
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="Enter executive email"
-                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#D4AF37] transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                className="btn-luxury-gold w-full py-2.5 rounded-xl text-navy-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-[#D4AF37]/20 group/btn"
-              >
-                <Send className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform duration-300" />
-                <span>Subscribe</span>
-              </button>
-            </form>
-
-            {isSubscribed && (
-              <p className="text-[11px] text-emerald-400">
-                ✓ Thank you. You are on the RYNOCHI VIP list.
-              </p>
-            )}
+          {/* Policies & Legal */}
+          <div>
+            <div className="eyebrow mb-4">Policies</div>
+            <ul className="space-y-1">
+              <li>
+                <Link href="/shipping-policy" className="flink">Shipping & Delivery</Link>
+              </li>
+              <li>
+                <Link href="/refund-cancellation-policy" className="flink">Returns & Replacements</Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="flink">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link href="/terms-and-conditions" className="flink">Terms & Conditions</Link>
+              </li>
+              <li>
+                <Link href="/faqs" className="flink">FAQ</Link>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Legal Policies & Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} RYNOCHI. All rights reserved. Handcrafted in India.</p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-400">
-            <Link href="/privacy-policy" className="hover:text-[#D4AF37] transition-colors">
-              Privacy Policy
-            </Link>
+        {/* Bottom Bar */}
+        <div className="mt-14 pt-8 border-t border-[#EBDDB4] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6E675A]">
+          <p>© {new Date().getFullYear()} RYNOCHI. All rights reserved. Handcrafted with pride in India.</p>
+          <p className="flex items-center gap-2">
+            <span>Precision Laser Craft</span>
             <span>•</span>
-            <Link href="/terms-and-conditions" className="hover:text-[#D4AF37] transition-colors">
-              Terms & Conditions
-            </Link>
-            <span>•</span>
-            <Link href="/shipping-policy" className="hover:text-[#D4AF37] transition-colors">
-              Shipping Policy
-            </Link>
-            <span>•</span>
-            <Link href="/refund-cancellation-policy" className="hover:text-[#D4AF37] transition-colors">
-              Cancellation & Refund Policy
-            </Link>
-          </div>
+            <span>Zero-Defect Guarantee</span>
+          </p>
         </div>
       </div>
     </footer>
@@ -231,4 +137,3 @@ export const Footer: React.FC = () => {
 };
 
 export default Footer;
-

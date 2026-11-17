@@ -1,92 +1,65 @@
 'use client';
 
 import React from 'react';
-import { Star, ShieldCheck, Quote } from 'lucide-react';
+
+const REVIEWS = [
+  {
+    quote:
+      'We ordered 120 custom engraved leather diaries and pens for our annual executive partner summit. The gold nameplates and crisp logo engraving exceeded all expectations. Every guest commented on the immaculate craftsmanship.',
+    author: 'Vikramaditya Roy',
+    role: 'Chief Operating Officer, Apex Group',
+    product: 'Signature Gold Box Gift Set',
+  },
+  {
+    quote:
+      'Ordered the personalized Matte Black rollerball as an anniversary gift for my husband. The brass exposure from the laser cut has a breathtaking golden luster that looks far more luxurious than luxury retail pens costing triple.',
+    author: 'Dr. Ananya Sharma',
+    role: 'Verified Patron, New Delhi',
+    product: 'Matte Black Engraved Pen',
+  },
+  {
+    quote:
+      'Fast 48-hour dispatch, responsive WhatsApp design approval, and the packaging presentation box is ready for instant gifting. RYNOCHI has become our permanent partner for corporate onboarding.',
+    author: 'Raghav Singhania',
+    role: 'VP Human Resources, Zscaler India',
+    product: 'Executive Diary & Pen Suite',
+  },
+];
 
 export const TestimonialsSection: React.FC = () => {
-  const reviews = [
-    {
-      author: 'Saurabh Kumar',
-      role: 'Director of Operations',
-      city: 'Gurugram',
-      product: 'Executive Diary & Pen Gift Set',
-      comment:
-        'The gold plaque engraving on the leather diary was stunningly crisp. The weight of the pen and the magnetic lock on the diary give it a true luxury feel. The packaging was immaculate.',
-      rating: 5,
-    },
-    {
-      author: 'Sweta Saha',
-      role: 'Corporate Communications Lead',
-      city: 'Mumbai',
-      product: 'Imperial Blue Rollerball Pen with Logo',
-      comment:
-        'We ordered engraved pens with our emblem for our annual summit. The laser contrast against the navy blue lacquer is sharp and permanent. Delivered 2 days ahead of schedule.',
-      rating: 5,
-    },
-    {
-      author: 'Dr. Raghav Singhania',
-      role: 'Senior Consultant',
-      city: 'Bengaluru',
-      product: 'Emerald Prestige Stylus Pen',
-      comment:
-        'The touch stylus works flawlessly on my iPad, and the ballpoint glides effortlessly on legal pads. The emerald crystal on the clip makes it a real conversation starter.',
-      rating: 5,
-    },
-  ];
-
   return (
-    <section className="py-24 bg-[#070D1F] relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37]">
-            Client Experiences
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
-            Treasured Words from Our Patrons
+    <section className="py-28 bg-[#F8F2E3]">
+      <div className="wrap">
+        <div className="text-center max-w-[680px] mx-auto">
+          <div className="eyebrow">Customer stories</div>
+          <h2 className="serif mt-4 text-[clamp(38px,5vw,60px)] leading-[1.05] font-semibold text-[#2A2620]">
+            Words from people who gifted RYNOCHI
           </h2>
-          <p className="text-xs sm:text-sm text-gray-400 font-sans">
-            Read verified feedback from patrons and corporate leaders across India.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {reviews.map((rev, idx) => (
-            <div
-              key={idx}
-              className="p-8 rounded-2xl bg-[#0B132B] border border-navy-800 hover-luxury-card shadow-xl flex flex-col justify-between space-y-6 group"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+          {REVIEWS.map((rev) => (
+            <figure
+              key={rev.author}
+              className="m-0 p-8 sm:p-9 bg-white border border-[#EBDDB4] shadow-sm flex flex-col gap-4 min-h-[260px] justify-between transition-transform duration-300 hover:-translate-y-1.5"
             >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-[#D4AF37]">
-                    {[...Array(rev.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <Quote className="w-6 h-6 text-[#D4AF37]/30" />
+              <div>
+                <div className="serif text-[56px] leading-[0.6] text-[#C9A24B] mb-4">“</div>
+                {/* 5 gold stars */}
+                <div className="flex gap-1 text-[#C9A24B] text-sm mb-3">
+                  {'★★★★★'}
                 </div>
-
-                <p className="text-xs sm:text-sm text-gray-300 italic leading-relaxed font-sans">
-                  &ldquo;{rev.comment}&rdquo;
-                </p>
+                <blockquote className="m-0 text-[15.5px] leading-[1.7] text-[#5B5444]">
+                  {rev.quote}
+                </blockquote>
               </div>
-
-              <div className="pt-4 border-t border-navy-800/80">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-serif font-bold text-white">{rev.author}</h4>
-                    <p className="text-[11px] text-gray-400">
-                      {rev.role} • {rev.city}
-                    </p>
-                  </div>
-                  <span className="text-[10px] text-emerald-400 flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
-                    <ShieldCheck className="w-3 h-3" /> Verified Order
-                  </span>
+              <figcaption className="mt-4 pt-4 border-t border-[#EBDDB4]/50">
+                <div className="text-[13px] font-bold tracking-[.08em] uppercase text-[#7A5C16]">
+                  {rev.author}
                 </div>
-                <div className="mt-2 text-[10px] text-[#C5A059] font-medium">
-                  Item: {rev.product}
-                </div>
-              </div>
-            </div>
+                <div className="text-xs text-[#6E675A] mt-0.5">{rev.role}</div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
@@ -95,4 +68,3 @@ export const TestimonialsSection: React.FC = () => {
 };
 
 export default TestimonialsSection;
-

@@ -2,10 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Sparkles, ArrowRight, Star } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils';
+import ProductAutoSlider from './ProductAutoSlider';
 
 interface ProductCardProps {
   product: Product;
@@ -13,99 +12,91 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const discountPercent = calculateDiscountPercentage(product.basePrice, product.discountPrice);
+  const badgeLabel = product.isBestseller
+    ? 'Bestseller'
+    : product.isNewArrival
+    ? 'New'
+    : product.isFeatured
+    ? 'Featured'
+    : 'Customizable';
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-b from-[#101B3B] via-[#0D1630] to-[#070D1F] border border-navy-800 hover-luxury-card flex flex-col justify-between">
-      {/* Product Image & Badges */}
-      <Link href={`/product/${product.slug}`} className="block relative aspect-square w-full bg-navy-950 overflow-hidden">
-        <Image
-          src={product.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
+    <article className="prod rvs rounded-none border border-[#EBDDB4] bg-white flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_56px_rgba(122,92,22,0.18)] hover:border-[#C9A24B] overflow-hidden group">
+      {/* Product Image Stage with Auto-Swiping Gallery */}
+      <div className="pstage relative aspect-square w-full bg-[radial-gradient(circle_at_50%_40%,#FFFFFF_0%,#F8F2E3_100%)] overflow-hidden flex items-center justify-center">
+        {/* Badge */}
+        <span className="badge absolute top-3.5 left-3.5 z-10 text-[11px] font-bold tracking-[.14em] uppercase py-1.5 px-2.5 bg-white text-[#7A5C16] border border-[#C9A24B] shadow-sm">
+          {badgeLabel}
+        </span>
+
+        {/* Auto-Swiping Images */}
+        <ProductAutoSlider
+          images={product.images}
           alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+          intervalMs={3600}
+          showDots={true}
         />
 
-        {/* Badges Overlay */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          {product.isBestseller && (
-            <span className="px-2.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-gradient-to-r from-[#DFBA6F] to-[#AA8417] text-navy-950 shadow-md">
-              Bestseller
-            </span>
-          )}
-          {product.isNewArrival && (
-            <span className="px-2.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-indigo-600 text-white shadow-md">
-              New Arrival
-            </span>
-          )}
-          {discountPercent > 0 && (
-            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-600/90 text-white backdrop-blur-sm shadow-md">
-              {discountPercent}% OFF
-            </span>
-          )}
-        </div>
-
-        {/* Personalization Tag at bottom-right */}
-        <div className="absolute bottom-2.5 right-2.5 z-10 px-2 py-0.5 rounded bg-navy-950/80 backdrop-blur-md border border-[#D4AF37]/30 text-[10px] text-[#F3E5AB] flex items-center gap-1 font-medium">
-          <Sparkles className="w-3 h-3 text-[#D4AF37]" />
-          <span>Laser Customizable</span>
-        </div>
-      </Link>
+        {/* Quick View / Customize Hover Bar */}
+        <Link
+          href={`/product/${product.slug}`}
+          className="qv absolute left-3.5 right-3.5 bottom-3.5 min-h-[44px] bg-gradient-to-r from-[#C9A24B] to-[#F0DFAE] text-[#2A2620] font-bold text-[13px] tracking-[.08em] uppercase flex items-center justify-center shadow-lg transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+        >
+          Quick View
+        </Link>
+      </div>
 
       {/* Content Body */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span className="uppercase tracking-wider text-[10px] text-[#C5A059] font-semibold">
+      <div className="p-6 flex flex-col gap-3 flex-1 justify-between bg-white">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[11px] tracking-[.14em] font-bold text-[#7A5C16] uppercase">
               {product.categoryName}
             </span>
-            {product.rating && (
-              <div className="flex items-center gap-1 text-[#D4AF37]">
-                <Star className="w-3 h-3 fill-current" />
-                <span className="text-[11px] font-bold">{product.rating}</span>
-              </div>
+            {discountPercent > 0 && (
+              <span className="text-[11px] font-bold text-[#8F6A17] bg-[#FBF3DC] px-2 py-0.5 border border-[#EBDDB4]">
+                {discountPercent}% OFF
+              </span>
             )}
           </div>
 
-          <Link href={`/product/${product.slug}`} className="block">
-            <h3 className="text-sm font-serif font-bold text-white group-hover:text-[#F3E5AB] transition-colors line-clamp-2 leading-snug">
+          <Link href={`/product/${product.slug}`} className="block group-hover:text-[#8F6A17] transition-colors">
+            <h3 className="serif text-[22px] leading-tight font-semibold text-[#2A2620] line-clamp-2">
               {product.name}
             </h3>
           </Link>
 
-          <p className="text-xs text-gray-400 line-clamp-2 font-sans leading-relaxed">
+          <p className="text-[13px] text-[#5B5444] line-clamp-2 leading-relaxed">
             {product.shortDescription}
           </p>
         </div>
 
-        {/* Price & Action */}
-        <div className="pt-3 border-t border-navy-800/80 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+        {/* Price & CTA */}
+        <div className="pt-3 border-t border-[#EBDDB4]/60 flex items-center justify-between gap-3 mt-auto">
           <div>
-            <div className="flex items-baseline gap-1.5 flex-wrap">
-              <span className="text-base font-serif font-bold text-[#D4AF37]">
+            <div className="text-[11px] text-[#6E675A] font-medium">Starts from</div>
+            <div className="flex items-baseline gap-2">
+              <span className="serif text-xl font-bold text-[#2A2620]">
                 {formatCurrency(product.discountPrice || product.basePrice)}
               </span>
               {product.discountPrice && (
-                <span className="text-xs text-gray-500 line-through">
+                <span className="text-xs text-[#9A927F] line-through">
                   {formatCurrency(product.basePrice)}
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-gray-400 block">Free Name Engraving</span>
           </div>
 
           <Link
             href={`/product/${product.slug}`}
-            className="btn-luxury-gold px-4 py-2 rounded-xl text-xs font-bold text-navy-950 flex items-center gap-1.5 shadow-md shadow-[#D4AF37]/20 active:scale-95 group/btn"
+            className="btn btn-gold min-h-[44px] px-5 text-xs font-bold tracking-wider"
           >
-            <span>Customize</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+            Customize Now
           </Link>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
 export default ProductCard;
-

@@ -65,18 +65,18 @@ function ShopContent() {
   }, [searchQuery, selectedCategory, sortBy, priceRange, onlyCustomizable]);
 
   return (
-    <div className="min-h-screen bg-[#070C1E] py-12">
+    <div className="min-h-screen bg-[#FFFDF8] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
-        <div className="mb-10 text-center sm:text-left space-y-2 border-b border-navy-800 pb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111C3A] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-widest text-[#F3E5AB]">
+        <div className="mb-10 text-center sm:text-left space-y-2 border-b border-[#EBDDB4] pb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111C3A] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-widest text-[#7A5C16]">
             <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
             Complete Collection
           </div>
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-[#2A2620] tracking-tight">
             Personalized Luxury Gifting & Instruments
           </h1>
-          <p className="text-xs sm:text-sm text-gray-400 font-sans max-w-2xl">
+          <p className="text-xs sm:text-sm text-[#6E675A] font-sans max-w-2xl">
             Explore our comprehensive catalog of laser-engraved pens, handcrafted A5 leather journals,
             touchscreen styluses, and corporate gift suites.
           </p>
@@ -91,14 +91,14 @@ function ShopContent() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by product name, finish, or keyword..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#D9C48C] text-[#2A2620] text-xs placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
             />
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-[#6E675A] absolute left-3.5 top-3" />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                className="absolute right-3 top-3 text-[#6E675A] hover:text-[#2A2620]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -110,19 +110,19 @@ function ShopContent() {
             <button
               type="button"
               onClick={() => setMobileFiltersOpen(true)}
-              className="lg:hidden flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-navy-900 border border-navy-700 text-xs font-semibold text-white"
+              className="lg:hidden flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#D9C48C] text-xs font-semibold text-[#2A2620]"
             >
               <Filter className="w-4 h-4 text-[#D4AF37]" />
               <span>Filters</span>
             </button>
 
             {/* Sort Select */}
-            <div className="flex items-center gap-2 bg-navy-900 border border-navy-700 rounded-xl px-3 py-1.5">
+            <div className="flex items-center gap-2 bg-white border border-[#D9C48C] rounded-xl px-3 py-1.5">
               <ArrowUpDown className="w-3.5 h-3.5 text-[#D4AF37]" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-transparent text-xs text-white focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs text-[#2A2620] focus:outline-none cursor-pointer"
               >
                 <option value="featured">Sort by: Featured</option>
                 <option value="price-low">Price: Low to High</option>
@@ -137,9 +137,9 @@ function ShopContent() {
         {/* Content Layout: Filters Sidebar + Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Desktop Filter Sidebar */}
-          <aside className="hidden lg:block space-y-6 p-6 rounded-2xl bg-[#091126] border border-navy-800/80 h-fit sticky top-24">
-            <div className="flex items-center justify-between border-b border-navy-800 pb-3">
-              <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
+          <aside className="hidden lg:block space-y-6 p-6 rounded-2xl bg-[#F8F2E3] border border-[#EBDDB4]/80 h-fit sticky top-24">
+            <div className="flex items-center justify-between border-b border-[#EBDDB4] pb-3">
+              <h3 className="text-sm font-serif font-bold text-[#2A2620] uppercase tracking-wider">
                 Filter Catalog
               </h3>
               {(selectedCategory !== 'all' || searchQuery || onlyCustomizable) && (
@@ -160,7 +160,7 @@ function ShopContent() {
 
             {/* Category Filter */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-[#F3E5AB] uppercase tracking-wider block">
+              <label className="text-xs font-semibold text-[#7A5C16] uppercase tracking-wider block">
                 Categories
               </label>
               <div className="space-y-1">
@@ -169,8 +169,8 @@ function ShopContent() {
                   onClick={() => setSelectedCategory('all')}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all duration-200 flex justify-between items-center ${
                     selectedCategory === 'all'
-                      ? 'bg-[#D4AF37]/20 text-[#F3E5AB] font-semibold border border-[#D4AF37]/40 shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:translate-x-1'
+                      ? 'bg-[#D4AF37]/20 text-[#7A5C16] font-semibold border border-[#D4AF37]/40 shadow-sm'
+                      : 'text-[#6E675A] hover:text-[#2A2620] hover:translate-x-1'
                   }`}
                 >
                   <span>All Products</span>
@@ -183,8 +183,8 @@ function ShopContent() {
                     onClick={() => setSelectedCategory(cat.id)}
                     className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all duration-200 flex justify-between items-center ${
                       selectedCategory === cat.id
-                        ? 'bg-[#D4AF37]/20 text-[#F3E5AB] font-semibold border border-[#D4AF37]/40 shadow-sm'
-                        : 'text-gray-400 hover:text-white hover:translate-x-1'
+                        ? 'bg-[#D4AF37]/20 text-[#7A5C16] font-semibold border border-[#D4AF37]/40 shadow-sm'
+                        : 'text-[#6E675A] hover:text-[#2A2620] hover:translate-x-1'
                     }`}
                   >
                     <span>{cat.name}</span>
@@ -197,9 +197,9 @@ function ShopContent() {
             </div>
 
             {/* Price Filter */}
-            <div className="space-y-2 border-t border-navy-800 pt-4">
+            <div className="space-y-2 border-t border-[#EBDDB4] pt-4">
               <div className="flex justify-between text-xs">
-                <span className="font-semibold text-[#F3E5AB] uppercase tracking-wider">
+                <span className="font-semibold text-[#7A5C16] uppercase tracking-wider">
                   Max Budget
                 </span>
                 <span className="text-[#D4AF37] font-bold">Up to ₹{priceRange}</span>
@@ -211,7 +211,7 @@ function ShopContent() {
                 step={250}
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
-                className="w-full accent-[#D4AF37] bg-navy-800 cursor-pointer"
+                className="w-full accent-[#D4AF37] bg-[#F8F2E3] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-gray-500">
                 <span>₹500</span>
@@ -220,13 +220,13 @@ function ShopContent() {
             </div>
 
             {/* Customization Toggle */}
-            <div className="border-t border-navy-800 pt-4">
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-gray-300">
+            <div className="border-t border-[#EBDDB4] pt-4">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#5B5444]">
                 <input
                   type="checkbox"
                   checked={onlyCustomizable}
                   onChange={(e) => setOnlyCustomizable(e.target.checked)}
-                  className="rounded border-navy-700 text-[#D4AF37] focus:ring-[#D4AF37]"
+                  className="rounded border-[#D9C48C] text-[#D4AF37] focus:ring-[#D4AF37]"
                 />
                 <span>Only Laser Customizable</span>
               </label>
@@ -235,13 +235,13 @@ function ShopContent() {
 
           {/* Product Grid Area */}
           <div className="lg:col-span-3">
-            <div className="mb-4 text-xs text-gray-400 flex items-center justify-between">
+            <div className="mb-4 text-xs text-[#6E675A] flex items-center justify-between">
               <span>Showing {filteredProducts.length} handcrafted products</span>
             </div>
 
             {filteredProducts.length === 0 ? (
-              <div className="p-12 text-center rounded-2xl bg-[#091126] border border-navy-800 space-y-4">
-                <p className="text-base font-serif font-semibold text-gray-300">
+              <div className="p-12 text-center rounded-2xl bg-[#F8F2E3] border border-[#EBDDB4] space-y-4">
+                <p className="text-base font-serif font-semibold text-[#5B5444]">
                   No matching products found
                 </p>
                 <p className="text-xs text-gray-500">
@@ -275,7 +275,7 @@ function ShopContent() {
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#070C1E] p-12 text-center text-gray-400">Loading catalog...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#FFFDF8] p-12 text-center text-[#6E675A]">Loading catalog...</div>}>
       <ShopContent />
     </Suspense>
   );

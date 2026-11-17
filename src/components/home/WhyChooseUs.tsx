@@ -1,75 +1,91 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Shield, Award, Clock, HeartHandshake, Box } from 'lucide-react';
+
+const REASONS = [
+  {
+    title: 'Premium finishing',
+    text: 'Clean edges, balanced weight and a finish that feels as good as it looks.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M24 6l5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Precision laser engraving',
+    text: 'Sharp, lasting lettering and logos that do not rub off with daily executive use.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 40L28 20" />
+        <path d="M28 20l12-12M32 8l8 8M36 28a3 3 0 100 .1" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Personalized designs',
+    text: 'Names, messages, logos and special artwork, placed where you want them.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 38l4-12L34 6l8 8-20 20z" />
+        <path d="M30 10l8 8" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Quality-focused production',
+    text: 'Every single piece is scrutinized before dispatch so it arrives ready to gift.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 24l10 10L40 12" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Corporate gifting',
+    text: 'Batch customization for teams and clients, with a digital vector proof before production.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 18h32v22H8z" />
+        <path d="M24 18v22M6 12h36v6H6z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Friendly support',
+    text: 'Reach us on WhatsApp anytime for help with designs, quantities and custom bulk quotes.',
+    icon: (
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" stroke="#B88A2E" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 12h32v20H20l-8 8v-8H8z" />
+        <path d="M16 20h16M16 26h10" />
+      </svg>
+    ),
+  },
+];
 
 export const WhyChooseUs: React.FC = () => {
-  const features = [
-    {
-      icon: Sparkles,
-      title: 'Fiber Laser Precision',
-      desc: 'Our German-engineered MOPA fiber lasers etch with 0.02mm accuracy, revealing shining brass undertones that will never peel or fade.',
-    },
-    {
-      icon: Award,
-      title: 'Heirloom Finishing',
-      desc: 'Triple-lacquered brass barrels, 24K gold PVD accents, and supple full-grain PU leather crafted for decades of dependable use.',
-    },
-    {
-      icon: Box,
-      title: 'Luxury Gift Unboxing',
-      desc: 'Every item arrives nestled in custom rigid presentation boxes tied with champagne gold satin ribbons, ready for immediate gifting.',
-    },
-    {
-      icon: Clock,
-      title: 'Rapid 24-48h Dispatch',
-      desc: 'Even personalized orders are custom-engraved and dispatched within 1–2 business days via premier air express couriers.',
-    },
-    {
-      icon: HeartHandshake,
-      title: 'Corporate Gifting Concierge',
-      desc: 'Dedicated account managers for corporate bulk orders, complimentary digital proofing, and bespoke branding customizations.',
-    },
-    {
-      icon: Shield,
-      title: 'Zero-Defect Guarantee',
-      desc: 'If your custom engraving has any spelling flaw on our end or transit damage, we issue a 100% free expedited replacement.',
-    },
-  ];
-
   return (
-    <section className="py-24 bg-[#070D1F] relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37]">
-            The RYNOCHI Distinction
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight">
-            Why Discerning Clients Choose RYNOCHI
+    <section className="py-28 bg-[#F8F2E3]">
+      <div className="wrap">
+        <div className="max-w-[720px]">
+          <div className="eyebrow">Why choose RYNOCHI</div>
+          <h2 className="serif mt-4 text-[clamp(40px,5.5vw,68px)] leading-[1.04] font-semibold text-[#2A2620]">
+            Crafted with <em className="not-italic text-[#8F6A17]">precision</em>, gifted with pride
           </h2>
-          <p className="text-xs sm:text-sm text-gray-300 font-sans">
-            Every piece we craft is a testament to timeless luxury, mechanical precision, and personal sentiment.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feat, idx) => {
-            const Icon = feat.icon;
-            return (
-              <div
-                key={idx}
-                className="p-7 rounded-2xl bg-[#0B132B] border border-navy-800 hover-luxury-card shadow-xl space-y-3 group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-navy-900 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-serif font-bold text-white group-hover:text-[#F3E5AB] transition-colors">
-                  {feat.title}
-                </h3>
-                <p className="text-xs text-gray-400 leading-relaxed font-sans">{feat.desc}</p>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+          {REASONS.map((reason) => (
+            <div key={reason.title} className="why">
+              {reason.icon}
+              <h3 className="serif mt-6 text-[26px] font-semibold text-[#2A2620]">
+                {reason.title}
+              </h3>
+              <p className="mt-3 text-[15.5px] leading-relaxed text-[#5B5444]">
+                {reason.text}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -77,4 +93,3 @@ export const WhyChooseUs: React.FC = () => {
 };
 
 export default WhyChooseUs;
-

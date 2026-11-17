@@ -142,7 +142,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
           <span className="px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-gold-400/20 text-[#D4AF37] border border-gold-400/30">
             {product.categoryName}
           </span>
-          <span className="text-xs text-gray-400">SKU: {selectedVariant?.sku || product.sku}</span>
+          <span className="text-xs text-[#6E675A]">SKU: {selectedVariant?.sku || product.sku}</span>
           {product.stock > 0 ? (
             <span className="text-xs text-emerald-400 font-medium flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -153,7 +153,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
           )}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-white tracking-tight leading-snug">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#2A2620] tracking-tight leading-snug">
           {product.name}
         </h1>
 
@@ -171,7 +171,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
               </span>
             </>
           )}
-          <span className="text-xs text-gray-400 font-sans">Inclusive of all taxes & engraving</span>
+          <span className="text-xs text-[#6E675A] font-sans">Inclusive of all taxes & engraving</span>
         </div>
       </div>
 
@@ -192,7 +192,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
       {/* Color / Variant Selection */}
       {product.variants && product.variants.length > 0 && (
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-300">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#5B5444]">
             Select Color / Finish: <span className="text-[#D4AF37]">{selectedVariant?.colorName}</span>
           </label>
           <div className="flex items-center gap-3">
@@ -204,7 +204,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium border transition-all ${
                   selectedVariant?.id === v.id
                     ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-white ring-1 ring-[#D4AF37]'
-                    : 'border-navy-800 bg-navy-950/40 text-gray-400 hover:border-gray-600'
+                    : 'border-[#EBDDB4] bg-white text-[#6E675A] hover:border-gray-600'
                 }`}
               >
                 <span
@@ -220,7 +220,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
 
       {/* Personalization Engine Box */}
       <div className="p-6 rounded-2xl bg-gradient-to-b from-[#111C3A] to-[#0A1128] border border-[#D4AF37]/30 shadow-xl space-y-5">
-        <div className="flex items-center justify-between border-b border-navy-800 pb-3">
+        <div className="flex items-center justify-between border-b border-[#EBDDB4] pb-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[#D4AF37]" />
             <h2 className="text-base font-serif font-bold text-white tracking-wide">
@@ -238,7 +238,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
             <label className="font-semibold text-gray-200">
               Personalized Name or Text to Engrave <span className="text-[#D4AF37]">*</span>
             </label>
-            <span className="text-gray-400">{primaryText.length} / 25 chars</span>
+            <span className="text-[#6E675A]">{primaryText.length} / 25 chars</span>
           </div>
           <input
             type="text"
@@ -246,9 +246,9 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
             value={primaryText}
             onChange={(e) => setPrimaryText(e.target.value)}
             placeholder="e.g. Saurabh Kumar"
-            className="w-full px-4 py-2.5 rounded-xl bg-navy-900 border border-[#D4AF37]/40 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all text-sm tracking-wide"
+            className="w-full px-4 py-2.5 rounded-xl bg-[#FFFDF8] border border-[#D4AF37]/40 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all text-sm tracking-wide"
           />
-          <p className="text-[11px] text-gray-400">
+          <p className="text-[11px] text-[#6E675A]">
             Precision laser-etched in enduring metallic golden brass.
           </p>
         </div>
@@ -260,7 +260,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
               <label className="font-semibold text-gray-200">
                 Designation / Organization for Cap (Optional)
               </label>
-              <span className="text-gray-400">{secondaryText.length} / 20 chars</span>
+              <span className="text-[#6E675A]">{secondaryText.length} / 20 chars</span>
             </div>
             <input
               type="text"
@@ -268,7 +268,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
               value={secondaryText}
               onChange={(e) => setSecondaryText(e.target.value)}
               placeholder="e.g. CEO / BJP / TechCorp"
-              className="w-full px-4 py-2 rounded-xl bg-navy-900/80 border border-navy-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all text-sm"
+              className="w-full px-4 py-2 rounded-xl bg-[#FFFDF8]/80 border border-[#D9C48C] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all text-sm"
             />
           </div>
         )}
@@ -291,14 +291,14 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
                 onClick={() => setSelectedFont(font.id)}
                 className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                   selectedFont === font.id
-                    ? 'border-[#D4AF37] bg-[#D4AF37]/20 text-[#F3E5AB] shadow-md ring-1 ring-[#D4AF37]'
-                    : 'border-navy-800 bg-navy-950/60 text-gray-400 hover:border-navy-700'
+                    ? 'border-[#D4AF37] bg-[#D4AF37]/20 text-[#7A5C16] shadow-md ring-1 ring-[#D4AF37]'
+                    : 'border-[#EBDDB4] bg-white/60 text-[#6E675A] hover:border-[#D9C48C]'
                 }`}
               >
                 <span className="text-xs text-white truncate max-w-full" style={{ fontFamily: font.style }}>
                   {font.sample}
                 </span>
-                <span className="text-[10px] text-gray-400 mt-1">{font.name}</span>
+                <span className="text-[10px] text-[#6E675A] mt-1">{font.name}</span>
               </button>
             ))}
           </div>
@@ -322,8 +322,8 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
                 onClick={() => setSelectedPlacement(place)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                   selectedPlacement === place
-                    ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#F3E5AB]'
-                    : 'border-navy-800 text-gray-400 hover:border-gray-700'
+                    ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#7A5C16]'
+                    : 'border-[#EBDDB4] text-[#6E675A] hover:border-gray-700'
                 }`}
               >
                 {place}
@@ -342,8 +342,8 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
             <span className="text-[#C5A059]">+₹150 for setup</span>
           </div>
 
-          <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-navy-700 hover:border-[#D4AF37]/50 rounded-xl cursor-pointer bg-navy-950/40 transition-colors">
-            <span className="text-xs text-gray-300">
+          <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-[#D9C48C] hover:border-[#D4AF37]/50 rounded-xl cursor-pointer bg-white transition-colors">
+            <span className="text-xs text-[#5B5444]">
               {uploadedLogo.name ? (
                 <span className="text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" /> {uploadedLogo.name}
@@ -377,7 +377,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
             value={specialInstructions}
             onChange={(e) => setSpecialInstructions(e.target.value)}
             placeholder="Any specific engraving alignment or capitalization notes..."
-            className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-800 text-white placeholder-gray-500 text-xs focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+            className="w-full px-3 py-2 rounded-xl bg-[#FFFDF8] border border-[#EBDDB4] text-white placeholder-gray-500 text-xs focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
           />
         </div>
       </div>
@@ -386,12 +386,12 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-300 block">Quantity:</label>
-            <div className="flex items-center border border-navy-700 bg-navy-950 rounded-xl overflow-hidden">
+            <label className="text-xs font-semibold text-[#5B5444] block">Quantity:</label>
+            <div className="flex items-center border border-[#D9C48C] bg-white rounded-xl overflow-hidden">
               <button
                 type="button"
                 onClick={() => setQuantity(Math.max(product.minOrderQty || 1, quantity - 1))}
-                className="px-3 py-2 text-gray-400 hover:text-white hover:bg-navy-800 transition-colors font-bold"
+                className="px-3 py-2 text-[#6E675A] hover:text-white hover:bg-[#F8F2E3] transition-colors font-bold"
               >
                 -
               </button>
@@ -401,7 +401,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
               <button
                 type="button"
                 onClick={() => setQuantity(quantity + 1)}
-                className="px-3 py-2 text-gray-400 hover:text-white hover:bg-navy-800 transition-colors font-bold"
+                className="px-3 py-2 text-[#6E675A] hover:text-white hover:bg-[#F8F2E3] transition-colors font-bold"
               >
                 +
               </button>
@@ -409,7 +409,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
           </div>
 
           <div className="flex-1 space-y-1">
-            <span className="text-xs text-gray-400">Total Payable Amount:</span>
+            <span className="text-xs text-[#6E675A]">Total Payable Amount:</span>
             <div className="text-2xl font-bold text-white font-serif">
               {formatCurrency(totalPrice)}
             </div>
@@ -450,16 +450,16 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
       </div>
 
       {/* Trust & Guarantee Badges */}
-      <div className="grid grid-cols-3 gap-3 pt-2 border-t border-navy-800 text-center">
-        <div className="flex flex-col items-center gap-1 text-[11px] text-gray-400">
+      <div className="grid grid-cols-3 gap-3 pt-2 border-t border-[#EBDDB4] text-center">
+        <div className="flex flex-col items-center gap-1 text-[11px] text-[#6E675A]">
           <ShieldCheck className="w-5 h-5 text-[#D4AF37]" />
           <span>Permanent Laser Etch Guarantee</span>
         </div>
-        <div className="flex flex-col items-center gap-1 text-[11px] text-gray-400">
+        <div className="flex flex-col items-center gap-1 text-[11px] text-[#6E675A]">
           <Truck className="w-5 h-5 text-[#D4AF37]" />
           <span>Express 24-48h Dispatch</span>
         </div>
-        <div className="flex flex-col items-center gap-1 text-[11px] text-gray-400">
+        <div className="flex flex-col items-center gap-1 text-[11px] text-[#6E675A]">
           <HelpCircle className="w-5 h-5 text-[#D4AF37]" />
           <span>100% Free Defect Replacement</span>
         </div>
