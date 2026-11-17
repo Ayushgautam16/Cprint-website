@@ -1114,9 +1114,9 @@ export default function AdminProductsPage() {
                 </div>
 
                 {/* Previews of uploaded images */}
-                {newProd.images && newProd.images.length > 0 && (
+                {Array.isArray(newProd.images) && newProd.images.length > 0 && (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
-                    {newProd.images.map((img, idx) => (
+                    {newProd.images.filter(Boolean).map((img, idx) => (
                       <div
                         key={idx}
                         className="relative h-20 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"
