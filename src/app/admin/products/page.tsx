@@ -13,6 +13,11 @@ import {
   Package,
   Boxes,
   AlertCircle,
+  Image as ImageIcon,
+  Upload,
+  Star,
+  ArrowUpDown,
+  CheckCircle2,
 } from 'lucide-react';
 import { getStoredProducts, saveStoredProducts, getStoredCategories } from '@/lib/store';
 import { Product, Category } from '@/lib/types';
@@ -22,8 +27,11 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [notification, setNotification] = useState<string | null>(null);
 
   // New product form state
   const [newProd, setNewProd] = useState<Partial<Product>>({
@@ -41,18 +49,30 @@ export default function AdminProductsPage() {
     isBestseller: false,
     isNewArrival: true,
     isActive: true,
-    images: ['/images/products/pen-imperial-blue-gold.jpg'],
+    images: ['/images/products-optimized/1.png'],
   });
 
   useEffect(() => {
     setProducts(getStoredProducts());
     setCategories(getStoredCategories());
+
+    const handleUpdate = () => {
+      setProducts(getStoredProducts());
+    };
+    window.addEventListener('rynochi-products-updated', handleUpdate);
+    return () => window.removeEventListener('rynochi-products-updated', handleUpdate);
   }, []);
+
+  const showToast = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const handleToggleActive = (id: string) => {
     const updated = products.map((p) => (p.id === id ? { ...p, isActive: !p.isActive } : p));
     setProducts(updated);
     saveStoredProducts(updated);
+    showToast('Product visibility updated.');
   };
 
   const handleDelete = (id: string) => {
@@ -60,9 +80,110 @@ export default function AdminProductsPage() {
       const updated = products.filter((p) => p.id !== id);
       setProducts(updated);
       saveStoredProducts(updated);
+      showToast('Product removed.');
     }
   };
 
+  // Add a new image from device file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, isEditing = true) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const result = uploadEvent.target?.result as string;
+      if (!result) return;
+
+      if (isEditing && editingProduct) {
+        setEditingProduct({
+          ...editingProduct,
+          images: [...editingProduct.images, result],
+        });
+      } else {
+        setNewProd({
+          ...newProd,
+          images: [...(newProd.images || []), result],
+        });
+      }
+      showToast('Image uploaded successfully.');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  // Add image by URL or path
+  const handleAddImageUrl = (isEditing = true) => {
+    if (!newImageUrl.trim()) return;
+    const url = newImageUrl.trim();
+
+    if (isEditing && editingProduct) {
+      setEditingProduct({
+        ...editingProduct,
+        images: [...editingProduct.images, url],
+      });
+    } else {
+      setNewProd({
+        ...newProd,
+        images: [...(newProd.images || []), url],
+      });
+    }
+    setNewImageUrl('');
+    showToast('Image added.');
+  };
+
+  // Remove an image from the product's images array
+  const handleRemoveImage = (indexToRemove: number, isEditing = true) => {
+    if (isEditing && editingProduct) {
+      if (editingProduct.images.length <= 1) {
+        alert('Each product must have at least one image.');
+        return;
+      }
+      const updatedImages = editingProduct.images.filter((_, idx) => idx !== indexToRemove);
+      setEditingProduct({
+        ...editingProduct,
+        images: updatedImages,
+      });
+    } else {
+      const updatedImages = (newProd.images || []).filter((_, idx) => idx !== indexToRemove);
+      setNewProd({
+        ...newProd,
+        images: updatedImages,
+      });
+    }
+  };
+
+  // Set an image as primary / cover (moves it to index 0)
+  const handleSetPrimaryImage = (indexToPrimary: number, isEditing = true) => {
+    if (isEditing && editingProduct) {
+      const target = editingProduct.images[indexToPrimary];
+      const remaining = editingProduct.images.filter((_, idx) => idx !== indexToPrimary);
+      setEditingProduct({
+        ...editingProduct,
+        images: [target, ...remaining],
+      });
+    } else {
+      const target = (newProd.images || [])[indexToPrimary];
+      const remaining = (newProd.images || []).filter((_, idx) => idx !== indexToPrimary);
+      setNewProd({
+        ...newProd,
+        images: [target, ...remaining],
+      });
+    }
+  };
+
+  // Save changes to editing product
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+
+    const updated = products.map((p) => (p.id === editingProduct.id ? editingProduct : p));
+    setProducts(updated);
+    saveStoredProducts(updated);
+    setEditingProduct(null);
+    showToast('Product & pricing updated successfully!');
+  };
+
+  // Create new product
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProd.name || !newProd.sku) return;
@@ -88,7 +209,7 @@ export default function AdminProductsPage() {
       isBestseller: Boolean(newProd.isBestseller),
       isNewArrival: Boolean(newProd.isNewArrival),
       isActive: true,
-      images: ['/images/products/diary-pen-giftset-box.jpg'],
+      images: (newProd.images && newProd.images.length > 0) ? newProd.images : ['/images/products-optimized/1.png'],
       rating: 5.0,
       reviewCount: 1,
     };
@@ -97,31 +218,34 @@ export default function AdminProductsPage() {
     setProducts(updated);
     saveStoredProducts(updated);
     setIsAddModalOpen(false);
+    showToast('New product created successfully!');
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingProduct) return;
-
-    const updated = products.map((p) => (p.id === editingProduct.id ? editingProduct : p));
-    setProducts(updated);
-    saveStoredProducts(updated);
-    setEditingProduct(null);
-  };
-
-  const filtered = products.filter(
-    (p) =>
+  // Filter products by search and category
+  const filtered = products.filter((p) => {
+    const matchCat = categoryFilter === 'ALL' || p.categoryId === categoryFilter;
+    const matchSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      p.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
+  });
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {notification && (
+        <div className="fixed top-6 right-6 z-50 p-4 rounded-2xl bg-[#091126] border border-[#D4AF37] text-white text-xs shadow-2xl flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{notification}</span>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-white">Product Catalogue</h1>
+          <h1 className="text-2xl font-serif font-bold text-white">Product Catalogue & Images</h1>
           <p className="text-xs text-gray-400 mt-1">
-            Manage your personalized writing instruments, diaries, variants, and stock counts.
+            Manage product photos, set base and discount prices, update descriptions, and stock counts.
           </p>
         </div>
 
@@ -135,124 +259,504 @@ export default function AdminProductsPage() {
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by product name or SKU..."
-          className="w-full pl-9 pr-4 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
-        />
-        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
-      </div>
+      {/* Search & Category Filter */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by product name or SKU..."
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+          />
+          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+        </div>
 
-      {/* Products Table */}
-      <div className="rounded-2xl bg-[#091126] border border-navy-800 overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-navy-950 text-gray-400 uppercase tracking-wider text-[10px] border-b border-navy-800">
-              <tr>
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3">SKU</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3">Customizable</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-navy-800">
-              {filtered.map((prod) => (
-                <tr key={prod.id} className="hover:bg-navy-950/40 transition-colors">
-                  <td className="px-4 py-3.5 flex items-center gap-3">
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-navy-900 border border-navy-800 flex-shrink-0">
-                      <Image
-                        src={prod.images[0] || '/images/products/diary-pen-giftset-box.jpg'}
-                        alt={prod.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white line-clamp-1 max-w-xs">
-                        {prod.name}
-                      </h4>
-                      <p className="text-[10px] text-gray-500 line-clamp-1">
-                        {prod.shortDescription}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5 font-mono text-gray-300">{prod.sku}</td>
-                  <td className="px-4 py-3.5 text-gray-300">{prod.categoryName}</td>
-                  <td className="px-4 py-3.5 font-serif font-bold text-[#F3E5AB]">
-                    {formatCurrency(prod.discountPrice || prod.basePrice)}
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <span
-                      className={`font-semibold ${
-                        prod.stock < 15 ? 'text-rose-400 font-bold' : 'text-emerald-400'
-                      }`}
-                    >
-                      {prod.stock} units
-                    </span>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    {prod.isCustomizable ? (
-                      <span className="text-[#D4AF37] flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5" /> Laser Yes
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">No</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleActive(prod.id)}
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        prod.isActive
-                          ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-gray-800 text-gray-400'
-                      }`}
-                    >
-                      {prod.isActive ? 'Active' : 'Draft'}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3.5 text-right space-x-2">
-                    <button
-                      type="button"
-                      onClick={() => setEditingProduct(prod)}
-                      className="p-1.5 text-gray-400 hover:text-[#D4AF37] hover:bg-navy-900 rounded-lg transition-colors"
-                      title="Quick Edit"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(prod.id)}
-                      className="p-1.5 text-gray-400 hover:text-rose-400 hover:bg-navy-900 rounded-lg transition-colors"
-                      title="Delete Product"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex items-center gap-2">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="bg-navy-900 border border-navy-700 text-xs text-white rounded-xl px-3 py-2 focus:outline-none"
+          >
+            <option value="ALL">All Categories ({products.length})</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Add Product Modal */}
+      {/* Products List (Cards with ALL Images displayed) */}
+      <div className="space-y-4">
+        {filtered.map((prod) => (
+          <div
+            key={prod.id}
+            className="p-5 rounded-2xl bg-[#091126] border border-navy-800 hover:border-navy-700 shadow-xl transition-all space-y-4"
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Product Info */}
+              <div className="space-y-1.5 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-base font-serif font-bold text-white">{prod.name}</h3>
+                  <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-navy-950 text-gray-400 border border-navy-800">
+                    {prod.sku}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30">
+                    {prod.categoryName}
+                  </span>
+                  {prod.isCustomizable && (
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> Laser Customization
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400 line-clamp-1">{prod.shortDescription}</p>
+              </div>
+
+              {/* Price & Stock Stats */}
+              <div className="flex items-center gap-6 text-xs">
+                <div>
+                  <span className="text-[10px] uppercase text-gray-500 block">Selling Price</span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="font-serif font-bold text-[#F3E5AB] text-base">
+                      {formatCurrency(prod.discountPrice || prod.basePrice)}
+                    </span>
+                    {prod.discountPrice && (
+                      <span className="line-through text-gray-500 text-xs">
+                        {formatCurrency(prod.basePrice)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] uppercase text-gray-500 block">Stock</span>
+                  <span
+                    className={`font-semibold ${
+                      prod.stock < 15 ? 'text-rose-400 font-bold' : 'text-emerald-400'
+                    }`}
+                  >
+                    {prod.stock} units
+                  </span>
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleActive(prod.id)}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-colors ${
+                      prod.isActive
+                        ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    {prod.isActive ? 'Active' : 'Draft'}
+                  </button>
+                </div>
+
+                {/* Edit Button */}
+                <button
+                  type="button"
+                  onClick={() => setEditingProduct(prod)}
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#D4AF37]/15 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-navy-950 border border-[#D4AF37]/40 transition-all flex items-center gap-1.5"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Edit Product & Images</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDelete(prod.id)}
+                  className="p-2 text-gray-500 hover:text-rose-400 hover:bg-navy-900 rounded-xl transition-colors"
+                  title="Delete Product"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* ALL EXISTING IMAGES GALLERY FOR THIS PRODUCT */}
+            <div className="pt-3 border-t border-navy-800/80">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-semibold text-gray-400 flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  Existing Product Images ({prod.images.length} photos)
+                </span>
+                <span className="text-[10px] text-gray-500">
+                  Swipe/Cycle sequence on website
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                {prod.images.map((imgUrl, imgIdx) => (
+                  <div
+                    key={imgIdx}
+                    className="relative w-20 h-20 rounded-xl overflow-hidden bg-navy-950 border border-navy-700/80 flex-shrink-0 group shadow"
+                  >
+                    <Image
+                      src={imgUrl}
+                      alt={`${prod.name} - view ${imgIdx + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                    />
+                    <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
+                      #{imgIdx + 1}
+                    </div>
+                    {imgIdx === 0 && (
+                      <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[9px] font-bold text-navy-950">
+                        Cover
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ============================================================== */}
+      {/* EDIT PRODUCT & IMAGES MODAL */}
+      {/* ============================================================== */}
+      {editingProduct && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center border-b border-navy-800 pb-4">
+              <div>
+                <h3 className="text-lg font-serif font-bold text-white">
+                  Edit Product: {editingProduct.name}
+                </h3>
+                <p className="text-xs text-gray-400">
+                  Manage all photos, prices, descriptions, and availability.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingProduct(null)}
+                className="p-1 rounded-xl text-gray-400 hover:text-white hover:bg-navy-900"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-6 text-xs">
+              {/* SECTION 1: PRODUCT IMAGES MANAGEMENT */}
+              <div className="p-4 rounded-2xl bg-navy-950 border border-navy-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-[#D4AF37] flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      Product Images Gallery ({editingProduct.images.length})
+                    </h4>
+                    <p className="text-[11px] text-gray-400">
+                      Add, delete, or set primary cover photo. These images cycle smoothly on the website.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Visual Grid of All Current Images */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                  {editingProduct.images.map((imgUrl, idx) => (
+                    <div
+                      key={idx}
+                      className="relative h-28 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"
+                    >
+                      <Image
+                        src={imgUrl}
+                        alt={`Photo ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="150px"
+                      />
+
+                      {/* Photo Badge */}
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
+                        #{idx + 1}
+                      </span>
+
+                      {/* Primary Cover Badge or Make Cover Button */}
+                      {idx === 0 ? (
+                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-[#D4AF37] text-navy-950 font-bold text-[9px]">
+                          Main Cover
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleSetPrimaryImage(idx, true)}
+                          className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-950/80 text-[9px] text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#D4AF37] hover:text-navy-950"
+                        >
+                          Make Cover
+                        </button>
+                      )}
+
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(idx, true)}
+                        className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-rose-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 shadow"
+                        title="Remove Image"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Image Controls */}
+                <div className="pt-2 border-t border-navy-900 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  {/* Upload from Device */}
+                  <label className="px-3.5 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-[#F3E5AB] cursor-pointer flex items-center justify-center gap-2 transition-colors flex-shrink-0">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload from Device</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, true)}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {/* Add by URL / Path */}
+                  <div className="flex-1 flex gap-2">
+                    <input
+                      type="text"
+                      value={newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      placeholder="Paste image path or URL (e.g. /images/...)"
+                      className="flex-1 px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleAddImageUrl(true)}
+                      className="px-3 py-2 rounded-xl bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-navy-950 font-semibold transition-colors"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 2: PRICING & DISCOUNTS */}
+              <div className="p-4 rounded-2xl bg-navy-950 border border-navy-800 space-y-3">
+                <h4 className="text-xs font-serif font-bold uppercase tracking-wider text-[#D4AF37]">
+                  Pricing & Stock
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Base Price / MRP (₹)</label>
+                    <input
+                      type="number"
+                      required
+                      value={editingProduct.basePrice}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          basePrice: Number(e.target.value),
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">
+                      Selling / Discount Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={editingProduct.discountPrice || ''}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          discountPrice: Number(e.target.value) || undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Stock Quantity (Units)</label>
+                    <input
+                      type="number"
+                      value={editingProduct.stock}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          stock: Number(e.target.value),
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+
+                {/* Live Discount calculation */}
+                {editingProduct.discountPrice && editingProduct.discountPrice < editingProduct.basePrice && (
+                  <div className="text-[11px] text-emerald-400 font-medium">
+                    Customer saves ₹{editingProduct.basePrice - editingProduct.discountPrice} (
+                    {Math.round(
+                      ((editingProduct.basePrice - editingProduct.discountPrice) /
+                        editingProduct.basePrice) *
+                        100
+                    )}
+                    % OFF)
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 3: PRODUCT TITLE & CATEGORY */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Product Name / Title</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingProduct.name}
+                      onChange={(e) =>
+                        setEditingProduct({ ...editingProduct, name: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Category</label>
+                    <select
+                      value={editingProduct.categoryId}
+                      onChange={(e) => {
+                        const cat = categories.find((c) => c.id === e.target.value);
+                        setEditingProduct({
+                          ...editingProduct,
+                          categoryId: e.target.value,
+                          categoryName: cat?.name || editingProduct.categoryName,
+                        });
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    >
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Short Description */}
+                <div className="space-y-1">
+                  <label className="text-gray-300 font-medium block">
+                    Short Description (Shown on cards)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingProduct.shortDescription}
+                    onChange={(e) =>
+                      setEditingProduct({ ...editingProduct, shortDescription: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+
+                {/* Full Detailed Description */}
+                <div className="space-y-1">
+                  <label className="text-gray-300 font-medium block">
+                    Full Detailed Description (Specifications, materials, engraving instructions)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={editingProduct.description}
+                    onChange={(e) =>
+                      setEditingProduct({ ...editingProduct, description: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+              </div>
+
+              {/* SECTION 4: TOGGLES */}
+              <div className="flex flex-wrap gap-5 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={editingProduct.isCustomizable}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        isCustomizable: e.target.checked,
+                      })
+                    }
+                    className="accent-[#D4AF37] w-4 h-4"
+                  />
+                  <span>Enable Laser Engraving Customization</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={editingProduct.isBestseller}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        isBestseller: e.target.checked,
+                      })
+                    }
+                    className="accent-[#D4AF37] w-4 h-4"
+                  />
+                  <span>Homepage Bestseller</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={editingProduct.isActive}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        isActive: e.target.checked,
+                      })
+                    }
+                    className="accent-[#D4AF37] w-4 h-4"
+                  />
+                  <span>Active on Store</span>
+                </label>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-navy-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingProduct(null)}
+                  className="px-5 py-2.5 rounded-xl text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#DFBA6F] via-[#D4AF37] to-[#AA8417] text-navy-950 hover:brightness-110 shadow-lg shadow-[#D4AF37]/20 flex items-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Save Product & Pricing</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* ADD NEW PRODUCT MODAL */}
+      {/* ============================================================== */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-navy-800 pb-3">
-              <h3 className="text-base font-serif font-bold text-white">
-                Add New Customizable Product
-              </h3>
+              <h3 className="text-base font-serif font-bold text-white">Add New Product</h3>
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(false)}
@@ -263,44 +767,28 @@ export default function AdminProductsPage() {
             </div>
 
             <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
-              <div className="space-y-1">
-                <label className="text-gray-300 font-medium block">Product Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={newProd.name}
-                  onChange={(e) => setNewProd({ ...newProd, name: e.target.value })}
-                  placeholder="e.g. RYNOCHI Regal Tan A5 Journal"
-                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">SKU Code *</label>
+                  <label className="text-gray-300 font-medium block">Product Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newProd.name}
+                    onChange={(e) => setNewProd({ ...newProd, name: e.target.value })}
+                    placeholder="e.g. Signature Golden Ballpoint Pen"
+                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-gray-300 font-medium block">SKU Code</label>
                   <input
                     type="text"
                     required
                     value={newProd.sku}
                     onChange={(e) => setNewProd({ ...newProd, sku: e.target.value })}
-                    placeholder="e.g. RYN-JRN-007"
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Category</label>
-                  <select
-                    value={newProd.categoryId}
-                    onChange={(e) => setNewProd({ ...newProd, categoryId: e.target.value })}
+                    placeholder="e.g. RYN-PEN-01"
                     className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                  >
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
               </div>
 
@@ -318,15 +806,15 @@ export default function AdminProductsPage() {
                   <label className="text-gray-300 font-medium block">Discount Price (₹)</label>
                   <input
                     type="number"
-                    value={newProd.discountPrice}
+                    value={newProd.discountPrice || ''}
                     onChange={(e) =>
-                      setNewProd({ ...newProd, discountPrice: Number(e.target.value) })
+                      setNewProd({ ...newProd, discountPrice: Number(e.target.value) || undefined })
                     }
                     className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Initial Stock</label>
+                  <label className="text-gray-300 font-medium block">Stock Quantity</label>
                   <input
                     type="number"
                     value={newProd.stock}
@@ -342,9 +830,37 @@ export default function AdminProductsPage() {
                   type="text"
                   value={newProd.shortDescription}
                   onChange={(e) => setNewProd({ ...newProd, shortDescription: e.target.value })}
-                  placeholder="One sentence luxury summary..."
+                  placeholder="One line summary for product grid..."
                   className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
                 />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-gray-300 font-medium block">Detailed Description</label>
+                <textarea
+                  rows={3}
+                  value={newProd.description}
+                  onChange={(e) => setNewProd({ ...newProd, description: e.target.value })}
+                  placeholder="Specifications, materials, engraving instructions..."
+                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
+                />
+              </div>
+
+              {/* Upload image */}
+              <div className="p-3 rounded-xl bg-navy-950 border border-navy-800 space-y-2">
+                <label className="text-gray-300 font-medium block">Product Photos</label>
+                <div className="flex gap-2">
+                  <label className="px-3 py-1.5 rounded-xl bg-navy-900 hover:bg-navy-800 border border-navy-700 text-gray-300 cursor-pointer flex items-center gap-1.5">
+                    <Upload className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>Upload Photo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, false)}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="flex gap-4 pt-2">
@@ -352,9 +868,7 @@ export default function AdminProductsPage() {
                   <input
                     type="checkbox"
                     checked={newProd.isCustomizable}
-                    onChange={(e) =>
-                      setNewProd({ ...newProd, isCustomizable: e.target.checked })
-                    }
+                    onChange={(e) => setNewProd({ ...newProd, isCustomizable: e.target.checked })}
                     className="accent-[#D4AF37]"
                   />
                   <span>Enable Laser Customization</span>
@@ -389,131 +903,6 @@ export default function AdminProductsPage() {
           </div>
         </div>
       )}
-
-      {/* Edit Product Modal */}
-      {editingProduct && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#091126] border border-[#D4AF37]/40 rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-navy-800 pb-3">
-              <h3 className="text-base font-serif font-bold text-white">
-                Edit: {editingProduct.name}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setEditingProduct(null)}
-                className="text-gray-400 hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
-              <div className="space-y-1">
-                <label className="text-gray-300 font-medium block">Product Name</label>
-                <input
-                  type="text"
-                  required
-                  value={editingProduct.name}
-                  onChange={(e) =>
-                    setEditingProduct({ ...editingProduct, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Base Price (₹)</label>
-                  <input
-                    type="number"
-                    value={editingProduct.basePrice}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        basePrice: Number(e.target.value),
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Discount Price (₹)</label>
-                  <input
-                    type="number"
-                    value={editingProduct.discountPrice || ''}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        discountPrice: Number(e.target.value) || undefined,
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-gray-300 font-medium block">Stock Quantity</label>
-                  <input
-                    type="number"
-                    value={editingProduct.stock}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={editingProduct.isCustomizable}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        isCustomizable: e.target.checked,
-                      })
-                    }
-                    className="accent-[#D4AF37]"
-                  />
-                  <span>Customizable</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={editingProduct.isBestseller}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        isBestseller: e.target.checked,
-                      })
-                    }
-                    className="accent-[#D4AF37]"
-                  />
-                  <span>Bestseller</span>
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3 border-t border-navy-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingProduct(null)}
-                  className="px-4 py-2 rounded-xl text-gray-400 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#D4AF37] text-navy-950"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
