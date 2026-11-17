@@ -414,7 +414,7 @@ export default function AdminProductsPage() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 overflow-x-auto pb-2">
+              <div className="flex items-center gap-3 overflow-x-auto pb-2 touch-pan-x scroll-smooth snap-x scrollbar-thin">
                 {prod.images.map((imgUrl, imgIdx) => (
                   <div
                     key={imgIdx}
