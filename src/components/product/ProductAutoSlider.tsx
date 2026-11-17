@@ -17,13 +17,26 @@ export default function ProductAutoSlider({
   className = '',
   showDots = true,
 }: ProductAutoSliderProps) {
-  const validImages: string[] = Array.isArray(images) && images.length > 0
-    ? images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
-    : typeof images === 'string' && (images as string).trim().length > 0
-    ? [(images as string).trim()]
-    : ['/images/products-optimized/1.png'];
+  let parsedImages: string[] = [];
+  if (Array.isArray(images)) {
+    parsedImages = images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+  } else if (typeof images === 'string') {
+    const trimmed = (images as string).trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          parsedImages = parsed.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
+        }
+      } catch {
+        parsedImages = [trimmed];
+      }
+    } else if (trimmed.length > 0) {
+      parsedImages = [trimmed];
+    }
+  }
 
-  const safeImages = validImages.length > 0 ? validImages : ['/images/products-optimized/1.png'];
+  const safeImages = parsedImages.length > 0 ? parsedImages : ['/images/products-optimized/1.png'];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isVisible, setIsVisible] = useState(false);

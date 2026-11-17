@@ -58,16 +58,19 @@ export const EngravingPreviewCanvas: React.FC<EngravingPreviewCanvasProps> = ({
   };
 
   // Determine mockup overlay coordinates based on product SKU / type
-  const isDiary = sku.includes('DIA') || sku.includes('SET');
-  const isPen = sku.includes('PEN');
+  const safeSku = sku || '';
+  const isDiary = safeSku.includes('DIA') || safeSku.includes('SET');
+  const isPen = safeSku.includes('PEN');
+  const safeProductImage = productImage || '/images/products-optimized/1.png';
+  const safeProductName = productName || 'Personalized Gift';
 
   return (
     <div className="relative w-full aspect-square max-h-[540px] rounded-2xl overflow-hidden bg-gradient-to-b from-[#111C3A] to-[#070D1F] border border-[#D4AF37]/30 shadow-2xl flex items-center justify-center group select-none">
       {/* Background Product Image */}
       <div className="relative w-full h-full">
         <Image
-          src={productImage}
-          alt={productName}
+          src={safeProductImage}
+          alt={safeProductName}
           fill
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
