@@ -256,9 +256,10 @@ export const Navbar: React.FC = () => {
                 </a>
               </div>
               <a
-                href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+                href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-[#D9C48C] bg-[#FFF8EB] text-xs font-semibold text-[#2A2620]"
               >
                 <div className="w-5 h-5 rounded bg-[#232F3E] text-[#FF9900] flex items-center justify-center flex-shrink-0">

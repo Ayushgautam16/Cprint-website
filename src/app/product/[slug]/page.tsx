@@ -101,9 +101,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
             {/* Amazon Store Listing Link */}
             <a
-              href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+              href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
               target="_blank"
               rel="noopener noreferrer"
+              title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
               className="flex items-center justify-between p-4 rounded-2xl bg-[#FFFDF8] border border-[#EBDDB4] hover:border-[#8F6A17] hover:shadow-md transition-all group"
             >
               <div className="flex items-center gap-3">
@@ -114,7 +115,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 </div>
                 <div>
                   <div className="text-[11px] font-bold uppercase tracking-wider text-[#8F6A17]">Prefer Amazon?</div>
-                  <div className="text-xs font-bold text-[#2A2620]">Available on Official Amazon India Store</div>
+                  <div className="text-xs font-bold text-[#2A2620]">Shop on Official Amazon Storefront</div>
                 </div>
               </div>
               <span className="text-xs font-bold text-[#8F6A17] group-hover:translate-x-0.5 transition-transform">

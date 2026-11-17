@@ -526,7 +526,7 @@ INSERT INTO public.store_settings (
   TRUE, '917277338436', 'orders@rynochi.com',
   '+91 72773 38436', 'T371-FAST FLOR CHAMELIN ROAD KAROL BAGH DELHI-110006 NEW DELHI DELHI 110006 India', 99,
   999, 18, TRUE,
-  TRUE, '{"instagram":"https://www.instagram.com/rynochi__eye_wear?utm_source=qr&srtk=MTB0MDVyMzd5anJsOQ==","facebook":"https://www.facebook.com/share/19ca1jff5P/","youtube":"http://youtube.com/@rynochi-p?si=8yDkeTxuhbS1fZQ3","whatsapp":"https://wa.me/917277338436?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry","amazonStore":"https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link","linkedin":"https://linkedin.com/company/rynochi","twitter":"https://twitter.com/rynochi"}'::jsonb
+  TRUE, '{"instagram":"https://www.instagram.com/rynochi__eye_wear?utm_source=qr&srtk=MTB0MDVyMzd5anJsOQ==","facebook":"https://www.facebook.com/share/19ca1jff5P/","youtube":"http://youtube.com/@rynochi-p?si=8yDkeTxuhbS1fZQ3","whatsapp":"https://wa.me/917277338436?text=Hello%20RYNOCHI,%20I%20have%20an%20enquiry","amazonStore":"https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share","linkedin":"https://linkedin.com/company/rynochi","twitter":"https://twitter.com/rynochi"}'::jsonb
 ) ON CONFLICT (id) DO UPDATE SET
   business_name = EXCLUDED.business_name,
   announcement_text = EXCLUDED.announcement_text,

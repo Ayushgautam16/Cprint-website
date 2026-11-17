@@ -142,10 +142,11 @@ export default function ContactPage() {
                       </svg>
                     </a>
                     <a
-                      href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+                      href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Amazon Store"
+                      aria-label="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
+                      title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
                       className="flex-1 py-1.5 px-3 rounded-lg bg-navy-900 border border-[#D4AF37]/40 flex items-center justify-center gap-1.5 text-xs text-[#F3E5AB] hover:bg-navy-800 transition-colors"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="#FF9900">

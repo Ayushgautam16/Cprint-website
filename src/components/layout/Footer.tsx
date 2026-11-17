@@ -98,11 +98,11 @@ export const Footer: React.FC = () => {
 
                 {/* Amazon Store Icon */}
                 <a
-                  href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+                  href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Shop on Amazon India"
-                  title="Shop RYNOCHI on Amazon India"
+                  title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
                   className="iconbtn border border-[#D9C48C] hover:bg-[#FBF3DC] hover:text-[#FF9900] hover:border-[#FF9900]/50 transition-all duration-300"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -113,11 +113,11 @@ export const Footer: React.FC = () => {
 
               {/* Amazon Store Badge */}
               <a
-                href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+                href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-[#D9C48C] bg-gradient-to-r from-[#FFFDF8] via-[#FFF9EE] to-[#FBF3DC] hover:border-[#8F6A17] hover:shadow-sm transition-all group"
-                title="Shop Official RYNOCHI Store on Amazon India"
+                title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
               >
                 <div className="w-7 h-7 rounded-lg bg-[#232F3E] text-[#FF9900] flex items-center justify-center flex-shrink-0 shadow-sm">
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -170,10 +170,11 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="https://www.amazon.in/sp?ie=UTF8&seller=A199V62RGC67K7&asin=B0G5QF6YG8&ref_=dp_merchant_link"
+                  href="https://www.amazon.in/storefront?me=A199V62RGC67K7&ref_=ssf_share"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flink flex items-center gap-1.5 text-[#8F6A17] font-semibold hover:underline"
+                  title="Shop now from RYNOCHI®️ storefront on Amazon and avail benefits!!"
                 >
                   <span>Amazon Storefront</span>
                   <span className="text-[10px]">↗</span>
