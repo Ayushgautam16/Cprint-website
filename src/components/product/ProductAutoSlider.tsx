@@ -106,14 +106,14 @@ export default function ProductAutoSlider({
         return (
           <div
             key={src}
-            className={`absolute inset-0 w-full h-full flex items-center justify-center p-3 transition-opacity duration-700 ease-out will-change-[opacity] ${
+            className={`absolute inset-0 w-full h-full flex items-center justify-center p-5 sm:p-6 transition-opacity duration-700 ease-out will-change-[opacity] ${
               isActive ? 'opacity-100 z-1' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
             <img
               src={src}
               alt={`${alt} - View ${idx + 1}`}
-              className="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
               loading={idx === 0 ? 'eager' : 'lazy'}
               decoding="async"
             />
