@@ -17,7 +17,13 @@ export default function ProductAutoSlider({
   className = '',
   showDots = true,
 }: ProductAutoSliderProps) {
-  const validImages = images && images.length > 0 ? images : ['/images/products-optimized/1.png'];
+  const validImages: string[] = Array.isArray(images) && images.length > 0
+    ? images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
+    : typeof images === 'string' && (images as string).trim().length > 0
+    ? [(images as string).trim()]
+    : ['/images/products-optimized/1.png'];
+
+  const safeImages = validImages.length > 0 ? validImages : ['/images/products-optimized/1.png'];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,28 +55,28 @@ export default function ProductAutoSlider({
 
   // Guard index bounds if product images update dynamically
   useEffect(() => {
-    if (currentIndex >= validImages.length) {
+    if (currentIndex >= safeImages.length) {
       setCurrentIndex(0);
     }
-  }, [validImages.length, currentIndex]);
+  }, [safeImages.length, currentIndex]);
 
   // Interval timer with visibility & hover/drag awareness
   useEffect(() => {
-    if (validImages.length <= 1 || isPaused || isDragging || !isVisible) {
+    if (safeImages.length <= 1 || isPaused || isDragging || !isVisible) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
 
-    const stagger = (validImages.length % 3) * 250;
+    const stagger = (safeImages.length % 3) * 250;
     timerRef.current = setInterval(() => {
       if (typeof document !== 'undefined' && document.hidden) return;
-      setCurrentIndex((prev) => (prev + 1) % validImages.length);
+      setCurrentIndex((prev) => (prev + 1) % safeImages.length);
     }, intervalMs + stagger);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [validImages.length, intervalMs, isPaused, isDragging, isVisible]);
+  }, [safeImages.length, intervalMs, isPaused, isDragging, isVisible]);
 
   // Touch Swipe Handlers for Mobile Phones
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -108,10 +114,10 @@ export default function ProductAutoSlider({
     const threshold = 35; // px swipe threshold
     if (deltaX < -threshold) {
       // Swiped Left -> Next image
-      setCurrentIndex((prev) => (prev + 1) % validImages.length);
+      setCurrentIndex((prev) => (prev + 1) % safeImages.length);
     } else if (deltaX > threshold) {
       // Swiped Right -> Previous image
-      setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
+      setCurrentIndex((prev) => (prev - 1 + safeImages.length) % safeImages.length);
     }
   };
 
@@ -124,17 +130,17 @@ export default function ProductAutoSlider({
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % validImages.length);
+    setCurrentIndex((prev) => (prev + 1) % safeImages.length);
   };
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
+    setCurrentIndex((prev) => (prev - 1 + safeImages.length) % safeImages.length);
   };
 
-  const nextIndex = (currentIndex + 1) % validImages.length;
-  const prevIndex = (currentIndex - 1 + validImages.length) % validImages.length;
+  const nextIndex = (currentIndex + 1) % safeImages.length;
+  const prevIndex = (currentIndex - 1 + safeImages.length) % safeImages.length;
 
   return (
     <div
@@ -149,7 +155,7 @@ export default function ProductAutoSlider({
       style={{ transform: 'translate3d(0,0,0)' }}
     >
       {/* Horizontal Sliding Image Reel */}
-      {validImages.map((src, idx) => {
+      {safeImages.map((src, idx) => {
         // Render active and adjacent images for performance
         const shouldRender = idx === currentIndex || idx === nextIndex || idx === prevIndex;
         if (!shouldRender) return null;
@@ -182,7 +188,7 @@ export default function ProductAutoSlider({
       })}
 
       {/* Manual Quick Next/Prev Arrows (Visible on card hover on desktop & subtle touch arrows on mobile) */}
-      {validImages.length > 1 && (
+      {safeImages.length > 1 && (
         <>
           <button
             type="button"
@@ -208,9 +214,9 @@ export default function ProductAutoSlider({
       )}
 
       {/* Slide Dots Indicator */}
-      {showDots && validImages.length > 1 && (
+      {showDots && safeImages.length > 1 && (
         <div className="absolute bottom-2.5 left-0 right-0 z-10 flex items-center justify-center gap-1.5 pointer-events-auto">
-          {validImages.map((_, idx) => (
+          {safeImages.map((_, idx) => (
             <button
               key={idx}
               type="button"

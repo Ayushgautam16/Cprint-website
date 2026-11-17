@@ -56,6 +56,49 @@ export function saveStoredOrders(orders: Order[]): void {
   }
 }
 
+function sanitizeProduct(p: any): Product {
+  let images: string[] = ['/images/products-optimized/1.png'];
+  if (Array.isArray(p?.images) && p.images.length > 0) {
+    images = p.images.filter((img: any) => typeof img === 'string' && img.trim().length > 0);
+  } else if (typeof p?.images === 'string' && p.images.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(p.images);
+      if (Array.isArray(parsed)) {
+        images = parsed.filter((img: any) => typeof img === 'string' && img.trim().length > 0);
+      } else {
+        images = [p.images.trim()];
+      }
+    } catch {
+      images = [p.images.trim()];
+    }
+  }
+  if (images.length === 0) {
+    images = ['/images/products-optimized/1.png'];
+  }
+
+  return {
+    ...p,
+    id: p?.id || `prod_${Date.now()}`,
+    name: p?.name || 'Personalized Luxury Item',
+    slug: p?.slug || 'product',
+    sku: p?.sku || 'RYN-ITEM',
+    shortDescription: p?.shortDescription || '',
+    description: p?.description || '',
+    categoryId: p?.categoryId || 'cat-pens',
+    categoryName: p?.categoryName || 'Personalized Pens',
+    basePrice: Number(p?.basePrice) || 999,
+    discountPrice: p?.discountPrice ? Number(p?.discountPrice) : undefined,
+    stock: Number(p?.stock) || 50,
+    minOrderQty: Number(p?.minOrderQty) || 1,
+    isCustomizable: Boolean(p?.isCustomizable !== false),
+    isFeatured: Boolean(p?.isFeatured),
+    isBestseller: Boolean(p?.isBestseller),
+    isNewArrival: Boolean(p?.isNewArrival),
+    isActive: Boolean(p?.isActive !== false),
+    images,
+  };
+}
+
 export function getStoredProducts(): Product[] {
   if (typeof window === 'undefined') return PRODUCTS;
   try {
@@ -64,7 +107,9 @@ export function getStoredProducts(): Product[] {
       localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(PRODUCTS));
       return PRODUCTS;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return PRODUCTS;
+    return parsed.map(sanitizeProduct);
   } catch (e) {
     return PRODUCTS;
   }

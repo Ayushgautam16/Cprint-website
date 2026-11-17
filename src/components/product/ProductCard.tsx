@@ -11,7 +11,11 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const discountPercent = calculateDiscountPercentage(product.basePrice, product.discountPrice);
+  if (!product) return null;
+
+  const basePrice = Number(product.basePrice) || 0;
+  const discountPrice = product.discountPrice ? Number(product.discountPrice) : undefined;
+  const discountPercent = calculateDiscountPercentage(basePrice, discountPrice);
   const badgeLabel = product.isBestseller
     ? 'Bestseller'
     : product.isNewArrival
@@ -19,6 +23,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : product.isFeatured
     ? 'Featured'
     : 'Customizable';
+
+  const safeImages = Array.isArray(product.images) && product.images.length > 0
+    ? product.images
+    : typeof product.images === 'string' && (product.images as string).trim()
+    ? [product.images]
+    : ['/images/products-optimized/1.png'];
 
   return (
     <article className="prod rvs rounded-none border border-[#EBDDB4] bg-white flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_56px_rgba(122,92,22,0.18)] hover:border-[#C9A24B] overflow-hidden group">
@@ -31,8 +41,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Auto-Swiping Images */}
         <ProductAutoSlider
-          images={product.images}
-          alt={product.name}
+          images={safeImages}
+          alt={product.name || 'Personalized Luxury Product'}
           intervalMs={3600}
           showDots={true}
         />

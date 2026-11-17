@@ -6,10 +6,10 @@ import { useLiveSettings } from '@/lib/store';
 export const AnnouncementBar: React.FC = () => {
   const { settings } = useLiveSettings();
 
-  if (!settings.announcementActive) return null;
+  if (!settings || !settings.announcementActive) return null;
 
   const text =
-    settings.announcementText ||
+    settings?.announcementText ||
     '✨ FREE ALL-INDIA SHIPPING ON ORDERS ABOVE ₹999 • COMPLIMENTARY PRECISION LASER ENGRAVING • DISPATCH WITHIN 24–48 HOURS • ZERO DEFECT SATISFACTION GUARANTEE';
 
   return (

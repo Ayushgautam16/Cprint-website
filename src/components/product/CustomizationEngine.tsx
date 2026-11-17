@@ -27,9 +27,11 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
   const router = useRouter();
   const { addItem } = useCart();
 
+  const safeSku = product?.sku || '';
+
   // Selected variant
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(
-    product.variants?.[0]
+    product?.variants?.[0]
   );
 
   // Customization Form State
@@ -37,7 +39,7 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
   const [secondaryText, setSecondaryText] = useState('');
   const [selectedFont, setSelectedFont] = useState('Great Vibes');
   const [selectedPlacement, setSelectedPlacement] = useState(
-    product.sku.includes('DIA') || product.sku.includes('SET')
+    safeSku.includes('DIA') || safeSku.includes('SET')
       ? 'Center Brass Nameplate'
       : 'Pen Barrel Center'
   );
@@ -178,14 +180,14 @@ export const CustomizationEngine: React.FC<CustomizationEngineProps> = ({ produc
       {/* Interactive Mockup Canvas on Mobile or Tablet */}
       <div className="lg:hidden w-full">
         <EngravingPreviewCanvas
-          productImage={selectedVariant?.imageUrl || product.images[0]}
-          productName={product.name}
+          productImage={selectedVariant?.imageUrl || product?.images?.[0] || '/images/products-optimized/1.png'}
+          productName={product?.name || 'Personalized Gift'}
           engravedText={primaryText}
           secondaryText={secondaryText}
           selectedFont={selectedFont}
           placement={selectedPlacement}
           uploadedLogoUrl={uploadedLogo.previewUrl}
-          sku={product.sku}
+          sku={safeSku}
         />
       </div>
 

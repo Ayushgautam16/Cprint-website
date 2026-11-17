@@ -30,9 +30,18 @@ export const ProductDetailLive: React.FC<ProductDetailLiveProps> = ({
 
   const product = liveProduct || initialProduct;
 
+  if (!product) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-24 text-center">
+        <div className="w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-xs text-gray-500 font-sans tracking-wider uppercase">Loading product details...</p>
+      </div>
+    );
+  }
+
   // Related products from live product list
   const relatedProducts = allProducts
-    .filter((p) => p.id !== product.id && p.categoryId === product.categoryId)
+    .filter((p) => p && p.id !== product.id && p.categoryId === product.categoryId)
     .slice(0, 3);
 
   return (

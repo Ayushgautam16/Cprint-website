@@ -3,11 +3,19 @@
 import React, { useState, useRef } from 'react';
 
 interface ProductGalleryProps {
-  images: string[];
+  images?: string[];
   productName: string;
 }
 
 export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) => {
+  const safeImages: string[] = Array.isArray(images) && images.length > 0
+    ? images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
+    : typeof images === 'string' && (images as string).trim().length > 0
+    ? [(images as string).trim()]
+    : ['/images/products-optimized/1.png'];
+
+  const validImages = safeImages.length > 0 ? safeImages : ['/images/products-optimized/1.png'];
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -16,10 +24,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
 
   // Guard bounds if image count changes dynamically
   React.useEffect(() => {
-    if (selectedIndex >= images.length && images.length > 0) {
+    if (selectedIndex >= validImages.length) {
       setSelectedIndex(0);
     }
-  }, [images.length, selectedIndex]);
+  }, [validImages.length, selectedIndex]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -29,13 +37,13 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
   };
 
   const handleNext = () => {
-    if (images.length <= 1) return;
-    setSelectedIndex((prev) => (prev + 1) % images.length);
+    if (validImages.length <= 1) return;
+    setSelectedIndex((prev) => (prev + 1) % validImages.length);
   };
 
   const handlePrev = () => {
-    if (images.length <= 1) return;
-    setSelectedIndex((prev) => (prev - 1 + images.length) % images.length);
+    if (validImages.length <= 1) return;
+    setSelectedIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
   };
 
   // Touch Swipe for mobile phones
@@ -67,7 +75,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     }
   };
 
-  const activeImage = images[selectedIndex] || images[0] || '/images/products-optimized/1.png';
+  const activeImage = validImages[selectedIndex] || validImages[0] || '/images/products-optimized/1.png';
 
   return (
     <div className="flex flex-col gap-4 w-full select-none">
@@ -102,7 +110,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         />
 
         {/* Mobile Swipe / Click Navigation Arrows */}
-        {images.length > 1 && (
+        {validImages.length > 1 && (
           <>
             <button
               type="button"
@@ -128,9 +136,9 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
         )}
 
         {/* Image Counter Badge for Mobile */}
-        {images.length > 1 && (
+        {validImages.length > 1 && (
           <div className="absolute top-3 right-3 text-[11px] font-bold bg-white/90 backdrop-blur-md text-[#7A5C16] px-2.5 py-1 border border-[#EBDDB4] rounded-full shadow-sm">
-            {selectedIndex + 1} / {images.length}
+            {selectedIndex + 1} / {validImages.length}
           </div>
         )}
 
@@ -141,9 +149,9 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
       </div>
 
       {/* Thumbnails Row */}
-      {images.length > 1 && (
+      {validImages.length > 1 && (
         <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none touch-pan-x">
-          {images.map((img, idx) => (
+          {validImages.map((img, idx) => (
             <button
               key={idx}
               type="button"
