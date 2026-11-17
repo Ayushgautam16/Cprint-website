@@ -55,6 +55,9 @@ export const metadata: Metadata = {
     description: 'Precision laser-engraved pens and handcrafted leather diaries.',
     images: ['/images/products/giftset-diary-pen-showcase.jpg'],
   },
+  verification: {
+    google: 'google5a7ae47222b0cb1b',
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
