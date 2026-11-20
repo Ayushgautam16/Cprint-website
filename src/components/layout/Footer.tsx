@@ -216,9 +216,9 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 pt-8 border-t border-[#EBDDB4] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6E675A] pb-16 sm:pb-2 sm:pr-48">
+        <div className="mt-14 pt-8 border-t border-[#EBDDB4] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6E675A] pb-24 sm:pb-6">
           <p>© {new Date().getFullYear()} RYNOCHI. All rights reserved. Handcrafted with pride in India.</p>
-          <p className="flex items-center gap-2">
+          <p className="flex items-center gap-2 sm:mr-24">
             <span>Precision Laser Craft</span>
             <span>•</span>
             <span>Zero-Defect Guarantee</span>
