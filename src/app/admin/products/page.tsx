@@ -313,6 +313,7 @@ export default function AdminProductsPage() {
           is_new_arrival: Boolean(editingProduct.isNewArrival),
           is_active: Boolean(editingProduct.isActive),
           images: editingProduct.images,
+          specifications: editingProduct.specifications,
           updated_at: new Date().toISOString(),
         })
         .eq('id', editingProduct.id);
@@ -367,6 +368,19 @@ export default function AdminProductsPage() {
       isNewArrival: Boolean(newProd.isNewArrival),
       isActive: true,
       images: (newProd.images && newProd.images.length > 0) ? newProd.images : ['/images/products-optimized/1.png'],
+      specifications: newProd.specifications || {
+        Brand: 'RYNOCHI',
+        'Product Type': 'Ball Pen',
+        'Main Colour': 'Black',
+        'Accent Colour': 'Gold',
+        Material: 'Solid Machined Brass',
+        'Pen Mechanism': 'Twist Mechanism',
+        Design: 'Textured Designer Grip',
+        Personalization: 'Custom Name Engraving',
+        Style: 'Luxury Executive',
+        Collection: 'Premium Collection',
+        'Ideal For': 'Men & Women',
+      },
       rating: 5.0,
       reviewCount: 1,
     };
