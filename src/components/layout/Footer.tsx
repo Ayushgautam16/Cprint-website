@@ -2,9 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useLiveCategories } from '@/lib/store';
 import { CATEGORIES } from '@/lib/mockData';
 
 export const Footer: React.FC = () => {
+  const { categories: liveCategories } = useLiveCategories();
+  const categoriesList = Array.isArray(liveCategories) && liveCategories.length > 0 ? liveCategories : CATEGORIES;
   return (
     <footer className="bg-[#FFFDF8] text-[#4A432F] pt-20 pb-10 border-t border-[#D9C48C]">
       <div className="wrap">
@@ -145,8 +148,8 @@ export const Footer: React.FC = () => {
           <div>
             <div className="eyebrow mb-4">Categories</div>
             <ul className="space-y-1">
-              {CATEGORIES.map((cat) => (
-                <li key={cat.id}>
+              {categoriesList.map((cat) => (
+                <li key={cat.id || cat.slug}>
                   <Link href={`/category/${cat.slug}`} className="flink">
                     {cat.name}
                   </Link>
