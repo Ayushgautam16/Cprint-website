@@ -409,6 +409,7 @@ export default function AdminProductsPage() {
         is_new_arrival: created.isNewArrival,
         is_active: true,
         images: created.images,
+        specifications: created.specifications,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
