@@ -14,6 +14,10 @@ import {
   Upload,
   CheckCircle2,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
 import { getStoredProducts, saveStoredProducts, getStoredCategories } from '@/lib/store';
 import { Product, Category } from '@/lib/types';
@@ -278,6 +282,54 @@ export default function AdminProductsPage() {
       }));
     }
     showToast('Main cover photo selected.');
+  };
+
+  // Drag state for reordering photos
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+
+  // Move / reorder image position forward or backward in sequence
+  const handleMoveImage = (fromIdx: number, toIdx: number, isEditing = true) => {
+    if (isEditing && editingProduct) {
+      const imgs = [...getSafeImages(editingProduct.images)];
+      if (toIdx < 0 || toIdx >= imgs.length || fromIdx === toIdx) return;
+      const [moved] = imgs.splice(fromIdx, 1);
+      imgs.splice(toIdx, 0, moved);
+      setEditingProduct({
+        ...editingProduct,
+        images: imgs,
+      });
+      showToast(`Photo moved to position #${toIdx + 1}`);
+    } else {
+      const imgs = [...getSafeImages(newProd.images)];
+      if (toIdx < 0 || toIdx >= imgs.length || fromIdx === toIdx) return;
+      const [moved] = imgs.splice(fromIdx, 1);
+      imgs.splice(toIdx, 0, moved);
+      setNewProd((prev) => ({
+        ...prev,
+        images: imgs,
+      }));
+      showToast(`Photo moved to position #${toIdx + 1}`);
+    }
+  };
+
+  // Move / reorder image position directly from product card in the main list
+  const handleReorderProductDirect = async (productId: string, fromIdx: number, toIdx: number) => {
+    const prod = products.find((p) => p.id === productId);
+    if (!prod) return;
+    const imgs = [...getSafeImages(prod.images)];
+    if (toIdx < 0 || toIdx >= imgs.length || fromIdx === toIdx) return;
+    const [moved] = imgs.splice(fromIdx, 1);
+    imgs.splice(toIdx, 0, moved);
+    const updatedProd = { ...prod, images: imgs };
+    const updatedList = products.map((p) => (p.id === productId ? updatedProd : p));
+    setProducts(updatedList);
+    saveStoredProducts(updatedList);
+    try {
+      await supabase.from('products').update({ images: imgs }).eq('id', productId);
+      showToast(`Photo #${toIdx + 1} position updated!`);
+    } catch (err) {
+      console.error('Failed to sync reordered photos to Supabase:', err);
+    }
   };
 
   // Save changes to editing product
@@ -617,32 +669,56 @@ export default function AdminProductsPage() {
                       <ImageIcon className="w-3.5 h-3.5 text-[#D4AF37]" />
                       Existing Product Images ({safeProdImages.length} photos)
                     </span>
-                    <span className="text-[10px] text-gray-500">
-                      Swipe/Cycle sequence on website
+                    <span className="text-[10px] text-gray-400">
+                      Arrows (<span className="text-[#D4AF37] font-semibold">◀ / ▶</span>) click karke sequence change karein
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3 overflow-x-auto pb-2 touch-pan-x scroll-smooth snap-x scrollbar-thin">
                     {safeProdImages.map((imgUrl, imgIdx) => (
                       <div
-                        key={imgIdx}
-                        className="relative w-20 h-20 rounded-xl overflow-hidden bg-navy-950 border border-navy-700/80 flex-shrink-0 group shadow"
+                        key={`${imgUrl}-${imgIdx}`}
+                        className={`relative w-24 h-24 rounded-xl overflow-hidden bg-navy-950 border transition-all flex-shrink-0 group shadow ${
+                          imgIdx === 0 ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]/40' : 'border-navy-700/80 hover:border-gray-500'
+                        }`}
                       >
                         <Image
                           src={imgUrl}
                           alt={`${prod.name} - view ${imgIdx + 1}`}
                           fill
                           className="object-contain p-1"
-                          sizes="80px"
+                          sizes="96px"
                         />
-                        <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
+                        <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono font-bold text-gray-200 z-10">
                           #{imgIdx + 1}
                         </div>
                         {imgIdx === 0 && (
-                          <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[9px] font-bold text-navy-950">
+                          <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-[#D4AF37] text-[8px] font-bold text-navy-950 z-10 shadow">
                             Cover
                           </div>
                         )}
+                        {/* Quick sequence shift arrows directly on card */}
+                        <div className="absolute inset-x-0 bottom-0 p-1 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex items-center justify-between z-10 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            disabled={imgIdx === 0}
+                            onClick={() => handleReorderProductDirect(prod.id, imgIdx, imgIdx - 1)}
+                            className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                            title="Move Left (Aagey)"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="text-[9px] font-mono text-gray-300 font-bold">#{imgIdx + 1}</span>
+                          <button
+                            type="button"
+                            disabled={imgIdx === safeProdImages.length - 1}
+                            onClick={() => handleReorderProductDirect(prod.id, imgIdx, imgIdx + 1)}
+                            className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                            title="Move Right (Picche)"
+                          >
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -688,7 +764,7 @@ export default function AdminProductsPage() {
                       Product Images Gallery ({getSafeImages(editingProduct.images).length})
                     </h4>
                     <p className="text-[11px] text-gray-400">
-                      Add, delete, or set primary cover photo. These images cycle smoothly on the website.
+                      Photo sequence change karne ke liye arrows (<span className="text-[#D4AF37] font-bold">◀ / ▶</span>) click karein ya photos ko drag/swipe karein. Photo #1 Main Cover hoti hai.
                     </p>
                   </div>
                   {isUploadingImage && (
@@ -699,12 +775,25 @@ export default function AdminProductsPage() {
                   )}
                 </div>
 
-                {/* Visual Grid of All Current Images */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                  {getSafeImages(editingProduct.images).map((imgUrl, idx) => (
+                {/* Visual Grid of All Current Images with Swipe / Reorder Controls */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
+                  {getSafeImages(editingProduct.images).map((imgUrl, idx, arr) => (
                     <div
-                      key={idx}
-                      className="relative h-28 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"
+                      key={`${imgUrl}-${idx}`}
+                      draggable
+                      onDragStart={() => setDraggedIdx(idx)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => {
+                        if (draggedIdx !== null && draggedIdx !== idx) {
+                          handleMoveImage(draggedIdx, idx, true);
+                        }
+                        setDraggedIdx(null);
+                      }}
+                      className={`relative h-32 rounded-xl overflow-hidden bg-navy-900 border transition-all select-none group ${
+                        idx === 0
+                          ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]/60'
+                          : 'border-navy-700 hover:border-gray-500'
+                      } ${draggedIdx === idx ? 'opacity-40 scale-95' : 'opacity-100'}`}
                     >
                       <Image
                         src={imgUrl}
@@ -714,35 +803,77 @@ export default function AdminProductsPage() {
                         sizes="150px"
                       />
 
-                      {/* Photo Badge */}
-                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-300">
+                      {/* Photo Sequence Badge */}
+                      <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-gray-200 font-bold z-10">
                         #{idx + 1}
                       </span>
 
-                      {/* Primary Cover Badge or Make Cover Button */}
-                      {idx === 0 ? (
-                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-[#D4AF37] text-navy-950 font-bold text-[9px]">
+                      {/* Primary Cover Badge */}
+                      {idx === 0 && (
+                        <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded bg-[#D4AF37] text-navy-950 font-bold text-[9px] z-10 shadow">
                           Main Cover
                         </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleSetPrimaryImage(idx, true)}
-                          className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-950/80 text-[9px] text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#D4AF37] hover:text-navy-950"
-                        >
-                          Make Cover
-                        </button>
                       )}
 
-                      {/* Delete Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(idx, true)}
-                        className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-rose-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 shadow"
-                        title="Remove Image"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      {/* Action Controls Bar for Reordering (Aage / Picche) */}
+                      <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex items-center justify-between gap-1 z-10">
+                        {/* Move Backward / Left Arrow */}
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveImage(idx, idx - 1, true);
+                          }}
+                          className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                          title="Move Left (Aagey)"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Set as Cover (if not already cover) */}
+                        {idx !== 0 ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSetPrimaryImage(idx, true);
+                            }}
+                            className="text-[9px] text-[#D4AF37] hover:underline font-semibold"
+                          >
+                            Set Cover
+                          </button>
+                        ) : (
+                          <span className="text-[9px] text-gray-400 font-medium">Cover</span>
+                        )}
+
+                        {/* Move Forward / Right Arrow */}
+                        <button
+                          type="button"
+                          disabled={idx === arr.length - 1}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveImage(idx, idx + 1, true);
+                          }}
+                          className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                          title="Move Right (Picche)"
+                        >
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage(idx, true);
+                          }}
+                          className="p-1 rounded bg-rose-600/80 text-white hover:bg-rose-600 transition-colors"
+                          title="Remove Image"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -844,15 +975,17 @@ export default function AdminProductsPage() {
                 </div>
 
                 {/* Live Discount calculation */}
-                {editingProduct.discountPrice && editingProduct.discountPrice < editingProduct.basePrice && (
-                  <div className="text-[11px] text-emerald-400 font-medium">
-                    Customer saves ₹{editingProduct.basePrice - editingProduct.discountPrice} (
-                    {Math.round(
-                      ((editingProduct.basePrice - editingProduct.discountPrice) /
-                        editingProduct.basePrice) *
-                        100
-                    )}
-                    % OFF)
+                {editingProduct.discountPrice && Number(editingProduct.discountPrice) < Number(editingProduct.basePrice) && (
+                  <div className="text-[12px] text-emerald-400 font-semibold flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 px-3.5 py-2 rounded-xl shadow-sm">
+                    <span>🏷️ Customer saves ₹{Number(editingProduct.basePrice) - Number(editingProduct.discountPrice)}</span>
+                    <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[11px] font-bold">
+                      {Math.round(
+                        ((Number(editingProduct.basePrice) - Number(editingProduct.discountPrice)) /
+                          Number(editingProduct.basePrice)) *
+                          100
+                      )}
+                      % OFF
+                    </span>
                   </div>
                 )}
               </div>
@@ -1303,6 +1436,21 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
+              {/* Live Discount calculation for Add New Product */}
+              {newProd.basePrice && newProd.discountPrice && Number(newProd.discountPrice) < Number(newProd.basePrice) && (
+                <div className="text-[12px] text-emerald-400 font-semibold flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 px-3.5 py-2 rounded-xl shadow-sm">
+                  <span>🏷️ Customer saves ₹{Number(newProd.basePrice) - Number(newProd.discountPrice)}</span>
+                  <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[11px] font-bold">
+                    {Math.round(
+                      ((Number(newProd.basePrice) - Number(newProd.discountPrice)) /
+                        Number(newProd.basePrice)) *
+                        100
+                    )}
+                    % OFF
+                  </span>
+                </div>
+              )}
+
               <div className="space-y-1">
                 <label className="text-gray-300 font-medium block">Short Description</label>
                 <input
@@ -1328,7 +1476,14 @@ export default function AdminProductsPage() {
               {/* Upload image & preview for New Product */}
               <div className="p-3.5 rounded-2xl bg-navy-950 border border-navy-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-gray-300 font-medium block">Product Photos</label>
+                  <div>
+                    <label className="text-gray-300 font-medium block">
+                      Product Photos ({getSafeImages(newProd.images).length})
+                    </label>
+                    <p className="text-[11px] text-gray-400">
+                      Photo sequence change karne ke liye arrows (<span className="text-[#D4AF37] font-bold">◀ / ▶</span>) click karein ya photos ko drag/swipe karein. Photo #1 Main Cover hoti hai.
+                    </p>
+                  </div>
                   {isUploadingImage && (
                     <div className="flex items-center gap-1.5 text-xs text-[#D4AF37] font-semibold animate-pulse">
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4AF37]" />
@@ -1337,36 +1492,102 @@ export default function AdminProductsPage() {
                   )}
                 </div>
 
-                {/* Previews of uploaded images */}
+                {/* Previews of uploaded images with swipe / reorder controls */}
                 {Array.isArray(newProd.images) && newProd.images.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
-                    {newProd.images.filter(Boolean).map((img, idx) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
+                    {getSafeImages(newProd.images).map((img, idx, arr) => (
                       <div
-                        key={idx}
-                        className="relative h-20 rounded-xl overflow-hidden bg-navy-900 border border-navy-700 group"
+                        key={`${img}-${idx}`}
+                        draggable
+                        onDragStart={() => setDraggedIdx(idx)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => {
+                          if (draggedIdx !== null && draggedIdx !== idx) {
+                            handleMoveImage(draggedIdx, idx, false);
+                          }
+                          setDraggedIdx(null);
+                        }}
+                        className={`relative h-32 rounded-xl overflow-hidden bg-navy-900 border transition-all select-none group ${
+                          idx === 0
+                            ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]/60'
+                            : 'border-navy-700 hover:border-gray-500'
+                        } ${draggedIdx === idx ? 'opacity-40 scale-95' : 'opacity-100'}`}
                       >
                         <Image
                           src={img}
                           alt={`New Product Photo ${idx + 1}`}
                           fill
-                          className="object-contain p-1"
-                          sizes="100px"
+                          className="object-contain p-1.5"
+                          sizes="150px"
                         />
-                        <span className="absolute top-1 left-1 px-1 rounded bg-black/70 text-[9px] text-gray-300">
+                        <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-gray-200 font-bold z-10">
                           #{idx + 1}
                         </span>
                         {idx === 0 && (
-                          <span className="absolute bottom-1 left-1 px-1.5 rounded bg-[#D4AF37] text-navy-950 text-[9px] font-bold">
-                            Cover
+                          <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded bg-[#D4AF37] text-navy-950 font-bold text-[9px] z-10 shadow">
+                            Main Cover
                           </span>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(idx, false)}
-                          className="absolute top-1 right-1 p-1 rounded bg-rose-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
+
+                        {/* Action Controls Bar for Reordering (Aage / Picche) */}
+                        <div className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex items-center justify-between gap-1 z-10">
+                          {/* Move Backward / Left Arrow */}
+                          <button
+                            type="button"
+                            disabled={idx === 0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveImage(idx, idx - 1, false);
+                            }}
+                            className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                            title="Move Left (Aagey)"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Set as Cover */}
+                          {idx !== 0 ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSetPrimaryImage(idx, false);
+                              }}
+                              className="text-[9px] text-[#D4AF37] hover:underline font-semibold"
+                            >
+                              Set Cover
+                            </button>
+                          ) : (
+                            <span className="text-[9px] text-gray-400 font-medium">Cover</span>
+                          )}
+
+                          {/* Move Forward / Right Arrow */}
+                          <button
+                            type="button"
+                            disabled={idx === arr.length - 1}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveImage(idx, idx + 1, false);
+                            }}
+                            className="p-1 rounded bg-navy-900/90 text-white hover:bg-[#D4AF37] hover:text-navy-950 disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                            title="Move Right (Picche)"
+                          >
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveImage(idx, false);
+                            }}
+                            className="p-1 rounded bg-rose-600/80 text-white hover:bg-rose-600 transition-colors"
+                            title="Remove Image"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
