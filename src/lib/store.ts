@@ -7,8 +7,8 @@ import { supabase } from './supabase';
 
 const CART_STORAGE_KEY = 'rynochi_cart_items_v1';
 const ORDERS_STORAGE_KEY = 'rynochi_orders_v1';
-const PRODUCTS_STORAGE_KEY = 'rynochi_products_v1';
-const CATEGORIES_STORAGE_KEY = 'rynochi_categories_v1';
+const PRODUCTS_STORAGE_KEY = 'rynochi_products_v2';
+const CATEGORIES_STORAGE_KEY = 'rynochi_categories_v2';
 const SETTINGS_STORAGE_KEY = 'rynochi_settings_v1';
 
 export function getStoredCart(): CartItem[] {
@@ -149,7 +149,10 @@ export function getStoredCategories(): Category[] {
       return CATEGORIES;
     }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) return CATEGORIES;
+    if (!Array.isArray(parsed) || parsed.length === 0 || !parsed.some((c: any) => c?.id === 'cat-keychain' || c?.slug === 'keychain')) {
+      localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(CATEGORIES));
+      return CATEGORIES;
+    }
     return parsed.map((c: any) => ({
       id: c?.id || `cat-${Date.now()}`,
       name: c?.name || 'Collection',

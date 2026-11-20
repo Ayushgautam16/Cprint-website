@@ -11,12 +11,14 @@ import {
   X,
   ChevronDown,
 } from 'lucide-react';
-import { useCart } from '@/lib/store';
+import { useCart, useLiveCategories } from '@/lib/store';
 import { CATEGORIES } from '@/lib/mockData';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { totalItemCount, setIsOpen } = useCart();
+  const { categories: liveCategories } = useLiveCategories();
+  const categoriesList = Array.isArray(liveCategories) && liveCategories.length > 0 ? liveCategories : CATEGORIES;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -80,9 +82,9 @@ export const Navbar: React.FC = () => {
                   Browse Collections
                 </div>
                 <div className="py-1">
-                  {CATEGORIES.map((cat) => (
+                  {categoriesList.map((cat) => (
                     <Link
-                      key={cat.id}
+                      key={cat.id || cat.slug}
                       href={`/category/${cat.slug}`}
                       className="block px-3 py-2 text-sm text-[#2A2620] hover:bg-[#F8F2E3] hover:text-[#8F6A17] font-medium transition-colors"
                     >
@@ -178,9 +180,9 @@ export const Navbar: React.FC = () => {
                 Categories
               </span>
               <div className="grid grid-cols-1 gap-2 pl-3">
-                {CATEGORIES.map((cat) => (
+                {categoriesList.map((cat) => (
                   <Link
-                    key={cat.id}
+                    key={cat.id || cat.slug}
                     href={`/category/${cat.slug}`}
                     className="text-sm text-[#4A432F] hover:text-[#8F6A17] py-1"
                   >
