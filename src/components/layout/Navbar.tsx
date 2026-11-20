@@ -77,7 +77,7 @@ export const Navbar: React.FC = () => {
             </button>
 
             {categoriesDropdownOpen && (
-              <div className="absolute top-full left-0 w-72 bg-[#FFFDF8] border border-[#EBDDB4] shadow-2xl p-3 z-50 animate-in fade-in duration-200">
+              <div className="absolute top-full left-0 w-72 sm:w-80 bg-[#FFFDF8] border border-[#EBDDB4] shadow-2xl p-3 z-50 animate-in fade-in duration-200 max-h-[85vh] overflow-y-auto scrollbar-thin">
                 <div className="text-[10px] uppercase font-bold tracking-[.18em] text-[#7A5C16] px-3 py-1.5 border-b border-[#EBDDB4]">
                   Browse Collections
                 </div>
@@ -86,7 +86,7 @@ export const Navbar: React.FC = () => {
                     <Link
                       key={cat.id || cat.slug}
                       href={`/category/${cat.slug}`}
-                      className="block px-3 py-2 text-sm text-[#2A2620] hover:bg-[#F8F2E3] hover:text-[#8F6A17] font-medium transition-colors"
+                      className="block px-3 py-2 text-sm text-[#2A2620] hover:bg-[#F8F2E3] hover:text-[#8F6A17] font-medium transition-colors rounded-md"
                     >
                       {cat.name}
                     </Link>
