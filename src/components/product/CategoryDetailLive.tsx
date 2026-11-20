@@ -24,9 +24,25 @@ export const CategoryDetailLive: React.FC<CategoryDetailLiveProps> = ({
       (c) => c && (c.slug === initialCategory?.slug || c.id === initialCategory?.id)
     ) || initialCategory;
 
-  const categoryProducts = (Array.isArray(allProducts) ? allProducts : []).filter(
-    (p) => p && (p.categoryId === currentCategory?.id || p.categoryName === currentCategory?.name)
-  );
+  const categoryProducts = (Array.isArray(allProducts) ? allProducts : []).filter((p) => {
+    if (!p) return false;
+    if (p.categoryId === currentCategory?.id || p.categoryName === currentCategory?.name) return true;
+    const catSlug = currentCategory?.slug;
+    const pName = (p.name || '').toLowerCase();
+    const pCat = (p.categoryName || '').toLowerCase();
+    if (catSlug === 'personalized-pens') return pCat.includes('pen') || pName.includes('pen');
+    if (catSlug === 'premium-metal-pens') return pName.includes('metal') || pName.includes('gold') || pName.includes('carbon') || pName.includes('rollerball');
+    if (catSlug === 'customized-diaries') return pCat.includes('diary') || pName.includes('diary') || pName.includes('journal');
+    if (catSlug === 'diary-and-pen-gift-sets') return (pName.includes('diary') && pName.includes('pen')) || pCat.includes('gift') || pName.includes('journal');
+    if (catSlug === 'corporate-gifts') return pName.includes('corporate') || pName.includes('gift') || pName.includes('hamper') || p.isCustomizable;
+    if (catSlug === 'stylus-pens-accessories') return pName.includes('stylus') || pName.includes('keychain') || (p.shortDescription || '').toLowerCase().includes('phone');
+    if (catSlug === 'keychain') return pCat.includes('keychain') || pName.includes('keychain');
+    if (catSlug === 'pen-and-keychain') return pCat.includes('pen') || pName.includes('pen') || pName.includes('keychain');
+    if (catSlug === 'cards-holder') return pCat.includes('card') || pName.includes('card');
+    if (catSlug === 'pen-diary-and-card-holder') return pCat.includes('diary') || pName.includes('diary') || pName.includes('card') || pName.includes('journal');
+    if (catSlug === 'combo-gift-sets') return pCat.includes('gift') || pName.includes('gift') || pName.includes('hamper') || pName.includes('set');
+    return false;
+  });
 
   const displayProducts = (categoryProducts.length > 0 ? categoryProducts : initialProducts || []).filter(Boolean);
 

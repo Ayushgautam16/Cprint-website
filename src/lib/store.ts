@@ -8,7 +8,7 @@ import { supabase } from './supabase';
 const CART_STORAGE_KEY = 'rynochi_cart_items_v1';
 const ORDERS_STORAGE_KEY = 'rynochi_orders_v1';
 const PRODUCTS_STORAGE_KEY = 'rynochi_products_v3';
-const CATEGORIES_STORAGE_KEY = 'rynochi_categories_v3';
+const CATEGORIES_STORAGE_KEY = 'rynochi_categories_v4';
 const SETTINGS_STORAGE_KEY = 'rynochi_settings_v1';
 
 export function getStoredCart(): CartItem[] {

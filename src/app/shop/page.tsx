@@ -28,8 +28,34 @@ function ShopContent() {
     return (Array.isArray(allProducts) ? allProducts : []).filter((product) => {
       if (!product) return false;
       // Category filter
-      if (selectedCategory !== 'all' && product.categoryId !== selectedCategory) {
-        return false;
+      if (selectedCategory !== 'all') {
+        const cat = (Array.isArray(categories) ? categories : []).find(
+          (c) => c.id === selectedCategory || c.slug === selectedCategory
+        );
+        if (cat) {
+          const matchDirect = product.categoryId === cat.id || product.categoryName === cat.name;
+          if (!matchDirect) {
+            const catSlug = cat.slug;
+            const pName = (product.name || '').toLowerCase();
+            const pCat = (product.categoryName || '').toLowerCase();
+            let matchesGroup = false;
+            if (catSlug === 'personalized-pens') matchesGroup = pCat.includes('pen') || pName.includes('pen');
+            else if (catSlug === 'premium-metal-pens') matchesGroup = pName.includes('metal') || pName.includes('gold') || pName.includes('carbon') || pName.includes('rollerball');
+            else if (catSlug === 'customized-diaries') matchesGroup = pCat.includes('diary') || pName.includes('diary') || pName.includes('journal');
+            else if (catSlug === 'diary-and-pen-gift-sets') matchesGroup = (pName.includes('diary') && pName.includes('pen')) || pCat.includes('gift') || pName.includes('journal');
+            else if (catSlug === 'corporate-gifts') matchesGroup = pName.includes('corporate') || pName.includes('gift') || pName.includes('hamper') || product.isCustomizable;
+            else if (catSlug === 'stylus-pens-accessories') matchesGroup = pName.includes('stylus') || pName.includes('keychain') || (product.shortDescription || '').toLowerCase().includes('phone');
+            else if (catSlug === 'keychain') matchesGroup = pCat.includes('keychain') || pName.includes('keychain');
+            else if (catSlug === 'pen-and-keychain') matchesGroup = pCat.includes('pen') || pName.includes('pen') || pName.includes('keychain');
+            else if (catSlug === 'cards-holder') matchesGroup = pCat.includes('card') || pName.includes('card');
+            else if (catSlug === 'pen-diary-and-card-holder') matchesGroup = pCat.includes('diary') || pName.includes('diary') || pName.includes('card') || pName.includes('journal');
+            else if (catSlug === 'combo-gift-sets') matchesGroup = pCat.includes('gift') || pName.includes('gift') || pName.includes('hamper') || pName.includes('set');
+
+            if (!matchesGroup) return false;
+          }
+        } else if (product.categoryId !== selectedCategory) {
+          return false;
+        }
       }
       // Customizable filter
       if (onlyCustomizable && !product.isCustomizable) {
