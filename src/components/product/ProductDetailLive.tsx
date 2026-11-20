@@ -138,27 +138,51 @@ export const ProductDetailLive: React.FC<ProductDetailLiveProps> = ({
           </div>
 
           {/* Technical Specs Table */}
-          {product.specifications && (
-            <div className="space-y-3 pt-4">
-              <h3 className="text-lg font-serif font-bold text-[#7A5C16] tracking-wide">
-                Technical Specifications
-              </h3>
-              <div className="rounded-2xl overflow-hidden border border-[#EBDDB4] bg-[#F8F2E3]">
-                <table className="w-full text-xs text-left">
-                  <tbody>
-                    {Object.entries(product.specifications).map(([key, val], idx) => (
-                      <tr
-                        key={key}
-                        className={idx % 2 === 0 ? 'bg-white' : 'bg-[#F8F2E3]'}
-                      >
-                        <td className="px-5 py-3 font-semibold text-[#5B5444] w-1/3 border-b border-[#EBDDB4]/50">
-                          {key}
-                        </td>
-                        <td className="px-5 py-3 text-[#6E675A] border-b border-[#EBDDB4]/50">
-                          {val}
-                        </td>
-                      </tr>
-                    ))}
+          {product.specifications && Object.keys(product.specifications).length > 0 && (
+            <div className="space-y-4 pt-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EBDDB4] pb-3">
+                <div>
+                  <h3 className="text-xl font-serif font-bold text-[#2A2620] tracking-wide">
+                    Specifications & Details
+                  </h3>
+                  <p className="text-xs text-[#7A5C16] font-medium">
+                    Technical parameters, materials & mechanism details
+                  </p>
+                </div>
+                <span className="self-start sm:self-auto text-xs text-[#8F6A17] font-semibold bg-[#FAF4E5] px-3 py-1 rounded-full border border-[#EBDDB4]">
+                  RYNOCHI Certified
+                </span>
+              </div>
+
+              <div className="rounded-2xl overflow-hidden border border-[#EBDDB4] bg-white shadow-sm">
+                <table className="w-full text-xs sm:text-sm text-left">
+                  <thead>
+                    <tr className="bg-[#FAF4E5] border-b border-[#EBDDB4] text-[#7A5C16] font-bold text-xs">
+                      <th className="px-5 py-3.5 w-2/5 sm:w-1/3">Specification</th>
+                      <th className="px-5 py-3.5">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#EBDDB4]/50">
+                    {Object.entries({
+                      Brand: 'RYNOCHI',
+                      'Product Name': product.name,
+                      ...(product.specifications || {}),
+                    }).map(([key, val], idx) => {
+                      if (!val) return null;
+                      return (
+                        <tr
+                          key={key}
+                          className={idx % 2 === 0 ? 'bg-white' : 'bg-[#FAF4E5]/30 hover:bg-[#FAF4E5]/60 transition-colors'}
+                        >
+                          <td className="px-5 py-3.5 font-semibold text-[#2A2620] w-2/5 sm:w-1/3">
+                            {key}
+                          </td>
+                          <td className="px-5 py-3.5 text-[#5B5444] font-medium">
+                            {String(val)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
