@@ -26,6 +26,69 @@ export const INITIAL_SETTINGS: WebsiteSettings = {
 };
 
 export const CATEGORIES: Category[] = [
+  // --- Original Collections ---
+  {
+    id: 'cat-pens',
+    name: 'Personalized Pens',
+    slug: 'personalized-pens',
+    description: 'Everyday and executive writing instruments laser engraved with your name or brand.',
+    imageUrl: '/images/products-optimized/1.png',
+    productCount: 12,
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    id: 'cat-metal-pens',
+    name: 'Premium Metal Pens',
+    slug: 'premium-metal-pens',
+    description: 'Weighty brass, rose gold and stainless steel pens engineered to make a lasting impression.',
+    imageUrl: '/images/products-optimized/2.png',
+    productCount: 8,
+    displayOrder: 2,
+    isActive: true,
+  },
+  {
+    id: 'cat-diaries',
+    name: 'Customized Diaries',
+    slug: 'customized-diaries',
+    description: 'Refined leatherette executive notebooks with custom embossed or laser engraved metal nameplates.',
+    imageUrl: '/images/products-optimized/3.png',
+    productCount: 10,
+    displayOrder: 3,
+    isActive: true,
+  },
+  {
+    id: 'cat-gift-sets',
+    name: 'Diary & Pen Gift Sets',
+    slug: 'diary-and-pen-gift-sets',
+    description: 'Handcrafted matching diary and pen luxury sets in velvet-lined gift presentation boxes.',
+    imageUrl: '/images/products-optimized/6.png',
+    productCount: 15,
+    displayOrder: 4,
+    isActive: true,
+  },
+  {
+    id: 'cat-corporate',
+    name: 'Corporate Gifts',
+    slug: 'corporate-gifts',
+    description: 'Bespoke corporate gifting hampers and executive desk essentials with corporate branding.',
+    imageUrl: '/images/products-optimized/5.png',
+    productCount: 14,
+    displayOrder: 5,
+    isActive: true,
+  },
+  {
+    id: 'cat-stylus',
+    name: 'Stylus Pens & Accessories',
+    slug: 'stylus-pens-accessories',
+    description: 'Dual-purpose high precision capacitive touch stylus pens and laser-engraved accessories.',
+    imageUrl: '/images/products-optimized/7.png',
+    productCount: 9,
+    displayOrder: 6,
+    isActive: true,
+  },
+
+  // --- Recently Added Official Collections ---
   {
     id: 'cat-keychain',
     name: 'Keychain',
@@ -33,7 +96,7 @@ export const CATEGORIES: Category[] = [
     description: 'Precision laser-engraved metallic & genuine leather custom keychains.',
     imageUrl: '/images/products-optimized/9.png',
     productCount: 8,
-    displayOrder: 1,
+    displayOrder: 7,
     isActive: true,
   },
   {
@@ -43,7 +106,7 @@ export const CATEGORIES: Category[] = [
     description: 'Executive writing instruments paired with matching engraved keychains.',
     imageUrl: '/images/products-optimized/1.png',
     productCount: 12,
-    displayOrder: 2,
+    displayOrder: 8,
     isActive: true,
   },
   {
@@ -53,7 +116,7 @@ export const CATEGORIES: Category[] = [
     description: 'Sleek metal and textured leather card cases personalized with name or initials.',
     imageUrl: '/images/products-optimized/8.png',
     productCount: 10,
-    displayOrder: 3,
+    displayOrder: 9,
     isActive: true,
   },
   {
@@ -63,7 +126,7 @@ export const CATEGORIES: Category[] = [
     description: 'The definitive executive trinity: custom engraved pen, leather diary & card holder.',
     imageUrl: '/images/products-optimized/3.png',
     productCount: 14,
-    displayOrder: 4,
+    displayOrder: 10,
     isActive: true,
   },
   {
@@ -73,7 +136,7 @@ export const CATEGORIES: Category[] = [
     description: 'Curated luxury hampers and multi-piece engraved gift sets in keepsake presentation boxes.',
     imageUrl: '/images/products-optimized/6.png',
     productCount: 16,
-    displayOrder: 5,
+    displayOrder: 11,
     isActive: true,
   },
 ];
