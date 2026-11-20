@@ -155,11 +155,12 @@ function ShopContent() {
               <h3 className="text-sm font-serif font-bold text-[#2A2620] uppercase tracking-wider">
                 Filter Catalog
               </h3>
-              {(selectedCategory !== 'all' || searchQuery || onlyCustomizable) && (
+              {(selectedCategory !== 'all' || selectedMechanism !== 'all' || searchQuery || onlyCustomizable) && (
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedCategory('all');
+                    setSelectedMechanism('all');
                     setSearchQuery('');
                     setOnlyCustomizable(false);
                     setPriceRange(5000);
@@ -204,6 +205,39 @@ function ShopContent() {
                     <span>
                       {allProducts.filter((p) => p.categoryId === cat.id).length}
                     </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pen Mechanism Filter */}
+            <div className="space-y-2 border-t border-[#EBDDB4] pt-4">
+              <label className="text-xs font-semibold text-[#7A5C16] uppercase tracking-wider block">
+                Pen Mechanism
+              </label>
+              <div className="space-y-1">
+                {[
+                  { label: 'All Mechanisms', value: 'all' },
+                  { label: 'Twist Mechanism', value: 'Twist Mechanism' },
+                  { label: 'Push Button', value: 'Push Button' },
+                  { label: 'Cap Type', value: 'Cap Type' },
+                ].map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setSelectedMechanism(item.value)}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all duration-200 flex justify-between items-center ${
+                      selectedMechanism === item.value
+                        ? 'bg-[#D4AF37]/20 text-[#7A5C16] font-semibold border border-[#D4AF37]/40 shadow-sm'
+                        : 'text-[#6E675A] hover:text-[#2A2620] hover:translate-x-1'
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    {item.value !== 'all' && (
+                      <span className="text-[10px] text-gray-500">
+                        {allProducts.filter((p) => p.specifications?.['Pen Mechanism'] === item.value).length}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
