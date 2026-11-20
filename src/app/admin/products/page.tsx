@@ -1408,6 +1408,203 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
+              {/* SECTION: SPECIFICATIONS & MECHANISM */}
+              <div className="p-4 rounded-2xl bg-navy-950 border border-navy-800 space-y-3">
+                <div className="border-b border-navy-800 pb-2">
+                  <h4 className="text-xs font-bold text-[#D4AF37] tracking-wider uppercase">
+                    Product Specifications (Shown in details table)
+                  </h4>
+                  <p className="text-[11px] text-gray-400">
+                    Product Type, Material, Main Colour, Accent Colour & Pen Mechanism
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                  {/* Product Type */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Product Type</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Ball Pen, Rollerball Pen, Keychain"
+                      value={newProd.specifications?.['Product Type'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            'Product Type': e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Pen Mechanism */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Pen Mechanism</label>
+                    <select
+                      value={newProd.specifications?.['Pen Mechanism'] || 'Not Sure'}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            'Pen Mechanism': e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    >
+                      <option value="Twist Mechanism">Twist Mechanism</option>
+                      <option value="Push Button">Push Button</option>
+                      <option value="Cap Type">Cap Type</option>
+                      <option value="Not Sure">Not Sure</option>
+                    </select>
+                  </div>
+
+                  {/* Material */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Material</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Metal, Solid Brass, Vegan Leather"
+                      value={newProd.specifications?.['Material'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            Material: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Main Colour */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Main Colour</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Black, Blue, Tan Brown"
+                      value={newProd.specifications?.['Main Colour'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            'Main Colour': e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Accent Colour */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Accent Colour</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Rose Gold, Gold, Silver"
+                      value={newProd.specifications?.['Accent Colour'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            'Accent Colour': e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Design */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Design</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Textured Designer Grip"
+                      value={newProd.specifications?.['Design'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            Design: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Personalization */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Personalization</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Custom Name Engraving"
+                      value={newProd.specifications?.['Personalization'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            Personalization: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Style */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Style</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Luxury Executive"
+                      value={newProd.specifications?.['Style'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            Style: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+
+                  {/* Ideal For */}
+                  <div className="space-y-1">
+                    <label className="text-gray-300 font-medium block">Ideal For</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Men & Women"
+                      value={newProd.specifications?.['Ideal For'] || ''}
+                      onChange={(e) =>
+                        setNewProd({
+                          ...newProd,
+                          specifications: {
+                            ...(newProd.specifications || {}),
+                            'Ideal For': e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-navy-900 border border-navy-700 text-white focus:outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="flex gap-4 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer text-gray-300">
                   <input
