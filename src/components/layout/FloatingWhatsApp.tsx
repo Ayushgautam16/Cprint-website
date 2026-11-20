@@ -21,10 +21,6 @@ export const FloatingWhatsApp: React.FC = () => {
         aria-label="Chat with us on WhatsApp"
         title="Chat with us on WhatsApp (+91 72773 38436)"
       >
-        <span className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
-        </span>
         {/* Official WhatsApp Logo */}
         <svg
           className="w-5 h-5 fill-current flex-shrink-0"
