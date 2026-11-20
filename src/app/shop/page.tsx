@@ -17,6 +17,7 @@ function ShopContent() {
 
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedMechanism, setSelectedMechanism] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'rating' | 'newest'>('featured');
   const [priceRange, setPriceRange] = useState<number>(5000);
   const [onlyCustomizable, setOnlyCustomizable] = useState(false);
@@ -47,6 +48,13 @@ function ShopContent() {
         const matchesSku = (product.sku || '').toLowerCase().includes(q);
         if (!matchesName && !matchesDesc && !matchesSku) return false;
       }
+      // Pen Mechanism filter
+      if (selectedMechanism !== 'all') {
+        const mech = product.specifications?.['Pen Mechanism'];
+        if (mech !== selectedMechanism) {
+          return false;
+        }
+      }
       return true;
     }).sort((a, b) => {
       if (!a || !b) return 0;
@@ -67,7 +75,7 @@ function ShopContent() {
           return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
       }
     });
-  }, [allProducts, searchQuery, selectedCategory, sortBy, priceRange, onlyCustomizable]);
+  }, [allProducts, searchQuery, selectedCategory, selectedMechanism, sortBy, priceRange, onlyCustomizable]);
 
   return (
     <div className="min-h-screen bg-[#FFFDF8] py-12">
